@@ -12,6 +12,7 @@ module Demo
     LANGS = %w[en fr es ja].freeze
     FILES = { 'en' => 'README.md', 'fr' => 'README.fr.md', 'es' => 'README.es.md', 'ja' => 'README.ja.md' }.freeze
     PALETTES = {
+      'fairyfloss' => ['🍭', 'fairyfloss', 'The default: a light take by day, the original fairyfloss by night.'],
       'catppuccin' => ['🐈', 'Catppuccin', 'Latte by day, Mocha by night.'],
       'rose-pine' => ['🌹', 'Rosé Pine', 'Dawn by day, Main by night.'],
       'everforest' => ['🌲', 'Everforest', 'Light by day, Dark by night, both at medium contrast.']
@@ -193,21 +194,26 @@ module Demo
       "# #{text[:title]}\n\n#{text[:intro]}\n\n#{language_links(lang)}\n\n#{body.join("\n")}\n#{retake(lang)}"
     end
 
+    # Fairyfloss reuses the English shots from the main gallery; the others have their own folders.
+    def palette_dir(id) = id == 'fairyfloss' ? 'en' : "palettes/#{id}"
+
+    # One folding section per palette; the default starts open. The blank lines let GitHub render the Markdown inside.
+    def palette_section(id, (emoji, name, sides))
+      figures = Scenes::LIST.map { figure(_1, 'en', palette_dir(id)) }.join("\n")
+      "<details#{if id == 'fairyfloss'
+                   ' open'
+                 end}>\n<summary><h2>#{emoji} #{name}</h2></summary>\n\n#{sides}\n\n#{figures}\n</details>\n"
+    end
+
     def palette_page
-      jump = PALETTES.map { |id, (emoji, name, _)| "[#{emoji} #{name}](##{id})" }.join(' · ')
-      body = PALETTES.map do |id, (emoji, name, sides)|
-        figures = Scenes::LIST.map { figure(_1, 'en', "palettes/#{id}") }.join("\n")
-        "<a id=\"#{id}\"></a>\n## #{emoji} #{name}\n\n#{sides}\n\n#{figures}"
-      end
       <<~MD
         # 🎨 garden in every color
 
-        The default 🍭 fairyfloss is in the [main gallery](README.md). Here is every page in the other color schemes,
-        ☀️ light on the left and 🌙 dark on the right, in English. Pick one from the color menu at the bottom of the sidebar.
+        Every page in every color scheme, ☀️ light on the left and 🌙 dark on the right, in English. Open a scheme to see
+        it; pick one in the app from the color menu at the bottom of the sidebar. The [main gallery](README.md) has
+        fairyfloss in every language.
 
-        #{jump}
-
-        #{body.join("\n")}
+        #{PALETTES.map { |id, details| palette_section(id, details) }.join("\n")}
       MD
     end
 
