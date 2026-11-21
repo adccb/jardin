@@ -1,0 +1,100 @@
+prs:
+  title: "jardin des PR"
+  tagline: "chaque petite PR que tu as plantée 🌱 et comment elle pousse"
+  main_label: "tes pull requests"
+  tabs_label: "dépôts au programme"
+  all_repos: "✨ tous les dépôts"
+  states_label: "état des pull requests"
+  search_placeholder: "🔍 cherche dans les titres, branches, labels…"
+  search_label: "rechercher des pull requests"
+  load_failed: "impossible de charger les PR 😿 %{reason}"
+  repo_failed: "%{slug} : %{message}"
+  repo_count: "(%{selected} sur %{total})"
+  panel:
+    heading: "dépôts"
+    select_all: "tout cocher"
+    clear: "tout décocher"
+    in_scope: "💝 au programme"
+    nothing_picked: "rien de choisi pour l'instant"
+    everything_else: "🌱 tout le reste"
+    picked_all: "tu les as tous pris ! 🎉"
+    hidden: "🙈 cachés"
+    hide_label: "cacher %{name} de cette liste"
+    hide_title: "cacher de cette liste"
+    bring_back: "faire revenir 👀"
+    bring_back_label: "faire revenir %{name}"
+    tucked_away: "%{name} mis de côté 🙈"
+  states:
+    open: "🌱 ouvertes"
+    merged: "💖 fusionnées"
+    closed: "🚪 fermées"
+  groups:
+    mergeable:
+      title: "💖 prêtes à merger"
+      hint: "approuvées, checks au vert, zéro conflit"
+    needs_work:
+      title: "🛠️ à retravailler"
+      hint: "changements demandés, checks en échec ou conflits"
+    waiting:
+      title: "👀 en attente de relecture"
+      hint: "la balle est dans le camp des relecteurs (ou de la CI)"
+    drafts:
+      title: "🧸 brouillons"
+      hint: "ça mijote encore"
+  stats:
+    open:
+      one: "ouverte"
+      other: "ouvertes"
+    ready:
+      one: "prête"
+      other: "prêtes"
+    needs_work:
+      one: "à retravailler"
+      other: "à retravailler"
+    waiting:
+      one: "en attente"
+      other: "en attente"
+    drafts:
+      one: "brouillon"
+      other: "brouillons"
+  shown:
+    open:
+      one: "%{count} PR ouverte affichée"
+      other: "%{count} PR ouvertes affichées"
+    merged:
+      one: "%{count} PR fusionnée affichée"
+      other: "%{count} PR fusionnées affichées"
+    closed:
+      one: "%{count} PR fermée affichée"
+      other: "%{count} PR fermées affichées"
+  empty:
+    no_repos: "choisis un dépôt ou deux dans la liste pour commencer"
+    loading: "je cueille tes PR…"
+    no_match: "rien ne correspond à ta recherche"
+    open: "aucune PR ouverte ici. va te chercher un petit goûter ! 🍓"
+    merged: "rien de fusionné ici pour l'instant"
+    closed: "aucune PR fermée. tout est bien rangé !"
+  review:
+    changes_requested: "🛠️ changements demandés par %{names}"
+    approved: "✅ approuvée"
+    approved_by: "✅ approuvée par %{names}"
+    waiting_on: "👀 en attente de %{names}"
+    comments_from: "💬 commentaires de %{names}"
+    no_reviewers: "🫥 pas encore de relecteurs"
+  checks:
+    failing:
+      one: "❌ %{count} en échec"
+      other: "❌ %{count} en échec"
+    running:
+      one: "⏳ %{count} en cours"
+      other: "⏳ %{count} en cours"
+    passing:
+      one: "✅ %{count} check au vert"
+      other: "✅ %{count} checks au vert"
+  badges:
+    conflicts: "⚔️ conflits de merge"
+    behind: "⬆️ en retard sur la base"
+    merged: "💖 fusionnée %{ago}"
+    closed: "🚪 fermée %{ago}"
+    draft: "🧸 brouillon"
+    updated: "🌀 mis à jour %{ago}"

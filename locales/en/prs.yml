@@ -1,0 +1,100 @@
+prs:
+  title: "pr garden"
+  tagline: "every little PR you've planted 🌱 and how it's growing"
+  main_label: "your pull requests"
+  tabs_label: "repos in scope"
+  all_repos: "✨ all repos"
+  states_label: "pull request state"
+  search_placeholder: "🔍 search titles, branches, labels…"
+  search_label: "search pull requests"
+  load_failed: "couldn't load PRs 😿 %{reason}"
+  repo_failed: "%{slug}: %{message}"
+  repo_count: "(%{selected} of %{total})"
+  panel:
+    heading: "repos"
+    select_all: "select all"
+    clear: "clear"
+    in_scope: "💝 in scope"
+    nothing_picked: "nothing picked yet"
+    everything_else: "🌱 everything else"
+    picked_all: "you picked them all! 🎉"
+    hidden: "🙈 hidden"
+    hide_label: "hide %{name} from this list"
+    hide_title: "hide from this list"
+    bring_back: "bring back 👀"
+    bring_back_label: "bring back %{name}"
+    tucked_away: "%{name} tucked away 🙈"
+  states:
+    open: "🌱 open"
+    merged: "💖 merged"
+    closed: "🚪 closed"
+  groups:
+    mergeable:
+      title: "💖 ready to merge"
+      hint: "approved, checks happy, no conflicts"
+    needs_work:
+      title: "🛠️ needs work"
+      hint: "changes requested, failing checks or conflicts"
+    waiting:
+      title: "👀 waiting on review"
+      hint: "over to your reviewers (or CI)"
+    drafts:
+      title: "🧸 drafts"
+      hint: "still cooking"
+  stats:
+    open:
+      one: "open"
+      other: "open"
+    ready:
+      one: "ready"
+      other: "ready"
+    needs_work:
+      one: "needs work"
+      other: "needs work"
+    waiting:
+      one: "waiting"
+      other: "waiting"
+    drafts:
+      one: "draft"
+      other: "drafts"
+  shown:
+    open:
+      one: "showing %{count} open PR"
+      other: "showing %{count} open PRs"
+    merged:
+      one: "showing %{count} merged PR"
+      other: "showing %{count} merged PRs"
+    closed:
+      one: "showing %{count} closed PR"
+      other: "showing %{count} closed PRs"
+  empty:
+    no_repos: "pick a repo or two from the list to get started"
+    loading: "gathering your PRs…"
+    no_match: "nothing matches that search"
+    open: "no open PRs here. go get a snack! 🍓"
+    merged: "nothing merged here yet"
+    closed: "no closed PRs. tidy!"
+  review:
+    changes_requested: "🛠️ changes requested by %{names}"
+    approved: "✅ approved"
+    approved_by: "✅ approved by %{names}"
+    waiting_on: "👀 waiting on %{names}"
+    comments_from: "💬 comments from %{names}"
+    no_reviewers: "🫥 no reviewers yet"
+  checks:
+    failing:
+      one: "❌ %{count} failing"
+      other: "❌ %{count} failing"
+    running:
+      one: "⏳ %{count} running"
+      other: "⏳ %{count} running"
+    passing:
+      one: "✅ %{count} check passing"
+      other: "✅ %{count} checks passing"
+  badges:
+    conflicts: "⚔️ merge conflicts"
+    behind: "⬆️ behind base"
+    merged: "💖 merged %{ago}"
+    closed: "🚪 closed %{ago}"
+    draft: "🧸 draft"
+    updated: "🌀 updated %{ago}"

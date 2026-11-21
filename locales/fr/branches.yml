@@ -1,0 +1,188 @@
+branches:
+  title: "jardin des branches"
+  tagline: "chouchoute tes petites branches git ✨ coupe celles qui ont fané 💕"
+  repo_label: "dépôt"
+  pr_note: "🫧 impossible de joindre GitHub pour ce dépôt, donc pas d'infos de PR cette fois"
+  loading: "on arrose le jardin…"
+  no_repos: "aucun dépôt git par ici pour l'instant"
+  select_visible: "tout cocher ☑️"
+  select_item: "sélectionner %{label}"
+  tabs:
+    label: "parterres du jardin"
+    branches: "branches"
+    worktrees: "worktrees"
+  stats:
+    branches:
+      one: "branche"
+      other: "branches"
+    worktrees:
+      one: "worktree"
+      other: "worktrees"
+    merged:
+      one: "mergée"
+      other: "mergées"
+    gone:
+      one: "disparue"
+      other: "disparues"
+    stale:
+      one: "fanée"
+      other: "fanées"
+  toolbar:
+    branches:
+      filters_label: "filtrer les branches"
+      search_placeholder: "🔍 chercher branches et commits…"
+      search_label: "chercher des branches"
+      sort_label: "trier les branches"
+      shown:
+        one: "%{shown} sur %{count} branche affichée"
+        other: "%{shown} sur %{count} branches affichées"
+    worktrees:
+      filters_label: "filtrer les worktrees"
+      search_placeholder: "🔍 chercher worktrees et chemins…"
+      search_label: "chercher des worktrees"
+      sort_label: "trier les worktrees"
+      prune: "chasser les fantômes 👻"
+      shown:
+        one: "%{shown} sur %{count} worktree affiché"
+        other: "%{shown} sur %{count} worktrees affichés"
+  sort:
+    oldest: "🐌 les plus vieux d'abord"
+    newest: "🐣 les plus récents d'abord"
+    name: "🔤 par nom"
+    behind: "⬇️ les plus en retard"
+    dirty: "🧺 le plus de modifs en cours"
+  filters:
+    branches:
+      merged: "💖 mergées"
+      gone: "👻 upstream disparu"
+      closed: "🚪 PR fermée"
+      open: "🌱 PR ouverte"
+      stale: "🕸️ fanées depuis %{days} j+"
+      worktree: "🏡 dans un worktree"
+      nopr: "✨ sans PR"
+    worktrees:
+      merged: "💖 mergés"
+      closed: "🚪 PR fermée"
+      open: "🌱 PR ouverte"
+      clean: "✨ propres"
+      dirty: "🧺 modifs non commitées"
+      stale: "🕸️ fanés depuis %{days} j+"
+      detached: "🎈 détachés"
+      ghost: "👻 fantômes"
+  empty:
+    tidy: "ton jardin est parfaitement rangé !"
+    branches: "rien ne fleurit ici… essaie un autre filtre"
+    worktrees: "aucun worktree ne correspond… essaie un autre filtre"
+  lock:
+    default: "c'est la branche par défaut, elle reste 👑"
+    worktree: "vit dans un worktree à %{path}"
+    current: "actuellement checkoutée"
+  badges:
+    pr_merged: "💖 mergée #%{number}"
+    pr_open: "🌱 ouverte #%{number}"
+    pr_closed: "🚪 fermée #%{number}"
+    default: "👑 par défaut"
+    checked_out: "📍 checkoutée"
+    merged_in_git: "🧁 mergée dans git"
+    upstream_gone: "👻 upstream disparu"
+    local_only: "🏠 en local seulement"
+    ahead_behind: "%{ahead} en avance, %{behind} en retard sur %{base}"
+    main_checkout: "🏰 checkout principal"
+    folder_gone: "🍂 le dossier a disparu"
+    unsaved:
+      one: "🧺 %{count} modif non sauvée"
+      other: "🧺 %{count} modifs non sauvées"
+    clean: "✨ propre"
+    prunable: "👻 à élaguer"
+    locked: "🔐 verrouillé"
+  card:
+    detached_at: "🎈 détaché sur %{head}"
+    delete: "supprimer 🗑️"
+    remove: "retirer 🧹"
+    remove_with_branch: "retirer + supprimer la branche 🗑️"
+    ghost_hint: "utilise « chasser les fantômes 👻 » pour ranger celui-ci"
+  bulkbar:
+    picked:
+      one: "%{count} choisi"
+      other: "%{count} choisis"
+    clear: "vider"
+    tidy_branches:
+      one: "ranger %{count} branche ✨"
+      other: "ranger %{count} branches ✨"
+    tidy_worktrees:
+      one: "ranger %{count} worktree ✨"
+      other: "ranger %{count} worktrees ✨"
+  goodbyes:
+    - "bye bye %{name} 👋💕"
+    - "%{name} est parti·e au compost 🌱"
+    - "clic clac ! %{name} a disparu ✂️✨"
+    - "%{name} s'est envolé·e 🦋"
+    - "%{name} est rangé·e 🧹💖"
+  toasts:
+    load_failed: "impossible de charger %{repo} 😿 %{error}"
+    delete_failed: "impossible de supprimer %{name} 😿 %{error}"
+    worktree_removed: "le worktree %{path} a plié bagage 🧳💕"
+    remove_failed: "impossible de retirer le worktree 😿 %{error}"
+    pruned: "élagué 👻 %{output}"
+    no_ghosts: "plus aucun fantôme 👻✨"
+    prune_failed: "l'élagage a raté 😿 %{error}"
+  dialogs:
+    git_says: "git dit :"
+    force_delete:
+      title: "%{name} n'est pas mergée dans git 🥺"
+      squashed: "mais sa PR a été squash-mergée 💖 donc forcer la suppression, ça devrait aller sans souci."
+      unmerged: "forcer la suppression jette les commits qui n'existent que sur cette branche. t'es sûr·e, mon cœur ? 🥺"
+      confirm: "forcer quand même 💥"
+    remove_worktree:
+      title: "retirer ce worktree ? 🧹"
+      title_with_branch: "retirer le worktree + la branche ? 🗑️"
+      will_run: "ça va lancer :"
+      safe: "git refuse s'il reste des modifs non sauvées, donc pas de larmes 🛡️"
+      confirm: "oui, range-le ✨"
+    force_remove:
+      title: "git a dit non 🙅‍♀️"
+      loss_dirty_html:
+        one: "ça jette <b>%{count} modif non sauvée</b> pour toujours 😱"
+        other: "ça jette <b>%{count} modifs non sauvées</b> pour toujours 😱"
+      loss_clean: "ça va le forcer à partir."
+      confirm: "forcer le retrait 💥"
+    prune:
+      title: "chasser les worktrees fantômes ? 👻"
+      body_html: "ça lance %{command}, qui oublie les worktrees dont le dossier a déjà disparu."
+      confirm: "adieu les fantômes 👻"
+    bulk_branches:
+      title:
+        one: "ranger %{count} branche ? ✨"
+        other: "ranger %{count} branches ? ✨"
+      intro_html: "ces branches locales vont passer par %{command} :"
+      force_html: "forcer la suppression (%{flag}). nécessaire pour les branches squash-mergées 💖 mais jette les commits pas mergés"
+      confirm: "range-les ✨"
+      retry:
+        one: "forcer la %{count} récalcitrante 💥"
+        other: "forcer les %{count} récalcitrantes 💥"
+    bulk_worktrees:
+      title:
+        one: "ranger %{count} worktree ? ✨"
+        other: "ranger %{count} worktrees ? ✨"
+      intro_html: "ceux-ci vont passer par %{command} :"
+      also_branches: "supprimer aussi leurs branches 🗑️"
+      force_branches_html: "forcer la suppression de ces branches (%{flag}). nécessaire pour celles qui sont squash-mergées 💖"
+      force_worktrees:
+        one: "forcer le retrait malgré les modifs non sauvées (%{count} worktree) 😱 elles seront perdues pour toujours"
+        other: "forcer le retrait malgré les modifs non sauvées (%{count} worktrees) 😱 elles seront perdues pour toujours"
+      confirm: "range-les ✨"
+      retry:
+        one: "forcer le %{count} récalcitrant 💥 (les modifs non sauvées partent à la poubelle)"
+        other: "forcer les %{count} récalcitrants 💥 (les modifs non sauvées partent à la poubelle)"
+      branch_stayed: "worktree retiré 🧹 mais la branche est restée : %{error}"
+    progress:
+      tidying: "rangement en cours… 🧹"
+      force_tidying: "rangement forcé… 💥"
+      working: "je bosse… 🪄"
+      some_stayed:
+        one: "%{tidied} au propre, %{count} n'a pas bougé 🥺"
+        other: "%{tidied} au propre, %{count} n'ont pas bougé 🥺"
+      all_tidied:
+        one: "%{count} au propre, tout est rangé ! 🎉💖"
+        other: "les %{count} sont au propre, tout est rangé ! 🎉💖"
+      done: "c'est fini 💕"

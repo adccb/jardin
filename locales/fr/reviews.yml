@@ -1,0 +1,59 @@
+reviews:
+  title: "jardin des relectures"
+  tagline: "les petites PR qui attendent ton regard 👀 et ta visite"
+  main_label: "pull requests qui attendent ta relecture"
+  search_placeholder: "🔍 cherche dans les titres, dépôts, auteurs, labels…"
+  search_label: "rechercher des demandes de relecture"
+  load_failed: "impossible de charger les demandes de relecture 😿 %{reason}"
+  panel:
+    heading: "dépôts"
+    loading: "je jette un œil à tes relectures…"
+    none: "aucun dépôt ne t'attend 🌙"
+    select_all: "tout cocher"
+    clear: "tout décocher"
+    count: "(%{selected} sur %{total})"
+    in_scope: "💝 affichés"
+    nothing_picked: "rien de coché pour l'instant"
+    filtered_out: "🌱 filtrés"
+    none_filtered: "tous les dépôts sont affichés ! 🎉"
+    hidden: "🙈 cachés"
+    hide_label: "cacher %{name} de cette liste"
+    hide_title: "cacher de cette liste"
+    bring_back: "faire revenir 👀"
+    bring_back_label: "faire revenir %{name}"
+    tucked_away: "%{name} mis de côté 🙈"
+  tabs_label: "qui demande"
+  tabs:
+    you:
+      title: "pour toi"
+      hint: "quelqu'un t'a demandée par ton nom"
+    team:
+      title: "pour ton équipe"
+      hint: "demandée via une équipe dont tu fais partie"
+  stats:
+    waiting:
+      one: "en attente"
+      other: "en attente"
+    you:
+      one: "pour toi"
+      other: "pour toi"
+    team:
+      one: "pour ton équipe"
+      other: "pour ton équipe"
+  shown:
+    one: "%{count} demande de relecture affichée"
+    other: "%{count} demandes de relecture affichées"
+  empty:
+    loading: "je jette un œil à tes relectures…"
+    no_match: "rien ne correspond à ta recherche"
+    all_filtered: "tous les dépôts avec une demande sont filtrés. coches-en un dans la liste 🗂️"
+    you: "personne ne t'a demandée par ton nom. jette un œil à l'onglet équipe 👥"
+    team: "aucune demande d'équipe en attente 🌿"
+    none: "personne ne t'attend. boîte vide ! 🍓"
+  badges:
+    draft: "🧸 brouillon"
+    comments:
+      one: "💬 %{count} commentaire"
+      other: "💬 %{count} commentaires"
+    opened: "🌱 ouverte %{ago}"
+    updated: "🌀 mis à jour %{ago}"

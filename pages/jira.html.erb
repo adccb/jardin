@@ -1,0 +1,64 @@
+    <header class="hero">
+      <h1><span class="bob" aria-hidden="true">🎀</span> <span class="title"><%= t('jira.title') %></span> <span class="bob" aria-hidden="true">🌼</span></h1>
+      <p class="tagline"><%= t('jira.tagline') %></p>
+      <div class="controls">
+        <button id="refresh" class="btn" type="button"><%= t('common.refresh') %></button>
+        <label class="field done-toggle"><input id="include-done" type="checkbox"> <span aria-hidden="true">✅</span> <%= t('jira.include_done') %></label>
+        <label class="field done-toggle" id="sprint-done-toggle" hidden><input id="show-sprint-done" type="checkbox"> <span aria-hidden="true">✅</span> <%= t('jira.sprint.show_done') %></label>
+      </div>
+      <div id="stats" class="stats"></div>
+    </header>
+
+    <div class="pr-layout">
+      <aside class="repo-panel" aria-labelledby="repo-panel-title">
+        <details id="repo-details" open>
+          <summary>
+            <h2 id="repo-panel-title"><span aria-hidden="true">🏃</span> <%= t('jira.panel.heading') %> <small id="repo-count"></small></h2>
+          </summary>
+          <p class="repo-panel-actions">
+            <button type="button" class="link-btn" id="repos-all"><%= t('jira.panel.select_all') %></button> ·
+            <button type="button" class="link-btn" id="repos-none"><%= t('jira.panel.clear') %></button>
+          </p>
+          <div id="repo-list"></div>
+        </details>
+      </aside>
+
+      <section class="pr-main" aria-label="<%= t('jira.tickets_label') %>">
+    <div class="tabs jira-tabs" role="tablist" id="jira-tabs" aria-label="<%= t('jira.tabs.label') %>"></div>
+
+    <section class="panel" id="jira-panel" role="tabpanel" aria-labelledby="jira-tab-mine">
+      <div class="toolbar">
+        <div id="status-filters" class="chips" role="group" aria-label="<%= t('jira.filter_label') %>"></div>
+        <div class="toolbar-row">
+          <input id="search" type="search" placeholder="<%= t('jira.search_placeholder') %>" aria-label="<%= t('jira.search_label') %>">
+          <label class="sr-only" for="sort"><%= t('jira.sort_label') %></label>
+          <select id="sort">
+            <option value="updated"><%= t('jira.sort.updated') %></option>
+            <option value="priority"><%= t('jira.sort.priority') %></option>
+            <option value="created"><%= t('jira.sort.created') %></option>
+            <option value="key"><%= t('jira.sort.key') %></option>
+            <option value="rank"><%= t('jira.board_order') %></option>
+          </select>
+        </div>
+        <p class="sprint-info" id="sprint-info" hidden></p>
+        <p class="shown" id="shown"></p>
+      </div>
+      <div id="tickets" class="lanes"></div>
+    </section>
+      </section>
+    </div>
+
+    <dialog id="drawer" class="drawer" aria-labelledby="drawer-title">
+      <div class="drawer-head">
+        <div class="drawer-heading">
+          <p class="drawer-key" id="drawer-key"></p>
+          <h2 id="drawer-title"></h2>
+        </div>
+        <button id="drawer-close" class="btn btn-small" type="button"><%= t('common.close') %></button>
+      </div>
+      <div class="badges" id="drawer-badges"></div>
+      <div class="adf" id="drawer-body"></div>
+      <div class="drawer-foot">
+        <a id="drawer-link" class="btn btn-primary" target="_blank" rel="noopener"><%= t('jira.drawer.open_in_jira') %></a>
+      </div>
+    </dialog>

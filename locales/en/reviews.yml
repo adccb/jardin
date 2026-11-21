@@ -1,0 +1,59 @@
+reviews:
+  title: "review garden"
+  tagline: "little PRs that asked for your eyes 👀 and are waiting for a visit"
+  main_label: "pull requests waiting on your review"
+  search_placeholder: "🔍 search titles, repos, authors, labels…"
+  search_label: "search review requests"
+  load_failed: "couldn't load review requests 😿 %{reason}"
+  panel:
+    heading: "repos"
+    loading: "peeking at your review queue…"
+    none: "no repos are waiting on you 🌙"
+    select_all: "select all"
+    clear: "clear"
+    count: "(%{selected} of %{total})"
+    in_scope: "💝 showing"
+    nothing_picked: "nothing ticked right now"
+    filtered_out: "🌱 filtered out"
+    none_filtered: "showing every repo! 🎉"
+    hidden: "🙈 hidden"
+    hide_label: "hide %{name} from this list"
+    hide_title: "hide from this list"
+    bring_back: "bring back 👀"
+    bring_back_label: "bring back %{name}"
+    tucked_away: "%{name} tucked away 🙈"
+  tabs_label: "who asked"
+  tabs:
+    you:
+      title: "asked you"
+      hint: "someone requested you by name"
+    team:
+      title: "asked your team"
+      hint: "requested through a team you're on"
+  stats:
+    waiting:
+      one: "waiting"
+      other: "waiting"
+    you:
+      one: "for you"
+      other: "for you"
+    team:
+      one: "for your team"
+      other: "for your team"
+  shown:
+    one: "showing %{count} review request"
+    other: "showing %{count} review requests"
+  empty:
+    loading: "peeking at your review queue…"
+    no_match: "nothing matches that search"
+    all_filtered: "every repo with a request is filtered out. tick one in the list 🗂️"
+    you: "nobody asked you by name. peek at your team tab 👥"
+    team: "no team requests waiting 🌿"
+    none: "nobody's waiting on you. inbox zero! 🍓"
+  badges:
+    draft: "🧸 draft"
+    comments:
+      one: "💬 %{count} comment"
+      other: "💬 %{count} comments"
+    opened: "🌱 opened %{ago}"
+    updated: "🌀 updated %{ago}"

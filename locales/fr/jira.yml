@@ -1,0 +1,80 @@
+jira:
+  title: "jardin des tickets"
+  tagline: "tout ton pain sur la planche, avec des vermicelles 🍩"
+  include_done: "inclure les terminés (30 derniers jours)"
+  tickets_label: "tes tickets"
+  filter_label: "filtrer par statut"
+  search_placeholder: "🔍 cherche des clés, résumés, étiquettes…"
+  search_label: "rechercher des tickets"
+  sort_label: "trier les tickets"
+  sort:
+    updated: "🌀 mis à jour récemment"
+    priority: "🔥 priorité"
+    created: "🐣 les plus récents"
+    key: "🔤 par clé"
+  stats:
+    tickets:
+      one: "ticket"
+      other: "tickets"
+    to_do: "à faire"
+    in_progress: "en cours"
+    high_priority: "priorité haute"
+    done:
+      one: "terminé (30 j)"
+      other: "terminés (30 j)"
+  shown:
+    one: "%{shown} sur %{count} ticket affiché"
+    other: "%{shown} sur %{count} tickets affichés"
+  due: "⏰ pour le %{date}"
+  updated: "🌀 mis à jour %{ago}"
+  created: "🐣 créé %{ago}"
+  loading: "tes tickets infusent…"
+  empty:
+    nothing_assigned: "rien ne t'est assigné. va prendre l'air ! 🌿"
+    no_match: "aucun ticket ne correspond… essaie un autre filtre"
+  drawer:
+    open_in_jira: "ouvrir dans jira ↗️"
+    fetching: "on récupère les potins…"
+    no_description: "pas de description… que de mystère"
+  toast:
+    fetching_done: "on va chercher tes victoires aussi ✅💕"
+  tabs:
+    label: "vues des tickets"
+    mine: "assignés à moi"
+  lanes:
+    no_parent: "🌱 sans parent"
+    open_parent: "ouvrir %{key}"
+  sprint:
+    info: "🏃 %{name} · %{start} → %{end}"
+    empty: "ce sprint est vide… étrangement calme 🌙"
+    show_done: "afficher les terminés"
+    all_done: "tout ce qui reste dans ce sprint est terminé 🎉 coche « afficher les terminés » pour le voir"
+  you: "💖 toi"
+  unassigned: "🫥 personne"
+  board_order: "📋 ordre du tableau"
+  stats_sprint:
+    done:
+      one: "terminé"
+      other: "terminés"
+    yours: "à toi"
+  assignees:
+    label: "filtrer par personne"
+    everyone: "👥 tout le monde"
+  panel:
+    heading: "sprints"
+    select_all: "tout cocher"
+    clear: "tout décocher"
+    count: "(%{selected} sur %{total})"
+    loading: "je cherche tes sprints…"
+    none: "aucun de tes tickets n'est dans un sprint ouvert pour l'instant 🏖️"
+    upcoming: "🔮 à venir"
+    in_scope: "💝 en onglet"
+    nothing_picked: "rien de coché pour l'instant"
+    filtered_out: "🌱 sans onglet"
+    none_filtered: "chaque sprint a son onglet ! 🎉"
+    hidden: "🙈 cachés"
+    hide_label: "cacher %{name} de cette liste"
+    hide_title: "cacher de cette liste"
+    bring_back: "faire revenir 👀"
+    bring_back_label: "faire revenir %{name}"
+    tucked_away: "%{name} mis de côté 🙈"

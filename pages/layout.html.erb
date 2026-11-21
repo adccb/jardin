@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="<%= locale %>">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="garden-token" content="<%= token %>">
+<title><%= t("#{tool.slug}.title") %></title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22><%= tool.emoji %></text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/garden.css">
+<link rel="stylesheet" href="/assets/css/<%= tool.slug %>.css">
+<script type="application/json" id="garden-i18n"><%= i18n_json %></script>
+</head>
+<body>
+<div class="floaties" aria-hidden="true"></div>
+
+<div class="shell">
+  <nav class="sidebar" aria-label="<%= t('common.nav_label') %>">
+    <a class="sidebar-brand" href="/" aria-label="<%= t('common.home') %>" title="garden">🌸</a>
+    <hr class="sidebar-divider">
+    <ul>
+<% tools.each do |item| -%>
+      <li>
+        <a class="sidebar-link" href="<%= item.path %>" data-label="<%= t("#{item.slug}.title") %>"<%= ' aria-current="page"' if item == tool %>>
+          <span aria-hidden="true"><%= item.emoji %></span><span class="sr-only"><%= t("#{item.slug}.title") %></span>
+        </a>
+      </li>
+<% end -%>
+    </ul>
+    <button type="button" class="sidebar-link sidebar-lang" id="lang-toggle" data-locale="<%= other_locale %>"
+            lang="<%= other_locale %>" data-label="<%= h(I18n.t(other_locale, 'common.switch_to_this')) %>"
+            aria-label="<%= h(I18n.t(other_locale, 'common.switch_to_this')) %>">
+      <span aria-hidden="true"><%= I18n.t(other_locale, 'common.flag') %></span>
+    </button>
+  </nav>
+
+  <main class="wrap">
+<%= render(tool.template) %>
+    <footer><%= t('common.footer') %></footer>
+  </main>
+</div>
+
+<dialog id="dialog" aria-labelledby="dialog-title">
+  <form method="dialog" id="dialog-form">
+    <h2 id="dialog-title"></h2>
+    <div id="dialog-body"></div>
+    <div class="dialog-actions">
+      <button id="dialog-cancel" class="btn" value="cancel"><%= t('common.never_mind') %></button>
+      <button id="dialog-confirm" class="btn btn-primary" value="confirm"><%= t('common.ok') %></button>
+    </div>
+  </form>
+</dialog>
+
+<div id="toasts" aria-live="polite"></div>
+
+<script type="module" src="/assets/js/<%= tool.slug %>.js"></script>
+</body>
+</html>

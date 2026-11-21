@@ -1,0 +1,52 @@
+    <header class="hero">
+      <h1><span class="bob" aria-hidden="true">🧺</span> <span class="title"><%= t('tasks.title') %></span> <span class="bob" aria-hidden="true">🍓</span></h1>
+      <p class="tagline" id="task-summary"><%= t('tasks.tagline') %></p>
+      <div class="controls">
+        <button id="new-task" class="btn btn-primary" type="button" aria-keyshortcuts="c"><%= t('tasks.new_task') %> <kbd>c</kbd></button>
+      </div>
+    </header>
+
+    <section class="task-garden" aria-labelledby="todo-title">
+      <section id="todoist-section" class="todoist-section" aria-labelledby="todoist-title" hidden>
+        <h2 id="todoist-title" class="list-heading">
+          <span aria-hidden="true">🍅</span> <span id="todoist-heading">todoist</span> <span class="count" id="todoist-count"></span>
+          <a class="link-btn todoist-open" id="todoist-open" href="https://app.todoist.com/app" target="_blank" rel="noopener"><%= t('tasks.todoist.open_today') %></a>
+        </h2>
+        <div class="tabs todoist-tabs" role="tablist" id="todoist-tabs" aria-label="<%= t('tasks.todoist.tabs_label') %>" hidden></div>
+        <p id="todoist-status" class="todoist-status" hidden></p>
+        <ul id="todoist-list" class="task-list" role="tabpanel" aria-labelledby="todoist-title"></ul>
+      </section>
+
+      <h2 id="todo-title" class="list-heading sr-only"><span aria-hidden="true">🌱</span> <%= t('tasks.todoist.mine_heading') %></h2>
+      <ul id="todo-list" class="task-list" aria-label="<%= t('tasks.todo_label') %>"></ul>
+
+      <details id="done-section" class="done-section">
+        <summary aria-keyshortcuts="d">
+          <span class="ribbon" aria-hidden="true">🎀</span> <%= t('tasks.done_label') %> <span class="count" id="done-count"></span> <kbd>d</kbd>
+        </summary>
+        <ul id="done-list" class="task-list" aria-label="<%= t('tasks.done_label') %>"></ul>
+      </details>
+    </section>
+
+    <p class="key-hints" aria-hidden="true">
+      <span><kbd>c</kbd> <%= t('tasks.hints.new') %></span>
+      <span><kbd>↑</kbd><kbd>↓</kbd> <%= t('tasks.hints.move') %></span>
+      <span><kbd>x</kbd> <%= t('tasks.hints.done') %></span>
+      <span><kbd>⌫</kbd> <%= t('tasks.hints.delete') %></span>
+      <span><kbd>u</kbd> <%= t('tasks.hints.undo') %></span>
+      <span><kbd>d</kbd> <%= t('tasks.hints.done_list') %></span>
+      <span><kbd>?</kbd> <%= t('tasks.hints.help') %></span>
+    </p>
+
+    <dialog id="task-dialog" class="task-dialog" aria-labelledby="task-dialog-title">
+      <form method="dialog" id="task-form">
+        <h2 id="task-dialog-title"><%= t('tasks.dialog.title') %></h2>
+        <label class="sr-only" for="task-input"><%= t('tasks.dialog.label') %></label>
+        <input id="task-input" type="text" maxlength="500" autocomplete="off" placeholder="<%= t('tasks.dialog.placeholder') %>">
+        <p class="task-dialog-hint"><%= t('tasks.dialog.hint_html') %></p>
+        <div class="dialog-actions">
+          <button class="btn" value="cancel" formnovalidate><%= t('common.never_mind') %></button>
+          <button class="btn btn-primary" value="create"><%= t('tasks.dialog.create') %></button>
+        </div>
+      </form>
+    </dialog>

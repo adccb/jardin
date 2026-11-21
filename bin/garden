@@ -1,0 +1,53 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# 🌸 garden: a cute little suite of local dev tools.
+# usage: garden [--port 4747] [--root ~/src] [--no-open]
+
+require "optparse"
+require_relative "../lib/garden"
+
+options = {
+  port: 4747,
+  root: File.join(Dir.home, "src"),
+  open: true,
+  jira_site: ENV.fetch("JIRA_SITE", "https://1password.atlassian.net"),
+  todoist_filter: ENV.fetch("TODOIST_FILTER", "aujourd'hui"),
+  data_dir: File.join(ENV.fetch("XDG_DATA_HOME", File.join(Dir.home, ".local", "share")), "garden")
+}
+
+OptionParser.new do |opts|
+  opts.banner = "usage: garden [options]"
+  opts.on("--port N", Integer, "port to bloom on (default 4747)") { |port| options[:port] = port }
+  opts.on("--root DIR", "folder of repos for the branches page (default ~/src)") { |dir| options[:root] = File.expand_path(dir) }
+  opts.on("--jira-site URL", "jira cloud site (default $JIRA_SITE or 1password.atlassian.net)") { |url| options[:jira_site] = url }
+  opts.on("--data-dir DIR", "where tasks.json lives (default ~/.local/share/garden)") { |dir| options[:data_dir] = File.expand_path(dir) }
+  opts.on("--todoist-filter NAME", "saved Todoist filter for the task page (default $TODOIST_FILTER or aujourd'hui)") { |name| options[:todoist_filter] = name }
+  opts.on("--[no-]open", "open the browser (default yes)") { |open| options[:open] = open }
+end.parse!
+
+tools = [
+  Garden::Tool.new(slug: "prs", emoji: "💌", api: Garden::Prs::Api.new(root: options[:root])),
+  Garden::Tool.new(slug: "reviews", emoji: "👀", api: Garden::Reviews::Api.new),
+  Garden::Tool.new(slug: "tasks", emoji: "📝", api: Garden::Tasks::Api.new(path: File.join(options[:data_dir], "tasks.json"), todoist: Garden::Todoist::Client.from_env, todoist_filter: options[:todoist_filter])),
+  Garden::Tool.new(slug: "branches", emoji: "🌿", api: Garden::Branches::Api.new(root: options[:root])),
+  Garden::Tool.new(slug: "jira", emoji: "🎟️", api: Garden::Jira::Api.new(site: options[:jira_site]))
+]
+
+$stdout.sync = true
+url = "http://localhost:#{options[:port]}"
+app = Garden::App.new(port: options[:port], tools:)
+
+trap("INT") do
+  puts "\n🌙 garden closed, sweet dreams 💕"
+  exit
+end
+
+begin
+  Garden::HttpServer.new(app, options[:port]).start do
+    puts "🌸 garden is blooming at #{url}  (ctrl-c to close)"
+    system("open", url) if options[:open]
+  end
+rescue Errno::EADDRINUSE
+  abort "🥺 port #{options[:port]} is already taken. is the garden already open? try --port 4748"
+end

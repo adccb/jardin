@@ -1,0 +1,188 @@
+branches:
+  title: "branch garden"
+  tagline: "tend your little git branches ✨ snip the wilted ones 💕"
+  repo_label: "repo"
+  pr_note: "🫧 couldn't reach GitHub for this repo, so no PR info this time"
+  loading: "watering the garden…"
+  no_repos: "no git repos found here yet"
+  select_visible: "select visible ☑️"
+  select_item: "select %{label}"
+  tabs:
+    label: "garden beds"
+    branches: "branches"
+    worktrees: "worktrees"
+  stats:
+    branches:
+      one: "branch"
+      other: "branches"
+    worktrees:
+      one: "worktree"
+      other: "worktrees"
+    merged:
+      one: "merged"
+      other: "merged"
+    gone:
+      one: "gone"
+      other: "gone"
+    stale:
+      one: "stale"
+      other: "stale"
+  toolbar:
+    branches:
+      filters_label: "filter branches"
+      search_placeholder: "🔍 search branches & commits…"
+      search_label: "search branches"
+      sort_label: "sort branches"
+      shown:
+        one: "showing %{shown} of %{count} branch"
+        other: "showing %{shown} of %{count} branches"
+    worktrees:
+      filters_label: "filter worktrees"
+      search_placeholder: "🔍 search worktrees & paths…"
+      search_label: "search worktrees"
+      sort_label: "sort worktrees"
+      prune: "prune ghosts 👻"
+      shown:
+        one: "showing %{shown} of %{count} worktree"
+        other: "showing %{shown} of %{count} worktrees"
+  sort:
+    oldest: "🐌 oldest first"
+    newest: "🐣 newest first"
+    name: "🔤 by name"
+    behind: "⬇️ most behind"
+    dirty: "🧺 most unsaved"
+  filters:
+    branches:
+      merged: "💖 merged"
+      gone: "👻 upstream gone"
+      closed: "🚪 PR closed"
+      open: "🌱 open PR"
+      stale: "🕸️ stale %{days}d+"
+      worktree: "🏡 in a worktree"
+      nopr: "✨ no PR"
+    worktrees:
+      merged: "💖 merged"
+      closed: "🚪 PR closed"
+      open: "🌱 open PR"
+      clean: "✨ clean"
+      dirty: "🧺 unsaved changes"
+      stale: "🕸️ stale %{days}d+"
+      detached: "🎈 detached"
+      ghost: "👻 ghosts"
+  empty:
+    tidy: "your garden is perfectly tidy!"
+    branches: "nothing blooming here… try another filter"
+    worktrees: "no worktrees match… try another filter"
+  lock:
+    default: "the default branch, she stays 👑"
+    worktree: "lives in a worktree at %{path}"
+    current: "currently checked out"
+  badges:
+    pr_merged: "💖 merged #%{number}"
+    pr_open: "🌱 open #%{number}"
+    pr_closed: "🚪 closed #%{number}"
+    default: "👑 default"
+    checked_out: "📍 checked out"
+    merged_in_git: "🧁 merged in git"
+    upstream_gone: "👻 upstream gone"
+    local_only: "🏠 local only"
+    ahead_behind: "%{ahead} ahead, %{behind} behind %{base}"
+    main_checkout: "🏰 main checkout"
+    folder_gone: "🍂 folder is gone"
+    unsaved:
+      one: "🧺 %{count} unsaved thing"
+      other: "🧺 %{count} unsaved things"
+    clean: "✨ clean"
+    prunable: "👻 prunable"
+    locked: "🔐 locked"
+  card:
+    detached_at: "🎈 detached at %{head}"
+    delete: "delete 🗑️"
+    remove: "remove 🧹"
+    remove_with_branch: "remove + delete branch 🗑️"
+    ghost_hint: "use “prune ghosts 👻” to tidy this one"
+  bulkbar:
+    picked:
+      one: "%{count} picked"
+      other: "%{count} picked"
+    clear: "clear"
+    tidy_branches:
+      one: "tidy %{count} branch ✨"
+      other: "tidy %{count} branches ✨"
+    tidy_worktrees:
+      one: "tidy %{count} worktree ✨"
+      other: "tidy %{count} worktrees ✨"
+  goodbyes:
+    - "bye bye %{name} 👋💕"
+    - "%{name} has been composted 🌱"
+    - "snip snip! %{name} is gone ✂️✨"
+    - "%{name} flew away 🦋"
+    - "tidied %{name} 🧹💖"
+  toasts:
+    load_failed: "couldn't load %{repo} 😿 %{error}"
+    delete_failed: "couldn't delete %{name} 😿 %{error}"
+    worktree_removed: "worktree %{path} packed up 🧳💕"
+    remove_failed: "couldn't remove the worktree 😿 %{error}"
+    pruned: "pruned 👻 %{output}"
+    no_ghosts: "no ghosts left 👻✨"
+    prune_failed: "prune failed 😿 %{error}"
+  dialogs:
+    git_says: "git says:"
+    force_delete:
+      title: "%{name} isn't merged in git 🥺"
+      squashed: "its PR was squash-merged though 💖 so force-deleting is probably totally fine."
+      unmerged: "force-deleting drops any commits that only live on this branch. are you sure, babe? 🥺"
+      confirm: "force it anyway 💥"
+    remove_worktree:
+      title: "remove this worktree? 🧹"
+      title_with_branch: "remove worktree + branch? 🗑️"
+      will_run: "this will run:"
+      safe: "git refuses if anything's unsaved, so no tears 🛡️"
+      confirm: "yes, tidy it ✨"
+    force_remove:
+      title: "git said no 🙅‍♀️"
+      loss_dirty_html:
+        one: "this throws away <b>%{count} unsaved thing</b> forever 😱"
+        other: "this throws away <b>%{count} unsaved things</b> forever 😱"
+      loss_clean: "this will force it out."
+      confirm: "force remove 💥"
+    prune:
+      title: "prune ghost worktrees? 👻"
+      body_html: "this runs %{command}, which forgets worktrees whose folders are already gone."
+      confirm: "bye ghosts 👻"
+    bulk_branches:
+      title:
+        one: "tidy %{count} branch? ✨"
+        other: "tidy %{count} branches? ✨"
+      intro_html: "these local branches get %{command}:"
+      force_html: "force delete (%{flag}). needed for squash-merged branches 💖 but drops unmerged commits"
+      confirm: "tidy them ✨"
+      retry:
+        one: "force the %{count} straggler 💥"
+        other: "force the %{count} stragglers 💥"
+    bulk_worktrees:
+      title:
+        one: "tidy %{count} worktree? ✨"
+        other: "tidy %{count} worktrees? ✨"
+      intro_html: "these get %{command}:"
+      also_branches: "also delete their branches 🗑️"
+      force_branches_html: "force delete those branches (%{flag}). needed for squash-merged ones 💖"
+      force_worktrees:
+        one: "force remove the %{count} one with unsaved changes 😱 they're gone forever"
+        other: "force remove the %{count} ones with unsaved changes 😱 they're gone forever"
+      confirm: "tidy them ✨"
+      retry:
+        one: "force the %{count} straggler 💥 (unsaved changes get tossed)"
+        other: "force the %{count} stragglers 💥 (unsaved changes get tossed)"
+      branch_stayed: "worktree removed 🧹 but the branch stayed: %{error}"
+    progress:
+      tidying: "tidying… 🧹"
+      force_tidying: "force-tidying… 💥"
+      working: "working… 🪄"
+      some_stayed:
+        one: "tidied %{tidied}, %{count} stayed put 🥺"
+        other: "tidied %{tidied}, %{count} stayed put 🥺"
+      all_tidied:
+        one: "all %{count} tidied! 🎉💖"
+        other: "all %{count} tidied! 🎉💖"
+      done: "all done 💕"

@@ -1,0 +1,80 @@
+jira:
+  title: "ticket garden"
+  tagline: "everything on your plate, with sprinkles 🍩"
+  include_done: "include done (last 30 days)"
+  tickets_label: "your tickets"
+  filter_label: "filter by status"
+  search_placeholder: "🔍 search keys, summaries, labels…"
+  search_label: "search tickets"
+  sort_label: "sort tickets"
+  sort:
+    updated: "🌀 recently updated"
+    priority: "🔥 priority"
+    created: "🐣 newest"
+    key: "🔤 by key"
+  stats:
+    tickets:
+      one: "ticket"
+      other: "tickets"
+    to_do: "to do"
+    in_progress: "in progress"
+    high_priority: "high priority"
+    done:
+      one: "done (30d)"
+      other: "done (30d)"
+  shown:
+    one: "showing %{shown} of %{count} ticket"
+    other: "showing %{shown} of %{count} tickets"
+  due: "⏰ due %{date}"
+  updated: "🌀 updated %{ago}"
+  created: "🐣 created %{ago}"
+  loading: "brewing your tickets…"
+  empty:
+    nothing_assigned: "nothing assigned to you. go touch grass! 🌿"
+    no_match: "no tickets match… try another filter"
+  drawer:
+    open_in_jira: "open in jira ↗️"
+    fetching: "fetching the tea…"
+    no_description: "no description… how mysterious"
+  toast:
+    fetching_done: "fetching your victories too ✅💕"
+  tabs:
+    label: "ticket views"
+    mine: "assigned to me"
+  lanes:
+    no_parent: "🌱 no parent"
+    open_parent: "open %{key}"
+  sprint:
+    info: "🏃 %{name} · %{start} → %{end}"
+    empty: "this sprint is empty… suspiciously calm 🌙"
+    show_done: "show done"
+    all_done: "everything left in this sprint is done 🎉 tick “show done” to see it"
+  you: "💖 you"
+  unassigned: "🫥 unassigned"
+  board_order: "📋 board order"
+  stats_sprint:
+    done:
+      one: "done"
+      other: "done"
+    yours: "yours"
+  assignees:
+    label: "filter by assignee"
+    everyone: "👥 everyone"
+  panel:
+    heading: "sprints"
+    select_all: "select all"
+    clear: "clear"
+    count: "(%{selected} of %{total})"
+    loading: "finding your sprints…"
+    none: "none of your tickets are in an open sprint right now 🏖️"
+    upcoming: "🔮 upcoming"
+    in_scope: "💝 tabs"
+    nothing_picked: "nothing ticked right now"
+    filtered_out: "🌱 not tabbed"
+    none_filtered: "every sprint has a tab! 🎉"
+    hidden: "🙈 hidden"
+    hide_label: "hide %{name} from this list"
+    hide_title: "hide from this list"
+    bring_back: "bring back 👀"
+    bring_back_label: "bring back %{name}"
+    tucked_away: "%{name} tucked away 🙈"
