@@ -4,70 +4,56 @@ A walk through every page, ☀️ light on the left and 🌙 dark on the right. 
 "sunbeam-labs" team, its repos, PRs, tickets and to-dos come from [`demo/fixtures.rb`](demo/fixtures.rb), not from
 GitHub, Jira or Todoist.
 
-Each shot exists in English ([`en/`](en)) and French ([`fr/`](fr)); the gallery below shows English, with the French
-twin linked under each one.
+🇫🇷 [Cette visite existe aussi en français.](README.fr.md)
 
 ## 💌 pr garden
 
 Your open PRs, grouped into ready to merge, needs work, waiting on review and drafts, with a repo panel on the left.
 ![pr garden](en/01-pr-garden.png)
-[en français](fr/01-pr-garden.png)
 
 The merged chip, for admiring what already landed.
 ![pr garden, merged](en/02-pr-garden-merged.png)
-[en français](fr/02-pr-garden-merged.png)
 
 ## 👀 review garden
 
 PRs that asked for your review by name.
 ![review garden](en/03-review-garden.png)
-[en français](fr/03-review-garden.png)
 
 The team tab, with one repo unticked and another tucked into the hidden group.
 ![review garden, team tab](en/04-review-garden-team.png)
-[en français](fr/04-review-garden-team.png)
 
 ## 📝 task garden
 
 Today's Todoist filter in tabs, your own tasks below, and the done list open.
 ![task garden](en/05-task-garden.png)
-[en français](fr/05-task-garden.png)
 
 Planting a new task (`c`).
 ![task garden, new task](en/06-task-garden-new-task.png)
-[en français](fr/06-task-garden-new-task.png)
 
 The keyboard help (`?`).
 ![task garden, keyboard help](en/07-task-garden-keyboard-help.png)
-[en français](fr/07-task-garden-keyboard-help.png)
 
 ## 🌿 branch garden
 
 Local branches with their PR state, upstream and worktree badges.
 ![branch garden](en/08-branch-garden.png)
-[en français](fr/08-branch-garden.png)
 
 Tidying two merged branches at once.
 ![branch garden, tidy dialog](en/09-branch-garden-tidy.png)
-[en français](fr/09-branch-garden-tidy.png)
 
 Worktrees, including a ghost whose folder is gone.
 ![branch garden, worktrees](en/10-branch-garden-worktrees.png)
-[en français](fr/10-branch-garden-worktrees.png)
 
 ## 🎟️ ticket garden
 
 Your tickets in swimlanes by epic, with the sprints panel on the left.
 ![ticket garden](en/11-ticket-garden.png)
-[en français](fr/11-ticket-garden.png)
 
 A sprint tab, with everyone's tickets and per-lane people filters.
 ![ticket garden, sprint](en/12-ticket-garden-sprint.png)
-[en français](fr/12-ticket-garden-sprint.png)
 
 A ticket opened in the drawer.
 ![ticket garden, ticket drawer](en/13-ticket-garden-ticket.png)
-[en français](fr/13-ticket-garden-ticket.png)
 
 ## Retaking them
 
