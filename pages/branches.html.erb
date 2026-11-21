@@ -2,13 +2,27 @@
       <h1><span class="bob" aria-hidden="true">🌸</span> <span class="title"><%= t('branches.title') %></span> <span class="bob" aria-hidden="true">🌷</span></h1>
       <p class="tagline"><%= t('branches.tagline') %></p>
       <div class="controls">
-        <label class="field"><span aria-hidden="true">🪴</span> <%= t('branches.repo_label') %> <select id="repo"></select></label>
         <button id="refresh" class="btn" type="button"><%= t('common.refresh') %></button>
       </div>
       <div id="stats" class="stats"></div>
-      <p id="pr-note" class="note" hidden><%= t('branches.pr_note') %></p>
+      <p id="pr-note" class="note" hidden></p>
     </header>
 
+    <div class="pr-layout">
+      <aside class="repo-panel" aria-labelledby="repo-panel-title">
+        <details id="repo-details" open>
+          <summary>
+            <h2 id="repo-panel-title"><span aria-hidden="true">🪴</span> <%= t('branches.panel.heading') %> <small id="repo-count"></small></h2>
+          </summary>
+          <p class="repo-panel-actions">
+            <button type="button" class="link-btn" id="repos-all"><%= t('branches.panel.select_all') %></button> ·
+            <button type="button" class="link-btn" id="repos-none"><%= t('branches.panel.clear') %></button>
+          </p>
+          <div id="repo-list"></div>
+        </details>
+      </aside>
+
+      <section class="pr-main" aria-label="<%= t('branches.tabs.label') %>">
     <div class="tabs" role="tablist" aria-label="<%= t('branches.tabs.label') %>">
       <button type="button" class="tab" role="tab" id="tab-branches" aria-controls="panel-branches" data-tab="branches">
         <span aria-hidden="true">🌿</span> <%= t('branches.tabs.branches') %> <span class="tab-count" id="branches-count"></span><span class="tab-picked" id="branches-picked"></span>
@@ -56,6 +70,8 @@
       </div>
       <div id="worktrees" class="grid" data-bed="worktrees"></div>
     </section>
+      </section>
+    </div>
 
 
     <div id="bulkbar" class="bulkbar" hidden>

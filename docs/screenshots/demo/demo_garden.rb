@@ -71,7 +71,7 @@ tools = [
   )),
   Garden::Tool.new(slug: 'branches', emoji: '🌿', api: Demo::FakeApi.new(
     'GET repos' => ->(*) { { repos: f.branch_repos } },
-    'GET state' => ->(*) { f.branch_state }
+    'GET state' => ->(q, *) { f.branch_state(q['repo']) }
   )),
   Garden::Tool.new(slug: 'jira', emoji: '🎟️', api: Demo::FakeApi.new(
     'GET tickets' => ->(q, *) { q['view'] == 'sprint' ? f.jira_sprint_view(q['sprint']) : f.jira_mine },

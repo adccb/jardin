@@ -397,7 +397,7 @@ footer { margin-top: 48px; text-align: center; color: var(--muted); font-weight:
 
 .repo-error { margin-bottom: 14px; padding: 10px 14px; border-radius: 16px; background: var(--coral-soft); color: var(--coral); font-weight: 700; overflow-wrap: anywhere; }
 
-/* repo side panel, shared by pr garden 💌 and review garden 👀 */
+/* repo side panel, shared by pr garden 💌, review garden 👀, ticket garden 🎀 and branch garden 🌸 */
 
 .pr-layout { display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 22px; align-items: start; margin-top: 26px; }
 

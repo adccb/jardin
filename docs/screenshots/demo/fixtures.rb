@@ -266,7 +266,10 @@ module Demo
 
     def gh_pr(number, state, title) = { number:, state:, title:, url: "https://github.com/#{ORG}/petal-api/pull/#{number}" }
 
-    def branch_state
+    def branch_state(path = nil)
+      repo_name = path ? File.basename(path) : 'petal-api'
+      return small_branch_state(repo_name) unless repo_name == 'petal-api'
+
       repo = "#{HOME}/src/petal-api"
       tree = ->(name) { "#{HOME}/src/petal-api-worktrees/#{name.split('/').last}" }
       branches = [
@@ -299,6 +302,21 @@ module Demo
           locked: false, prunable: true, main: false, missing: true, dirty: 0 }
       ]
       { repo:, name: 'petal-api', home: HOME, default_branch: 'main', pr_info: true, branches:, worktrees: }
+    end
+
+    # The other demo repos are quieter: a main checkout and a couple of branches each.
+    def small_branch_state(name)
+      repo = "#{HOME}/src/#{name}"
+      extra = {
+        'meadow-web' => [branch('sunny/petal-picker', 'Petal picker for the bloom form', 26, pr: gh_pr(812, 'OPEN', 'Petal picker')),
+                         branch('sunny/old-navbar', 'Retire the old navbar', 320, merged: true, ahead: 0, gone: true,
+                                                                                  pr: gh_pr(790, 'MERGED', 'Retire the old navbar'))],
+        'fern-cli' => [branch('sunny/completions', 'Shell completions for fern', 96, upstream: nil)]
+      }.fetch(name, [])
+      branches = [branch('main', 'Release v2.4.0', 12, default: true, current: true, ahead: 0, upstream: 'origin/main'), *extra]
+      worktrees = [{ path: repo, head: 'e5f6a7b8c9', branch: 'main', detached: false, locked: false, prunable: false, main: true,
+                     missing: false, dirty: 0 }]
+      { repo:, name:, home: HOME, default_branch: 'main', pr_info: true, branches:, worktrees: }
     end
 
     # ---------- 🎟️ ticket garden ----------

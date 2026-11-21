@@ -2,18 +2,27 @@ import {
   $, STALE_DAYS, store, esc, ageDays, t, tp, pick, ago, ageEmoji, api, failureMessage,
   sparkle, pointOf, toast, openDialog, setDialogBusy, dialogItem, toggle, sprout,
 } from './garden.js';
+import { ScopePanel } from './scope-panel.js';
 
 const newBed = (name) => ({ filter: 'all', query: '', sort: store.get(`${name}-sort`) || 'oldest', selected: new Set() });
+// states: the last snapshot of each in-scope repo, by path. data: those snapshots flattened into one garden,
+// every branch and worktree tagged with the repo it came from.
 const ui = {
-  repos: [], repo: null, data: null, loadId: 0,
+  repos: [], states: {}, generations: {}, pending: 0, data: null, home: '',
   tab: store.get('tab') === 'worktrees' ? 'worktrees' : 'branches',
   beds: { branches: newBed('branches'), worktrees: newBed('worktrees') },
 };
 
+const SCOPE_KEY = 'branches-repos';
+const panel = new ScopePanel({ prefix: 'branches.panel', storeKey: SCOPE_KEY, onChange: () => scopeChanged() });
+const scopedPaths = () => panel.scoped().map((repo) => repo.id);
 
-const tildify = (path) => (ui.data && path.startsWith(ui.data.home) ? `~${path.slice(ui.data.home.length)}` : path);
-const branchByName = (name) => ui.data?.branches.find((b) => b.name === name);
+const tildify = (path) => (ui.home && path.startsWith(ui.home) ? `~${path.slice(ui.home.length)}` : path);
+const branchKey = (repo, name) => `${repo}::${name}`;
+const branchByKey = (key) => ui.data?.branches.find((b) => b.key === key);
 const worktreeByPath = (path) => ui.data?.worktrees.find((w) => w.path === path);
+// With more than one repo showing, names alone are ambiguous, so say which repo each thing is in.
+const inRepo = (item, text) => (ui.data?.multi ? `${text} (${item.repoName})` : text);
 const isMerged = (b) => !b.default && (b.pr?.state === 'MERGED' || b.merged);
 const isStale = (b) => ageDays(b.date) > STALE_DAYS;
 const canDelete = (b) => !b.default && !b.current && !b.worktree;
@@ -35,7 +44,7 @@ const gitSays = (result) => `<p>${esc(t('branches.dialogs.git_says'))}</p><pre>$
 const BEDS = {
   branches: {
     items: () => ui.data.branches,
-    key: (b) => b.name,
+    key: (b) => b.key,
     selectable: canDelete,
     matches: (b, query) => b.name.toLowerCase().includes(query) || b.subject.toLowerCase().includes(query),
     card: (b) => branchCard(b),
@@ -48,7 +57,7 @@ const BEDS = {
       { key: 'open', label: t('branches.filters.branches.open'), test: (b) => b.pr?.state === 'OPEN' },
       { key: 'stale', label: t('branches.filters.branches.stale', { days: STALE_DAYS }), test: isStale },
       { key: 'worktree', label: t('branches.filters.branches.worktree'), test: (b) => !!b.worktree },
-      { key: 'nopr', label: t('branches.filters.branches.nopr'), test: (b) => !b.pr, needsPrs: true },
+      { key: 'nopr', label: t('branches.filters.branches.nopr'), test: (b) => b.prInfo && !b.pr, needsPrs: true },
     ],
     sorts: {
       oldest: (a, b) => Date.parse(a.date) - Date.parse(b.date),
@@ -97,39 +106,88 @@ function visibleItems(bedName) {
 }
 
 const isGitFailure = (result) => result.output !== undefined && !result.ok;
-const deleteBranchRequest = (branch, force) => api('/api/branches/delete-branch', { repo: ui.repo, branch, force });
-const removeWorktreeRequest = (path, force) => api('/api/branches/remove-worktree', { repo: ui.repo, path, force });
+const deleteBranchRequest = (b, force) => api('/api/branches/delete-branch', { repo: b.repo, branch: b.name, force });
+const removeWorktreeRequest = (w, force) => api('/api/branches/remove-worktree', { repo: w.repo, path: w.path, force });
 
 /* ---------- loading ---------- */
 
+// The folder a repo lives in, home shortened to ~, so same-named repos can be told apart.
+const repoFolder = (path) => path.slice(0, path.lastIndexOf('/')).replace(/^\/(Users|home)\/[^/]+/, '~') || '/';
+const repoName = (path) => ui.repos.find((r) => r.path === path)?.name || path;
+
 async function loadRepos() {
   const result = await api('/api/branches/repos');
+  if (!result.httpOk) return panel.fail(failureMessage(result));
   ui.repos = result.repos || [];
-  const saved = store.get('repo');
-  ui.repo = ui.repos.find((r) => r.path === saved)?.path || ui.repos[0]?.path;
-  $('#repo').innerHTML = ui.repos.map((r) => `<option value="${esc(r.path)}">${esc(r.name)}</option>`).join('');
-  $('#repo').value = ui.repo ?? '';
-  if (ui.repo) await loadState();
-  else renderEmptyGarden();
+  seedScope();
+  panel.setItems(ui.repos.map((r) => ({ id: r.path, name: r.name, detail: repoFolder(r.path) })));
+  if (scopedPaths().length) await loadState();
+  else render();
 }
 
-async function loadState({ refresh = false, quiet = false } = {}) {
-  const loadId = ++ui.loadId;
+// The panel shows every repo it finds, but snapshotting all of them at once is slow, so the first
+// visit starts with just one in scope: the repo the old picker last showed, or the first one.
+function seedScope() {
+  if (store.get(`${SCOPE_KEY}-excluded`) !== null || !ui.repos.length) return;
+  const start = ui.repos.find((r) => r.path === store.get('repo'))?.path || ui.repos[0].path;
+  panel.excluded = new Set(ui.repos.map((r) => r.path).filter((path) => path !== start));
+  store.set(`${SCOPE_KEY}-excluded`, JSON.stringify([...panel.excluded]));
+}
+
+// Fetches a fresh snapshot of each repo (all in-scope repos by default). Each repo keeps its own
+// generation number, so an older answer for a repo never overwrites a newer one.
+async function loadState({ repos = scopedPaths(), refresh = false, quiet = false } = {}) {
+  if (!repos.length) return render();
   if (!quiet) renderLoading();
+  ui.pending += 1;
   $('#refresh').disabled = true;
-  const result = await api(`/api/branches/state?repo=${encodeURIComponent(ui.repo)}${refresh ? '&refresh=1' : ''}`);
-  if (loadId !== ui.loadId) return;
-  $('#refresh').disabled = false;
-  if (!result.httpOk) return toast(t('branches.toasts.load_failed', { repo: ui.repo, error: failureMessage(result) }), 'error');
-  ui.data = result;
+  await Promise.all(repos.map(async (repo) => {
+    const generation = (ui.generations[repo] || 0) + 1;
+    ui.generations[repo] = generation;
+    const result = await api(`/api/branches/state?repo=${encodeURIComponent(repo)}${refresh ? '&refresh=1' : ''}`);
+    if (generation !== ui.generations[repo]) return;
+    if (result.httpOk) {
+      ui.states[repo] = result;
+    } else {
+      delete ui.states[repo];
+      toast(t('branches.toasts.load_failed', { repo: repoName(repo), error: failureMessage(result) }), 'error');
+    }
+  }));
+  ui.pending -= 1;
+  $('#refresh').disabled = ui.pending > 0;
+  render();
+  if (!quiet) sprout($('#branches'), $('#worktrees'));
+}
+
+function scopeChanged() {
+  const scoped = scopedPaths();
+  // Forget repos that left scope, so bringing one back fetches it fresh.
+  Object.keys(ui.states).filter((path) => !scoped.includes(path)).forEach((path) => delete ui.states[path]);
+  const missing = scoped.filter((path) => !ui.states[path]);
+  const showing = scoped.length > missing.length;
+  if (showing || !missing.length) render();
+  if (missing.length) loadState({ repos: missing, quiet: showing });
+}
+
+// Flattens the in-scope snapshots into one garden.
+function combine() {
+  const scoped = scopedPaths();
+  const states = scoped.map((path) => ui.states[path]).filter(Boolean);
+  ui.home = states[0]?.home || ui.home;
+  const tag = (state) => ({ repo: state.repo, repoName: state.name, base: state.default_branch, prInfo: state.pr_info });
+  ui.data = {
+    branches: states.flatMap((s) => s.branches.map((b) => ({ ...b, ...tag(s), key: branchKey(s.repo, b.name) }))),
+    worktrees: states.flatMap((s) => s.worktrees.map((w) => ({ ...w, ...tag(s) }))),
+    prInfo: states.some((s) => s.pr_info),
+    noPrInfo: states.filter((s) => !s.pr_info).map((s) => s.name),
+    multi: scoped.length > 1,
+  };
   linkWorktreesToBranches();
   keepSelectableSelections();
-  render();
-  sprout($('#branches'), $('#worktrees'));
 }
 
 function linkWorktreesToBranches() {
-  ui.data.worktrees.forEach((w) => { w.info = branchByName(w.branch); });
+  ui.data.worktrees.forEach((w) => { w.info = branchByKey(branchKey(w.repo, w.branch)); });
 }
 
 function keepSelectableSelections() {
@@ -140,15 +198,16 @@ function keepSelectableSelections() {
   });
 }
 
-function forgetBranch(name) {
-  ui.data.branches = ui.data.branches.filter((b) => b.name !== name);
-  ui.beds.branches.selected.delete(name);
-  linkWorktreesToBranches();
+function forgetBranch(b) {
+  const state = ui.states[b.repo];
+  if (state) state.branches = state.branches.filter((other) => other.name !== b.name);
+  ui.beds.branches.selected.delete(b.key);
 }
 
 /* ---------- rendering ---------- */
 
 function render() {
+  combine();
   renderStats();
   renderTabs();
   Object.keys(BEDS).forEach(renderBed);
@@ -163,13 +222,15 @@ function renderLoading() {
   $('#branches').innerHTML = loading;
 }
 
-function renderEmptyGarden() {
-  $('#branches').innerHTML = emptyState('🏜️', t('branches.no_repos'));
-  $('#worktrees').innerHTML = '';
+// When no repo is in scope there's nothing to filter, so both beds say why they're empty.
+function scopeEmptyState() {
+  if (!ui.repos.length) return emptyState('🏜️', t('branches.no_repos'));
+  if (!scopedPaths().length) return emptyState('🌙', t('branches.nothing_in_scope'));
+  return null;
 }
 
 function renderStats() {
-  const { branches, worktrees, pr_info } = ui.data;
+  const { branches, worktrees, noPrInfo } = ui.data;
   const stats = [
     ['🌿', branches.length, 'branches'],
     ['🏡', worktrees.filter((w) => !w.main).length, 'worktrees'],
@@ -180,7 +241,8 @@ function renderStats() {
   $('#stats').innerHTML = stats
     .map(([emoji, count, key]) => `<div class="stat"><b>${count}</b><span><span aria-hidden="true">${emoji}</span> ${esc(tp(`branches.stats.${key}`, count))}</span></div>`)
     .join('');
-  $('#pr-note').hidden = pr_info;
+  $('#pr-note').hidden = !noPrInfo.length;
+  $('#pr-note').textContent = t('branches.pr_note', { repos: noPrInfo.join(', ') });
 }
 
 function renderTabs() {
@@ -209,7 +271,7 @@ function renderFilters(bedName) {
   const bed = BEDS[bedName];
   const state = ui.beds[bedName];
   $(`#${bedName}-filters`).innerHTML = bed.filters
-    .filter((f) => ui.data.pr_info || !f.needsPrs)
+    .filter((f) => ui.data.prInfo || !f.needsPrs)
     .map((f) => {
       const count = bed.items().filter(f.test).length;
       return `<button type="button" class="chip" data-filter="${f.key}" aria-pressed="${state.filter === f.key}">${esc(f.label)}<span class="count">${count}</span></button>`;
@@ -221,7 +283,7 @@ function renderItems(bedName) {
   const items = visibleItems(bedName);
   const total = BEDS[bedName].items().length;
   $(`#${bedName}-shown`).textContent = tp(`branches.toolbar.${bedName}.shown`, total, { shown: items.length });
-  $(`#${bedName}`).innerHTML = items.length ? items.map(BEDS[bedName].card).join('') : BEDS[bedName].empty();
+  $(`#${bedName}`).innerHTML = items.length ? items.map(BEDS[bedName].card).join('') : scopeEmptyState() || BEDS[bedName].empty();
 }
 
 function picker(bedName, key, label) {
@@ -245,13 +307,13 @@ const button = (action, text, { danger = false, extra = '' } = {}) =>
   `<button type="button" class="btn btn-small${danger ? ' btn-danger' : ''}" data-action="${action}"${extra}>${esc(text)}</button>`;
 
 function branchCard(b) {
-  const selected = ui.beds.branches.selected.has(b.name);
+  const selected = ui.beds.branches.selected.has(b.key);
   const lead = canDelete(b)
-    ? picker('branches', b.name, b.name)
+    ? picker('branches', b.key, inRepo(b, b.name))
     : `<span class="lock" role="img" title="${esc(lockReason(b))}" aria-label="${esc(lockReason(b))}">${b.default ? '👑' : b.worktree ? '🔒' : '📍'}</span>`;
   const deleteButton = canDelete(b) ? button('delete-branch', t('branches.card.delete'), { danger: true }) : '';
   return `
-    <article class="card${selected ? ' is-selected' : ''}" data-key="${esc(b.name)}">
+    <article class="card${selected ? ' is-selected' : ''}" data-key="${esc(b.key)}">
       <div class="card-top">${lead}<h3>${esc(b.name)}</h3></div>
       <p class="subject">${esc(b.subject)}</p>
       <div class="badges">${branchBadges(b)}</div>
@@ -273,8 +335,10 @@ function prBadge(pr) {
   return `<a class="badge ${klass}" href="${esc(pr.url)}" target="_blank" rel="noopener" title="${esc(pr.title)}">${esc(label)}</a>`;
 }
 
+const repoBadge = (item) => (ui.data.multi ? badge('b-gold', `🪴 ${item.repoName}`) : '');
+
 function branchBadges(b) {
-  const badges = [];
+  const badges = [repoBadge(b)];
   if (b.default) badges.push(badge('b-gold', t('branches.badges.default')));
   if (b.current) badges.push(badge('b-lav', t('branches.badges.checked_out')));
   badges.push(prBadge(b.pr));
@@ -287,7 +351,7 @@ function branchBadges(b) {
 }
 
 function aheadBehindBadge(b) {
-  const tooltip = t('branches.badges.ahead_behind', { ahead: b.ahead, behind: b.behind, base: ui.data.default_branch });
+  const tooltip = t('branches.badges.ahead_behind', { ahead: b.ahead, behind: b.behind, base: b.base });
   return badge('b-mint', `⬆️ ${b.ahead} ⬇️ ${b.behind}`, tooltip);
 }
 
@@ -305,7 +369,7 @@ function worktreeCard(w) {
 }
 
 function worktreeBadges(w) {
-  const badges = [];
+  const badges = [repoBadge(w)];
   if (w.main) badges.push(badge('b-gold', t('branches.badges.main_checkout')));
   if (w.missing) badges.push(badge('b-coral', t('branches.badges.folder_gone')));
   else if (w.dirty > 0) badges.push(badge('b-coral', tp('branches.badges.unsaved', w.dirty)));
@@ -348,26 +412,28 @@ const goodbye = (name) => pick('branches.goodbyes').replace('%{name}', () => nam
 
 /* ---------- single actions ---------- */
 
-async function deleteBranch(name, point, force = false) {
-  const result = await deleteBranchRequest(name, force);
+async function deleteBranch(key, point, force = false) {
+  const b = branchByKey(key);
+  if (!b) return false;
+  const result = await deleteBranchRequest(b, force);
   if (result.ok) {
     sparkle(point);
-    toast(goodbye(name));
-    forgetBranch(name);
+    toast(goodbye(b.name));
+    forgetBranch(b);
     render();
     return true;
   }
   const unmerged = /not fully merged/i.test(failureMessage(result));
-  if (!force && unmerged && (await confirmForceDelete(name, result))) return deleteBranch(name, point, true);
-  if (force || !unmerged) toast(t('branches.toasts.delete_failed', { name, error: failureMessage(result) }), 'error');
+  if (!force && unmerged && (await confirmForceDelete(b, result))) return deleteBranch(key, point, true);
+  if (force || !unmerged) toast(t('branches.toasts.delete_failed', { name: b.name, error: failureMessage(result) }), 'error');
   return false;
 }
 
-function confirmForceDelete(name, result) {
-  const squashed = branchByName(name)?.pr?.state === 'MERGED';
+function confirmForceDelete(b, result) {
+  const squashed = b.pr?.state === 'MERGED';
   const advice = t(squashed ? 'branches.dialogs.force_delete.squashed' : 'branches.dialogs.force_delete.unmerged');
   return openDialog({
-    title: t('branches.dialogs.force_delete.title', { name }),
+    title: t('branches.dialogs.force_delete.title', { name: b.name }),
     body: `${gitSays(result)}<p>${esc(advice)}</p>`,
     confirm: t('branches.dialogs.force_delete.confirm'),
     danger: true,
@@ -389,13 +455,13 @@ async function removeWorktree(path, withBranch, point) {
   if (await removeWorktreeFolder(worktree)) {
     sparkle(point);
     toast(t('branches.toasts.worktree_removed', { path: tildify(path) }));
-    if (withBranch) await deleteBranch(worktree.branch, point);
+    if (withBranch && worktree.info) await deleteBranch(worktree.info.key, point);
   }
-  await loadState({ quiet: true });
+  await loadState({ repos: [worktree.repo], quiet: true });
 }
 
 async function removeWorktreeFolder(worktree, force = false) {
-  const result = await removeWorktreeRequest(worktree.path, force);
+  const result = await removeWorktreeRequest(worktree, force);
   if (result.ok) return true;
   if (!force && isGitFailure(result) && (await confirmForceRemove(worktree, result))) return removeWorktreeFolder(worktree, true);
   if (force || !isGitFailure(result)) toast(t('branches.toasts.remove_failed', { error: failureMessage(result) }), 'error');
@@ -421,41 +487,44 @@ async function pruneWorktrees(point) {
     confirm: t('branches.dialogs.prune.confirm'),
   });
   if (!confirmed) return;
-  const result = await api('/api/branches/prune', { repo: ui.repo });
-  if (result.ok) {
+  const repos = [...new Set(ui.data.worktrees.filter((w) => w.prunable || w.missing).map((w) => w.repo))];
+  const results = await Promise.all(repos.map((repo) => api('/api/branches/prune', { repo })));
+  const output = results.filter((result) => result.ok).map((result) => result.output).filter(Boolean).join('\n');
+  results.forEach((result, index) => {
+    if (!result.ok) toast(t('branches.toasts.prune_failed', { error: `${repoName(repos[index])}: ${failureMessage(result)}` }), 'error');
+  });
+  if (results.some((result) => result.ok)) {
     sparkle(point);
-    toast(result.output ? t('branches.toasts.pruned', { output: result.output }) : t('branches.toasts.no_ghosts'));
-  } else {
-    toast(t('branches.toasts.prune_failed', { error: failureMessage(result) }), 'error');
+    toast(output ? t('branches.toasts.pruned', { output }) : t('branches.toasts.no_ghosts'));
   }
-  await loadState({ quiet: true });
+  await loadState({ repos, quiet: true });
 }
 
 /* ---------- bulk actions ---------- */
 
 async function bulkTidyBranches() {
-  const names = [...ui.beds.branches.selected];
-  const allSquashed = names.every((name) => branchByName(name)?.pr?.state === 'MERGED');
+  const branches = [...ui.beds.branches.selected].map(branchByKey).filter(Boolean);
+  const allSquashed = branches.every((b) => b.pr?.state === 'MERGED');
   const form = await openDialog({
-    title: tp('branches.dialogs.bulk_branches.title', names.length),
+    title: tp('branches.dialogs.bulk_branches.title', branches.length),
     body: `
       <p>${t('branches.dialogs.bulk_branches.intro_html', { command: code('git branch -d') })}</p>
-      <ul class="dialog-list">${names.map((n) => `<li>🌿 ${code(n)}</li>`).join('')}</ul>
+      <ul class="dialog-list">${branches.map((b) => `<li>🌿 ${code(b.name)}${ui.data.multi ? ` · 🪴 ${esc(b.repoName)}` : ''}</li>`).join('')}</ul>
       ${toggle('force', t('branches.dialogs.bulk_branches.force_html', { flag: code('-D') }), allSquashed)}`,
     confirm: t('branches.dialogs.bulk_branches.confirm'),
   });
   if (!form) return;
   const force = form.get('force') === 'on';
   await runBulk({
-    items: names.map((name) => ({ key: name, label: `🌿 ${name}` })),
-    perform: (item, retrying) => tidyBranch(item.key, force || retrying),
+    items: branches.map((b) => ({ key: b.key, repo: b.repo, label: `🌿 ${inRepo(b, b.name)}`, branch: b })),
+    perform: (item, retrying) => tidyBranch(item.branch, force || retrying),
     retryKey: force ? null : 'branches.dialogs.bulk_branches.retry',
   });
 }
 
-async function tidyBranch(name, force) {
-  const result = await deleteBranchRequest(name, force);
-  if (result.ok) ui.beds.branches.selected.delete(name);
+async function tidyBranch(b, force) {
+  const result = await deleteBranchRequest(b, force);
+  if (result.ok) ui.beds.branches.selected.delete(b.key);
   return { ok: result.ok, message: failureMessage(result) };
 }
 
@@ -480,7 +549,7 @@ async function bulkTidyWorktrees() {
     forceWorktrees: form.get('force-worktrees') === 'on',
   };
   await runBulk({
-    items: worktrees.map((w) => ({ key: w.path, label: `🏡 ${tildify(w.path)}`, worktree: w, removed: false })),
+    items: worktrees.map((w) => ({ key: w.path, repo: w.repo, label: `🏡 ${tildify(w.path)}`, worktree: w, removed: false })),
     perform: (item, retrying) => tidyWorktree(item, retrying ? { ...options, forceBranches: true, forceWorktrees: true } : options),
     retryKey: 'branches.dialogs.bulk_worktrees.retry',
   });
@@ -495,13 +564,13 @@ function worktreeListItem(w) {
 async function tidyWorktree(item, options) {
   const w = item.worktree;
   if (!item.removed) {
-    const result = await removeWorktreeRequest(w.path, options.forceWorktrees);
+    const result = await removeWorktreeRequest(w, options.forceWorktrees);
     if (!result.ok) return { ok: false, message: failureMessage(result) };
     item.removed = true;
     ui.beds.worktrees.selected.delete(w.path);
   }
   if (!options.branches || !ownsDeletableBranch(w)) return { ok: true };
-  const result = await deleteBranchRequest(w.branch, options.forceBranches);
+  const result = await deleteBranchRequest(w.info, options.forceBranches);
   return { ok: result.ok, message: t('branches.dialogs.bulk_worktrees.branch_stayed', { error: failureMessage(result) }) };
 }
 
@@ -529,7 +598,7 @@ async function runBulk({ items, perform, retryKey, retrying = false }) {
   setDialogBusy(false);
   finishBulk(items.length - failed.length, failed.length, retrying ? null : retryKey);
   const retry = await finished;
-  await loadState({ quiet: true });
+  await loadState({ repos: [...new Set(items.map((item) => item.repo))], quiet: true });
   if (retry && failed.length) await runBulk({ items: failed, perform, retryKey, retrying: true });
 }
 
@@ -571,13 +640,6 @@ $('.tabs').addEventListener('keydown', (event) => {
   const next = { ArrowLeft: index - 1, ArrowRight: index + 1, Home: 0, End: names.length - 1 }[event.key];
   event.preventDefault();
   selectTab(names[(next + names.length) % names.length], { focus: true });
-});
-
-$('#repo').addEventListener('change', (event) => {
-  ui.repo = event.target.value;
-  store.set('repo', ui.repo);
-  Object.keys(BEDS).forEach((name) => { ui.beds[name] = newBed(name); });
-  loadState();
 });
 
 $('#refresh').addEventListener('click', () => loadState({ refresh: true }));

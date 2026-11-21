@@ -39,8 +39,8 @@ module Demo
         steps: "await wait('#todo-list li'); press('?'); await sleep(1500);" },
       { name: '08-branch-garden', page: '/branches', preset: { 'tab' => 'branches' } },
       { name: '09-branch-garden-tidy', page: '/branches', preset: { 'tab' => 'branches' },
-        steps: "await checkBox('[data-key=\"sunny/ruby-34\"] input[data-action=\"select\"]'); " \
-               "await checkBox('[data-key=\"sunny/bloom-log-pii\"] input[data-action=\"select\"]'); await click('#bulk-tidy'); await sleep(1500);" },
+        steps: "await checkBox('[data-key$=\"::sunny/ruby-34\"] input[data-action=\"select\"]'); " \
+               "await checkBox('[data-key$=\"::sunny/bloom-log-pii\"] input[data-action=\"select\"]'); await click('#bulk-tidy'); await sleep(1500);" },
       { name: '10-branch-garden-worktrees', page: '/branches', preset: { 'tab' => 'worktrees' } },
       { name: '11-ticket-garden', page: '/jira', preset: { 'jira-view' => 'mine' } },
       { name: '12-ticket-garden-sprint', page: '/jira', preset: { 'jira-view' => 'sprint:501' } },
