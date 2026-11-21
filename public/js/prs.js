@@ -130,7 +130,7 @@ function renderRepoCount() {
 
 function hideRepo(slug) {
   const rows = [...document.querySelectorAll('#repo-list .repo-row:not(.is-hidden) input')].map((input) => input.dataset.slug);
-  const neighbour = rows[rows.indexOf(slug) + 1] || rows[rows.indexOf(slug) - 1];
+  const neighbor = rows[rows.indexOf(slug) + 1] || rows[rows.indexOf(slug) - 1];
   ui.hidden.add(slug);
   ui.selected.delete(slug);
   if (ui.tab === slug) ui.tab = 'all';
@@ -138,7 +138,7 @@ function hideRepo(slug) {
   saveSelection();
   renderRepoPanel();
   render();
-  if (neighbour) focusRepoCheckbox(neighbour);
+  if (neighbor) focusRepoCheckbox(neighbor);
   toast(t('prs.panel.tucked_away', { name: slug.split('/')[1] }));
 }
 

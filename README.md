@@ -1,6 +1,6 @@
 # 🌸 garden
 
-A cute little suite of local dev tools, in English or French. One stdlib-Ruby server, one page per tool, emoji nav down the left (🇫🇷/🇬🇧 toggle at the bottom).
+A cute little suite of local dev tools, in English, French, Spanish or Japanese. One stdlib-Ruby server, one page per tool, emoji nav down the left, with color (🍭 fairyfloss, 🐈 Catppuccin, 🌹 Rosé Pine, 🌲 Everforest) and language (🍔/🥐/🌽/🍙) menus at the bottom.
 
 ```sh
 ~/src/garden/bin/garden            # opens http://localhost:4747
@@ -17,19 +17,19 @@ A cute little suite of local dev tools, in English or French. One stdlib-Ruby se
 
 Curious how it all fits together? [docs/how-it-works.md](docs/how-it-works.md) walks the whole flow from disk to browser and back.
 
-Want a look first? [docs/screenshots](docs/screenshots/README.md) has every page in light and dark, English and French. 📸
+Want a look first? [docs/screenshots](docs/screenshots/README.md) has every page in light and dark, in all four languages, plus [every color scheme](docs/screenshots/palettes.md). 📸
 
 ## Jira setup
 
 The server reads `JIRA_TOKEN_REF` (a `op://…/credential` reference to an Atlassian API token) with `op read`.
 Your Atlassian email comes from the same item's `username` field, or `JIRA_EMAIL` if that's empty.
 The site defaults to `https://1password.atlassian.net` (`--jira-site` or `JIRA_SITE` to change).
-The 🏃 sprints panel lists every open sprint holding a ticket assigned to you (found through the Sprint field); each ticked sprint gets its own tab, untick or 🙈 hide the ones you don't want. Every tab groups tickets into swimlanes by parent ticket.
+The 🏃 sprints panel lists every open sprint holding a ticket assigned to you (found through the Sprint field); each checked sprint gets its own tab; uncheck or 🙈 hide the ones you don't want. Every tab groups tickets into swimlanes by parent ticket.
 
 ## Todoist setup
 
 The task page shows one of your saved Todoist filters (default `aujourd'hui`; set `TODOIST_FILTER` or `--todoist-filter` to pick another) when `TODOIST_TOKEN_REF` points at a Todoist API token in 1Password (`op://…`). Each comma-separated part of the filter gets its own tab.
-Ticking a Todoist task closes it in Todoist; unticking reopens it. Nothing is ever deleted there. Without the variable, the section just doesn't appear.
+Checking off a Todoist task closes it in Todoist; unchecking reopens it. Nothing is ever deleted there. Without the variable, the section just doesn't appear.
 
 ## Adding a tool
 
@@ -37,7 +37,7 @@ Ticking a Todoist task closes it in Todoist; unticking reopens it. Nothing is ev
    (include `Garden::Responses` for `json`; raise `Garden::Refusal.new('errors.some_key')` for user-facing errors). Routes land at `/api/<slug>/<action>`.
 2. `pages/<slug>.html.erb`: the page fragment inside the shared layout, using `<%= t('<slug>.key') %>` for text.
 3. `public/js/<slug>.js` (an ES module; import `t`, `tp`, `api`… from `./garden.js`) and `public/css/<slug>.css`.
-4. `locales/en/<slug>.yml` and `locales/fr/<slug>.yml`, including `<slug>.title` for the sidebar.
+4. `locales/<lang>/<slug>.yml` for each of `en`, `fr`, `es` and `ja`, including `<slug>.title` for the sidebar.
 5. Register it in `bin/garden` with `Garden::Tool.new(slug:, emoji:, api:)`.
 
 POSTs need the `X-Garden-Token` header (the page's `api()` helper sends it), and only `localhost` Host headers are served.

@@ -1,0 +1,188 @@
+branches:
+  title: "jardín de ramas"
+  tagline: "cuida tus ramitas de git ✨ corta las marchitas 💕"
+  repo_label: "repo"
+  pr_note: "🫧 no se pudo conectar con GitHub para este repo, así que esta vez no hay info de PR"
+  loading: "regando el jardín…"
+  no_repos: "todavía no hay repos de git por aquí"
+  select_visible: "seleccionar visibles ☑️"
+  select_item: "seleccionar %{label}"
+  tabs:
+    label: "parcelas del jardín"
+    branches: "ramas"
+    worktrees: "worktrees"
+  stats:
+    branches:
+      one: "rama"
+      other: "ramas"
+    worktrees:
+      one: "worktree"
+      other: "worktrees"
+    merged:
+      one: "fusionada"
+      other: "fusionadas"
+    gone:
+      one: "esfumada"
+      other: "esfumadas"
+    stale:
+      one: "marchita"
+      other: "marchitas"
+  toolbar:
+    branches:
+      filters_label: "filtrar ramas"
+      search_placeholder: "🔍 buscar ramas y commits…"
+      search_label: "buscar ramas"
+      sort_label: "ordenar ramas"
+      shown:
+        one: "mostrando %{shown} de %{count} rama"
+        other: "mostrando %{shown} de %{count} ramas"
+    worktrees:
+      filters_label: "filtrar worktrees"
+      search_placeholder: "🔍 buscar worktrees y rutas…"
+      search_label: "buscar worktrees"
+      sort_label: "ordenar worktrees"
+      prune: "podar fantasmas 👻"
+      shown:
+        one: "mostrando %{shown} de %{count} worktree"
+        other: "mostrando %{shown} de %{count} worktrees"
+  sort:
+    oldest: "🐌 lo más antiguo primero"
+    newest: "🐣 lo más nuevo primero"
+    name: "🔤 por nombre"
+    behind: "⬇️ lo más atrasado"
+    dirty: "🧺 más cosas sin guardar"
+  filters:
+    branches:
+      merged: "💖 fusionadas"
+      gone: "👻 sin upstream"
+      closed: "🚪 PR cerrada"
+      open: "🌱 PR abierta"
+      stale: "🕸️ marchitas %{days}d+"
+      worktree: "🏡 en un worktree"
+      nopr: "✨ sin PR"
+    worktrees:
+      merged: "💖 fusionados"
+      closed: "🚪 PR cerrada"
+      open: "🌱 PR abierta"
+      clean: "✨ limpios"
+      dirty: "🧺 cambios sin guardar"
+      stale: "🕸️ marchitos %{days}d+"
+      detached: "🎈 desacoplados"
+      ghost: "👻 fantasmas"
+  empty:
+    tidy: "¡tu jardín está perfectamente ordenado!"
+    branches: "nada florece aquí… prueba con otro filtro"
+    worktrees: "ningún worktree coincide… prueba con otro filtro"
+  lock:
+    default: "es la rama predeterminada, ella se queda 👑"
+    worktree: "vive en un worktree en %{path}"
+    current: "en uso ahora mismo"
+  badges:
+    pr_merged: "💖 fusionada #%{number}"
+    pr_open: "🌱 abierta #%{number}"
+    pr_closed: "🚪 cerrada #%{number}"
+    default: "👑 predeterminada"
+    checked_out: "📍 en uso"
+    merged_in_git: "🧁 fusionada en git"
+    upstream_gone: "👻 sin upstream"
+    local_only: "🏠 solo local"
+    ahead_behind: "%{ahead} adelante, %{behind} detrás de %{base}"
+    main_checkout: "🏰 checkout principal"
+    folder_gone: "🍂 la carpeta ya no existe"
+    unsaved:
+      one: "🧺 %{count} cosa sin guardar"
+      other: "🧺 %{count} cosas sin guardar"
+    clean: "✨ limpio"
+    prunable: "👻 para podar"
+    locked: "🔐 bloqueado"
+  card:
+    detached_at: "🎈 desacoplado en %{head}"
+    delete: "borrar 🗑️"
+    remove: "quitar 🧹"
+    remove_with_branch: "quitar + borrar la rama 🗑️"
+    ghost_hint: "usa “podar fantasmas 👻” para ordenar este"
+  bulkbar:
+    picked:
+      one: "%{count} en la selección"
+      other: "%{count} en la selección"
+    clear: "limpiar"
+    tidy_branches:
+      one: "ordenar %{count} rama ✨"
+      other: "ordenar %{count} ramas ✨"
+    tidy_worktrees:
+      one: "ordenar %{count} worktree ✨"
+      other: "ordenar %{count} worktrees ✨"
+  goodbyes:
+    - "adiosito, %{name} 👋💕"
+    - "%{name} ya es abono 🌱"
+    - "¡tijeretazo! %{name} ya no está ✂️✨"
+    - "%{name} salió volando 🦋"
+    - "%{name} quedó en orden 🧹💖"
+  toasts:
+    load_failed: "no se pudo cargar %{repo} 😿 %{error}"
+    delete_failed: "no se pudo borrar %{name} 😿 %{error}"
+    worktree_removed: "el worktree %{path} hizo sus maletas 🧳💕"
+    remove_failed: "no se pudo quitar el worktree 😿 %{error}"
+    pruned: "podado 👻 %{output}"
+    no_ghosts: "ya no quedan fantasmas 👻✨"
+    prune_failed: "la poda falló 😿 %{error}"
+  dialogs:
+    git_says: "git dice:"
+    force_delete:
+      title: "%{name} no está fusionada en git 🥺"
+      squashed: "pero su PR se fusionó con squash 💖 así que borrarla a la fuerza seguramente no tiene ningún problema."
+      unmerged: "borrar a la fuerza descarta los commits que solo viven en esta rama. ¿de verdad quieres hacerlo, corazón? 🥺"
+      confirm: "hazlo a la fuerza igual 💥"
+    remove_worktree:
+      title: "¿quitar este worktree? 🧹"
+      title_with_branch: "¿quitar el worktree + la rama? 🗑️"
+      will_run: "esto va a ejecutar:"
+      safe: "git se niega si hay algo sin guardar, así que nada de lágrimas 🛡️"
+      confirm: "sí, ordénalo ✨"
+    force_remove:
+      title: "git dijo que no 🙅‍♀️"
+      loss_dirty_html:
+        one: "esto tira <b>%{count} cosa sin guardar</b> para siempre 😱"
+        other: "esto tira <b>%{count} cosas sin guardar</b> para siempre 😱"
+      loss_clean: "esto lo va a sacar a la fuerza."
+      confirm: "quitar a la fuerza 💥"
+    prune:
+      title: "¿podar los worktrees fantasma? 👻"
+      body_html: "esto ejecuta %{command}, que olvida los worktrees cuyas carpetas ya no existen."
+      confirm: "adiós, fantasmas 👻"
+    bulk_branches:
+      title:
+        one: "¿ordenar %{count} rama? ✨"
+        other: "¿ordenar %{count} ramas? ✨"
+      intro_html: "a estas ramas locales se les aplica %{command}:"
+      force_html: "borrar a la fuerza (%{flag}). hace falta para las ramas fusionadas con squash 💖 pero descarta los commits sin fusionar"
+      confirm: "ordénalas ✨"
+      retry:
+        one: "forzar %{count} rezagada 💥"
+        other: "forzar %{count} rezagadas 💥"
+    bulk_worktrees:
+      title:
+        one: "¿ordenar %{count} worktree? ✨"
+        other: "¿ordenar %{count} worktrees? ✨"
+      intro_html: "a estos se les aplica %{command}:"
+      also_branches: "borrar también sus ramas 🗑️"
+      force_branches_html: "borrar esas ramas a la fuerza (%{flag}). hace falta para las fusionadas con squash 💖"
+      force_worktrees:
+        one: "quitar a la fuerza %{count} worktree con cambios sin guardar 😱 se pierden para siempre"
+        other: "quitar a la fuerza %{count} worktrees con cambios sin guardar 😱 se pierden para siempre"
+      confirm: "ordénalos ✨"
+      retry:
+        one: "forzar %{count} rezagado 💥 (los cambios sin guardar se van a la basura)"
+        other: "forzar %{count} rezagados 💥 (los cambios sin guardar se van a la basura)"
+      branch_stayed: "se quitó el worktree 🧹 pero la rama se quedó: %{error}"
+    progress:
+      tidying: "ordenando… 🧹"
+      force_tidying: "ordenando a la fuerza… 💥"
+      working: "trabajando… 🪄"
+      some_stayed:
+        one: "%{tidied} en orden, %{count} se quedó en su lugar 🥺"
+        other: "%{tidied} en orden, %{count} se quedaron en su lugar 🥺"
+      all_tidied:
+        one: "¡listo! todo en orden (%{count}) 🎉💖"
+        other: "¡listo! todo en orden (%{count}) 🎉💖"
+      done: "todo listo 💕"

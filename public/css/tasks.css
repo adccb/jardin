@@ -52,7 +52,7 @@ kbd {
 .done-section { margin-top: 26px; }
 .done-section summary {
   list-style: none; cursor: pointer; width: fit-content; margin-bottom: 12px;
-  font-family: "Fredoka", system-ui, sans-serif; font-size: 1.3rem; font-weight: 600;
+  font-family: var(--font-display); font-size: 1.3rem; font-weight: 600;
   padding: 4px 12px; border-radius: 14px;
 }
 .done-section summary::-webkit-details-marker { display: none; }
@@ -64,7 +64,7 @@ kbd {
 
 .task-empty {
   text-align: center; padding: 34px 16px; border: 2px dashed var(--border); border-radius: 22px;
-  background: var(--surface-2); font-family: "Fredoka", system-ui, sans-serif; font-size: 1.15rem; color: var(--muted);
+  background: var(--surface-2); font-family: var(--font-display); font-size: 1.15rem; color: var(--muted);
 }
 .task-empty .big { display: block; font-size: 2.6rem; margin-bottom: 6px; }
 .done-empty { margin: 0 12px; font-weight: 700; color: var(--muted); }
@@ -93,10 +93,10 @@ kbd {
 .todoist-section[hidden] { display: none; }
 .list-heading {
   display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 10px; margin: 0 0 12px 4px;
-  font-family: "Fredoka", system-ui, sans-serif; font-size: 1.3rem; font-weight: 600;
+  font-family: var(--font-display); font-size: 1.3rem; font-weight: 600;
 }
 .list-heading .count { font-size: .9rem; color: var(--muted); }
-.todoist-open { margin-left: auto; font-family: "Nunito", system-ui, sans-serif; font-size: .85rem; }
+.todoist-open { margin-left: auto; font-family: var(--font-body); font-size: .85rem; }
 .todoist-status { margin: 0 0 10px 6px; font-weight: 700; color: var(--muted); }
 
 .task-meta { flex: none; display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 4px; max-width: 45%; }

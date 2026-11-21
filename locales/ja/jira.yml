@@ -1,0 +1,80 @@
+jira:
+  title: "チケットのお庭"
+  tagline: "やることぜんぶ、スプリンクルをのせて 🍩"
+  include_done: "完了も含める（過去30日）"
+  tickets_label: "あなたのチケット"
+  filter_label: "ステータスで絞り込み"
+  search_placeholder: "🔍 キー、概要、ラベルで検索…"
+  search_label: "チケットを検索"
+  sort_label: "チケットの並べ替え"
+  sort:
+    updated: "🌀 最近の更新順"
+    priority: "🔥 優先度順"
+    created: "🐣 新しい順"
+    key: "🔤 キー順"
+  stats:
+    tickets:
+      one: "チケット"
+      other: "チケット"
+    to_do: "未着手"
+    in_progress: "進行中"
+    high_priority: "優先度高"
+    done:
+      one: "完了（30日）"
+      other: "完了（30日）"
+  shown:
+    one: "%{count}件中%{shown}件のチケットを表示"
+    other: "%{count}件中%{shown}件のチケットを表示"
+  due: "⏰ 期限 %{date}"
+  updated: "🌀 %{ago}に更新"
+  created: "🐣 %{ago}に作成"
+  loading: "チケットを淹れてるよ…"
+  empty:
+    nothing_assigned: "あなたの担当はなにもないよ。外の空気でも吸ってきて！ 🌿"
+    no_match: "一致するチケットがないよ… 別のフィルターを試してみて"
+  drawer:
+    open_in_jira: "Jiraで開く ↗️"
+    fetching: "うわさを仕入れ中…"
+    no_description: "説明なし… ミステリアスだね"
+  toast:
+    fetching_done: "がんばった成果も取ってくるね ✅💕"
+  tabs:
+    label: "チケットの表示"
+    mine: "自分の担当"
+  lanes:
+    no_parent: "🌱 親チケットなし"
+    open_parent: "%{key}を開く"
+  sprint:
+    info: "🏃 %{name} · %{start} → %{end}"
+    empty: "このスプリントはからっぽ… あやしいほど静か 🌙"
+    show_done: "完了も表示"
+    all_done: "このスプリントの残りはぜんぶ完了してるよ 🎉 「完了も表示」をチェックすると見られるよ"
+  you: "💖 あなた"
+  unassigned: "🫥 未割り当て"
+  board_order: "📋 ボード順"
+  stats_sprint:
+    done:
+      one: "完了"
+      other: "完了"
+    yours: "あなたの"
+  assignees:
+    label: "担当者で絞り込み"
+    everyone: "👥 みんな"
+  panel:
+    heading: "スプリント"
+    select_all: "すべてチェック"
+    clear: "すべて外す"
+    count: "（%{total}件中%{selected}件）"
+    loading: "スプリントを探してるよ…"
+    none: "いま開いているスプリントにあなたのチケットはないよ 🏖️"
+    upcoming: "🔮 今後の予定"
+    in_scope: "💝 タブあり"
+    nothing_picked: "いまはなにもチェックしてないよ"
+    filtered_out: "🌱 タブなし"
+    none_filtered: "ぜんぶのスプリントにタブがあるよ！ 🎉"
+    hidden: "🙈 隠したもの"
+    hide_label: "%{name}をこのリストから隠す"
+    hide_title: "このリストから隠す"
+    bring_back: "戻す 👀"
+    bring_back_label: "%{name}を戻す"
+    tucked_away: "%{name}をしまったよ 🙈"

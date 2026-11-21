@@ -1,7 +1,9 @@
-# Shoots every demo scene in light and dark, per language, then lays each pair side by side.
-# usage: ruby demo_garden.rb &  then  ruby shoot.rb .. [scene-name-filter]   (writes ../en and ../fr)
+# Shoots every demo scene in light and dark, then lays each pair side by side as a JPEG:
+#   - in fairyfloss, once per language      → OUT/<lang>/<scene>.jpg
+#   - in English, once per other palette    → OUT/palettes/<palette>/<scene>.jpg
+# usage: ruby demo_garden.rb &  then  ruby shoot.rb OUT_DIR [scene-name-filter]
 require 'fileutils'
-require "json"
+require 'json'
 require 'open3'
 require 'erb'
 require 'tmpdir'
@@ -12,15 +14,20 @@ BASE = 'http://localhost:4750'
 WIDTH = 1280
 HEIGHT = 900 # every scene shares one viewport, so every image comes out the same size
 GUTTER = 36
-LANGS = %w[en fr].freeze
+JPEG_QUALITY = 85
+LANGS = %w[en fr es ja].freeze
+DEFAULT_PALETTE = 'fairyfloss'
+OTHER_PALETTES = %w[catppuccin rose-pine everforest].freeze
 THEMES = { 'light' => 1, 'dark' => 0 }.freeze
+CAPTIONS = { 'en' => %w[light dark], 'fr' => %w[clair sombre], 'es' => %w[claro oscuro], 'ja' => %w[ライト ダーク] }.freeze
 WORK = File.join(Dir.tmpdir, 'garden-screenshots')
 
-out_dir = File.expand_path(ARGV.fetch(0))
-filter = ARGV[1]
-scenes = Demo::Scenes::LIST.select { |scene| filter.nil? || scene[:name].include?(filter) }
+Job = Data.define(:scene, :lang, :palette, :target) do
+  def name = "#{palette}-#{lang}-#{scene[:name]}"
+  def url = "#{BASE}#{scene[:page]}?lang=#{lang}&palette=#{palette}&scene=#{scene[:name]}"
+end
 
-def chrome(url, path, width:, height:, theme: 1, profile:)
+def chrome(url, path, width:, height:, profile:, theme: 1)
   args = [CHROME, '--headless=new', '--disable-gpu', '--hide-scrollbars', "--blink-settings=preferredColorScheme=#{theme}",
           "--window-size=#{width},#{height}", '--virtual-time-budget=20000', "--user-data-dir=#{profile}",
           '--allow-file-access-from-files', "--screenshot=#{path}", url]
@@ -34,6 +41,13 @@ def chrome(url, path, width:, height:, theme: 1, profile:)
     sleep(1 + attempt)
   end
   raise "chrome failed for #{url}: #{err}"
+end
+
+def to_jpeg(png, jpeg)
+  FileUtils.mkdir_p(File.dirname(jpeg))
+  _out, err, status = Open3.capture3('sips', '-s', 'format', 'jpeg', '-s', 'formatOptions', JPEG_QUALITY.to_s, png,
+                                     '--out', jpeg)
+  raise "sips failed for #{png}: #{err}" unless status.success?
 end
 
 PAIR = ERB.new(<<~HTML)
@@ -50,33 +64,45 @@ PAIR = ERB.new(<<~HTML)
   </body></html>
 HTML
 
-CAPTIONS = { 'en' => %w[light dark], 'fr' => %w[clair sombre] }.freeze
+def shoot(job, profile)
+  light, dark = THEMES.map do |theme, flag|
+    path = File.join(WORK, "#{job.name}-#{theme}.png")
+    chrome(job.url, path, width: WIDTH, height: HEIGHT, theme: flag, profile:)
+    path
+  end
+  labels = CAPTIONS.fetch(job.lang)
+  pair = File.join(WORK, "#{job.name}.html")
+  File.write(pair, PAIR.result(binding))
+  composite = File.join(WORK, "#{job.name}.png")
+  chrome("file://#{pair}", composite, width: (WIDTH * 2) + (GUTTER * 3), height: HEIGHT + (GUTTER * 2) + 34, profile:)
+  to_jpeg(composite, job.target)
+end
 
-jobs = scenes.product(LANGS)
+out_dir = File.expand_path(ARGV.fetch(0))
+filter = ARGV[1]
+scenes = Demo::Scenes::LIST.select { |scene| filter.nil? || scene[:name].include?(filter) }
+jobs = scenes.product(LANGS).map do |scene, lang|
+  Job.new(scene:, lang:, palette: DEFAULT_PALETTE, target: File.join(out_dir, lang, "#{scene[:name]}.jpg"))
+end +
+       scenes.product(OTHER_PALETTES).map do |scene, palette|
+         Job.new(scene:, lang: 'en', palette:, target: File.join(out_dir, 'palettes', palette, "#{scene[:name]}.jpg"))
+       end
+
+FileUtils.mkdir_p(WORK)
 queue = Queue.new
 jobs.each { |job| queue << job }
 workers = Array.new(4) do |index|
   Thread.new do
     profile = File.join(WORK, "profile-#{index}")
-    while (job = queue.pop(true) rescue nil)
-      scene, lang = job
-      shots = THEMES.to_h do |theme, flag|
-        path = File.join(WORK, lang, "#{scene[:name]}-#{theme}.png")
-        FileUtils.mkdir_p(File.dirname(path))
-        chrome("#{BASE}#{scene[:page]}?lang=#{lang}&scene=#{scene[:name]}", path, width: WIDTH, height: HEIGHT,
-               theme: flag, profile:)
-        [theme, path]
-      end
-      pair = File.join(WORK, lang, "#{scene[:name]}.html")
-      labels = CAPTIONS.fetch(lang)
-      light = shots['light']
-      dark = shots['dark']
-      File.write(pair, PAIR.result(binding))
-      target = File.join(out_dir, lang, "#{scene[:name]}.png")
-      FileUtils.mkdir_p(File.dirname(target))
-      chrome("file://#{pair}", target, width: (WIDTH * 2) + (GUTTER * 3), height: HEIGHT + (GUTTER * 2) + 34, profile:)
-      puts "✓ #{lang}/#{scene[:name]}"
+    while (job = begin
+      queue.pop(true)
+    rescue StandardError
+      nil
+    end)
+      shoot(job, profile)
+      puts "✓ #{job.target.delete_prefix("#{out_dir}/")}"
     end
   end
 end
 workers.each(&:join)
+puts "#{jobs.size} images"

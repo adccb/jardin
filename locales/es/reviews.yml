@@ -1,0 +1,59 @@
+reviews:
+  title: "jardín de revisiones"
+  tagline: "pequeñas PR que pidieron tus ojos 👀 y esperan tu visita"
+  main_label: "pull requests esperando tu revisión"
+  search_placeholder: "🔍 buscar en títulos, repos, autores, etiquetas…"
+  search_label: "buscar solicitudes de revisión"
+  load_failed: "no se pudieron cargar las solicitudes de revisión 😿 %{reason}"
+  panel:
+    heading: "repos"
+    loading: "echando un vistazo a tu cola de revisiones…"
+    none: "ningún repo te está esperando 🌙"
+    select_all: "marcar todo"
+    clear: "desmarcar todo"
+    count: "(%{selected} de %{total})"
+    in_scope: "💝 mostrando"
+    nothing_picked: "nada marcado por ahora"
+    filtered_out: "🌱 filtrados"
+    none_filtered: "¡mostrando todos los repos! 🎉"
+    hidden: "🙈 ocultos"
+    hide_label: "ocultar %{name} de esta lista"
+    hide_title: "ocultar de esta lista"
+    bring_back: "traer de vuelta 👀"
+    bring_back_label: "traer de vuelta %{name}"
+    tucked_away: "%{name} guardadito 🙈"
+  tabs_label: "quién pidió"
+  tabs:
+    you:
+      title: "te pidieron"
+      hint: "alguien te pidió por tu nombre"
+    team:
+      title: "le pidieron a tu equipo"
+      hint: "pedida a través de un equipo del que eres parte"
+  stats:
+    waiting:
+      one: "en espera"
+      other: "en espera"
+    you:
+      one: "para ti"
+      other: "para ti"
+    team:
+      one: "para tu equipo"
+      other: "para tu equipo"
+  shown:
+    one: "mostrando %{count} solicitud de revisión"
+    other: "mostrando %{count} solicitudes de revisión"
+  empty:
+    loading: "echando un vistazo a tu cola de revisiones…"
+    no_match: "nada coincide con esa búsqueda"
+    all_filtered: "todos los repos con solicitudes están filtrados. marca uno en la lista 🗂️"
+    you: "nadie te pidió por tu nombre. échale un ojo a la pestaña de tu equipo 👥"
+    team: "no hay solicitudes de equipo esperando 🌿"
+    none: "nadie te está esperando. ¡bandeja en cero! 🍓"
+  badges:
+    draft: "🧸 borrador"
+    comments:
+      one: "💬 %{count} comentario"
+      other: "💬 %{count} comentarios"
+    opened: "🌱 abierta %{ago}"
+    updated: "🌀 actualizada %{ago}"

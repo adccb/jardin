@@ -5,7 +5,7 @@ function savedSet(key) {
 }
 
 // The side panel of things a page can show (repos, sprints…). Items come from the page's data,
-// so each one is in scope unless you've unticked (excluded) or hidden it, and new ones show up ticked.
+// so each one is in scope unless you've unchecked (excluded) or hidden it, and new ones show up checked.
 // Items: { id, name, detail, tally }. Text comes from `${prefix}.*`; markup ids come from the page.
 export class ScopePanel {
   constructor({ prefix, storeKey, onChange }) {
@@ -113,9 +113,9 @@ export class ScopePanel {
 
   hide(id) {
     const rows = [...document.querySelectorAll('#repo-list .repo-row:not(.is-hidden) input')].map((input) => input.dataset.id);
-    const neighbour = rows[rows.indexOf(id) + 1] || rows[rows.indexOf(id) - 1];
+    const neighbor = rows[rows.indexOf(id) + 1] || rows[rows.indexOf(id) - 1];
     this.hidden.add(id);
-    this.changed({ focus: neighbour });
+    this.changed({ focus: neighbor });
     toast(this.text('tucked_away', { name: this.items.find((item) => item.id === id)?.name || id }));
   }
 

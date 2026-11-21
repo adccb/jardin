@@ -54,7 +54,10 @@ module Demo
 
     def pr_list(state, slugs)
       repos = slugs.map do |slug|
-        prs = raw_prs(slug, state).map { |pr| Garden::Prs::PullRequest.new(pr.merge('url' => pr['url'].sub('/x/', "/#{slug.split('/').last}/")), repo: slug).to_h }
+        prs = raw_prs(slug, state).map do |pr|
+          Garden::Prs::PullRequest.new(pr.merge('url' => pr['url'].sub('/x/', "/#{slug.split('/').last}/")),
+                                       repo: slug).to_h
+        end
         { slug:, name: slug.split('/').last, ok: true, prs: }
       end
       { state:, repos: }
@@ -82,7 +85,7 @@ module Demo
                 'reviewDecision' => 'APPROVED', 'mergeStateStatus' => 'CLEAN', 'additions' => 158, 'deletions' => 40,
                 'latestReviews' => [review('maple-okafor', 'APPROVED'), review('wren-castillo', 'APPROVED')],
                 'labels' => labels('a11y', 'frontend'), 'updatedAt' => ago(6)),
-        open_pr(918, 'Dark mode for the seed catalogue', 'sunny/catalogue-dark-mode',
+        open_pr(918, 'Dark mode for the seed catalog', 'sunny/catalog-dark-mode',
                 'statusCheckRollup' => checks(pass: 20, fail: 1), 'mergeable' => 'CONFLICTING', 'mergeStateStatus' => 'DIRTY',
                 'additions' => 245, 'deletions' => 88, 'labels' => labels('frontend'), 'updatedAt' => days(1)),
         open_pr(925, 'Translate the onboarding tour into French', 'sunny/onboarding-fr',
@@ -137,15 +140,22 @@ module Demo
                 'commentsCount' => 3, 'updatedAt' => ago(1), 'labels' => labels('backend')),
         request('meadow-web', 927, 'Make the planting calendar work with a screen reader', 'wren-castillo', 'you',
                 'commentsCount' => 7, 'updatedAt' => ago(3), 'labels' => labels('a11y')),
-        request('fern-cli', 314, 'Shell completions for zsh and fish', 'basil-moreau', 'you', 'createdAt' => days(6), 'updatedAt' => days(1)),
-        request('pollen-sdk', 77, 'Typed errors for the pollen client', 'hazel-nakamura', 'you', 'commentsCount' => 1, 'updatedAt' => ago(26)),
-        request('petal-api', 1485, 'Nightly job to compost stale sessions', 'juniper-tran', 'team', 'commentsCount' => 2, 'updatedAt' => ago(7)),
+        request('fern-cli', 314, 'Shell completions for zsh and fish', 'basil-moreau', 'you', 'createdAt' => days(6),
+                                                                                              'updatedAt' => days(1)),
+        request('pollen-sdk', 77, 'Typed errors for the pollen client', 'hazel-nakamura', 'you', 'commentsCount' => 1,
+                                                                                                 'updatedAt' => ago(26)),
+        request('petal-api', 1485, 'Nightly job to compost stale sessions', 'juniper-tran', 'team',
+                'commentsCount' => 2, 'updatedAt' => ago(7)),
         request('hive-infra', 203, 'Bump the database to Postgres 17', 'ash-delacroix', 'team',
                 'commentsCount' => 11, 'labels' => labels('infra', 'needs-ops'), 'updatedAt' => ago(5)),
-        request('hive-infra', 206, 'Alert when the greenhouse queue backs up', 'ash-delacroix', 'team', 'updatedAt' => ago(30)),
-        request('meadow-web', 930, 'Lazy-load the seed catalogue images', 'rowan-achebe', 'team', 'isDraft' => true, 'updatedAt' => days(2)),
-        request('seedling-docs', 58, 'Document the webhook retry policy', 'linden-park', 'team', 'labels' => labels('docs'), 'updatedAt' => days(3)),
-        request('pollen-sdk', 79, 'Publish the SDK to the internal registry', 'hazel-nakamura', 'team', 'commentsCount' => 4, 'updatedAt' => days(4))
+        request('hive-infra', 206, 'Alert when the greenhouse queue backs up', 'ash-delacroix', 'team',
+                'updatedAt' => ago(30)),
+        request('meadow-web', 930, 'Lazy-load the seed catalog images', 'rowan-achebe', 'team', 'isDraft' => true,
+                                                                                                'updatedAt' => days(2)),
+        request('seedling-docs', 58, 'Document the webhook retry policy', 'linden-park', 'team',
+                'labels' => labels('docs'), 'updatedAt' => days(3)),
+        request('pollen-sdk', 79, 'Publish the SDK to the internal registry', 'hazel-nakamura', 'team',
+                'commentsCount' => 4, 'updatedAt' => days(4))
       ]
     end
 
@@ -169,12 +179,57 @@ module Demo
         ['Renouveler le certificat TLS de préprod', 50, 26],
         ['Envoyer à Wren les notes d’audit a11y', 72, 30],
         ['Trouver un nom pour le nouveau service', 100, 80]
+      ],
+      'es' => [
+        ['Responder el hilo de revisión del calendario', 0.5, nil],
+        ['Reservar un escritorio para el jueves', 3, nil],
+        ['Escribir el plan de migración a Postgres 17', 20, nil],
+        ['Regar los helechos de la oficina 🌿', 2, nil],
+        ['Renovar el certificado TLS de staging', 50, 26],
+        ['Mandarle a Wren las notas de la auditoría a11y', 72, 30],
+        ['Elegir un nombre para el servicio nuevo', 100, 80]
+      ],
+      'ja' => [
+        ['カレンダーのレビューのスレッドに返信する', 0.5, nil],
+        ['木曜日の席を予約する', 3, nil],
+        ['Postgres 17 へのアップグレード計画を書く', 20, nil],
+        ['オフィスのシダに水をあげる 🌿', 2, nil],
+        ['ステージングの TLS 証明書を更新する', 50, 26],
+        ['Wren に a11y 監査のメモを送る', 72, 30],
+        ['新しいサービスの名前を決める', 100, 80]
       ]
     }.freeze
 
+    # Per language: the filter name, then each tab's label and its tasks as [content, project].
+    TODOIST = {
+      'en' => ['today', [['today | overdue', [['Pay the gardener invoice', 'Home'], ['Team stand-up', 'Work'], ['Repot the basil', 'Garden'], ['Call grandma', 'Family']]],
+                         ['#Groceries',
+                          [['Cherry tomatoes', 'Groceries'], ['Seed-starting compost', 'Groceries'],
+                           ['Coffee beans', 'Groceries']]]]],
+      'fr' => ["aujourd'hui", [["aujourd'hui | en retard", [['Payer la facture du jardinier', 'Maison'], ['Stand-up de l’équipe', 'Travail'], ['Rempoter le basilic', 'Jardin'], ['Appeler mamie', 'Famille']]],
+                               ['#Courses',
+                                [['Tomates cerises', 'Courses'], ['Terreau pour semis', 'Courses'],
+                                 ['Café en grains', 'Courses']]]]],
+      'es' => ['hoy', [['hoy | vencidas', [['Pagarle al jardinero', 'Casa'], ['Stand-up del equipo', 'Trabajo'], ['Trasplantar la albahaca', 'Jardín'], ['Llamar a la abuela', 'Familia']]],
+                       ['#Súper',
+                        [['Tomates cherry', 'Súper'], ['Tierra para almácigos', 'Súper'],
+                         ['Café en grano', 'Súper']]]]],
+      'ja' => ['今日', [['今日 | 期限切れ', [%w[庭師さんの請求書を払う 家], %w[チームのスタンドアップ 仕事], %w[バジルを植え替える 庭], %w[おばあちゃんに電話する 家族]]],
+                        ['#買い物',
+                         [%w[ミニトマト 買い物], %w[種まき用の土 買い物], %w[コーヒー豆 買い物]]]]]
+    }.freeze
+
+    # How each demo Todoist task is due and flagged, in list order across both tabs.
+    TODO_SHAPES = [
+      { priority: 1, due: -1, overdue: true }, { priority: 2, time: '09:30', recurring: true },
+      { priority: 3, labels: ['weekend'] }, { priority: 4, time: '18:00' },
+      { priority: 4 }, { priority: 3 }, { priority: 2 }
+    ].freeze
+
     def tasks(locale)
       TASKS.fetch(locale, TASKS['en']).each_with_index.map do |(title, created, done), index|
-        { id: format('00000000-0000-4000-8000-%012d', index), title:, created_at: ago(created), done_at: done && ago(done) }
+        { id: format('00000000-0000-4000-8000-%012d', index), title:, created_at: ago(created),
+          done_at: done && ago(done) }
       end
     end
 
@@ -185,24 +240,17 @@ module Demo
     end
 
     def todoist(locale)
-      fr = locale == 'fr'
-      {
-        enabled: true,
-        filter: { name: fr ? "aujourd'hui" : 'today', url: 'https://app.todoist.com/app/filter/demo' },
-        sections: [
-          { label: fr ? "aujourd'hui | en retard" : 'today | overdue', tasks: [
-            todo(1, fr ? 'Payer la facture du jardinier' : 'Pay the gardener invoice', fr ? 'Maison' : 'Home', 1, due: -1, overdue: true),
-            todo(2, fr ? 'Stand-up de l’équipe' : 'Team stand-up', fr ? 'Travail' : 'Work', 2, time: '09:30', recurring: true),
-            todo(3, fr ? 'Rempoter le basilic' : 'Repot the basil', fr ? 'Jardin' : 'Garden', 3, labels: ['weekend']),
-            todo(4, fr ? 'Appeler mamie' : 'Call grandma', fr ? 'Famille' : 'Family', 4, time: '18:00')
-          ] },
-          { label: fr ? '#Courses' : '#Groceries', tasks: [
-            todo(5, fr ? 'Tomates cerises' : 'Cherry tomatoes', fr ? 'Courses' : 'Groceries', 4),
-            todo(6, fr ? 'Terreau pour semis' : 'Seed-starting compost', fr ? 'Courses' : 'Groceries', 3),
-            todo(7, fr ? 'Café en grains' : 'Coffee beans', fr ? 'Courses' : 'Groceries', 2)
-          ] }
-        ]
-      }
+      filter, tabs = TODOIST.fetch(locale, TODOIST['en'])
+      shapes = TODO_SHAPES.each
+      ids = (1..).each
+      sections = tabs.map do |label, items|
+        tasks = items.map do |content, project|
+          shape = shapes.next
+          todo(ids.next, content, project, shape[:priority], **shape.except(:priority))
+        end
+        { label:, tasks: }
+      end
+      { enabled: true, filter: { name: filter, url: 'https://app.todoist.com/app/filter/demo' }, sections: }
     end
 
     # ---------- 🌿 branch garden ----------
@@ -222,28 +270,41 @@ module Demo
       repo = "#{HOME}/src/petal-api"
       tree = ->(name) { "#{HOME}/src/petal-api-worktrees/#{name.split('/').last}" }
       branches = [
-        branch('main', 'Merge pull request #1471 from sunny/forecast-cache', 4, default: true, current: true, ahead: 0, upstream: 'origin/main'),
-        branch('sunny/ingest-rate-limit', 'Rate limit pollen ingest per hive', 2, ahead: 6, pr: gh_pr(1482, 'OPEN', 'Add rate limiting'), worktree: tree['sunny/ingest-rate-limit']),
-        branch('sunny/stream-snapshots', 'Stream snapshots in 64 KB chunks', 20, ahead: 9, behind: 14, pr: gh_pr(1479, 'OPEN', 'Stream garden snapshots')),
-        branch('sunny/forecast-cache', 'Cache sunlight forecasts', 30, ahead: 3, gone: true, upstream: 'origin/sunny/forecast-cache', pr: gh_pr(1471, 'MERGED', 'Cache sunlight forecasts'), worktree: tree['sunny/forecast-cache']),
-        branch('sunny/ruby-34', 'Drop the old JSON shim', 74, ahead: 4, gone: true, pr: gh_pr(1466, 'MERGED', 'Upgrade to Ruby 3.4')),
-        branch('sunny/bloom-log-pii', 'Scrub emails from bloom logs', 150, merged: true, ahead: 0, pr: gh_pr(1460, 'MERGED', 'Log bloom events without personal data')),
-        branch('sunny/graphql-attempt', 'WIP: graphql schema for gardens', 210, ahead: 22, behind: 180, pr: gh_pr(1455, 'CLOSED', 'Try GraphQL')),
-        branch('sunny/columnar-spike', 'Spike columnar bloom history', 48, ahead: 11, pr: gh_pr(1493, 'OPEN', 'Spike: columnar store')),
+        branch('main', 'Merge pull request #1471 from sunny/forecast-cache', 4, default: true, current: true, ahead: 0,
+                                                                                upstream: 'origin/main'),
+        branch('sunny/ingest-rate-limit', 'Rate limit pollen ingest per hive', 2, ahead: 6,
+                                                                                  pr: gh_pr(1482, 'OPEN', 'Add rate limiting'), worktree: tree['sunny/ingest-rate-limit']),
+        branch('sunny/stream-snapshots', 'Stream snapshots in 64 KB chunks', 20, ahead: 9, behind: 14,
+                                                                                 pr: gh_pr(1479, 'OPEN', 'Stream garden snapshots')),
+        branch('sunny/forecast-cache', 'Cache sunlight forecasts', 30, ahead: 3, gone: true,
+                                                                       upstream: 'origin/sunny/forecast-cache', pr: gh_pr(1471, 'MERGED', 'Cache sunlight forecasts'), worktree: tree['sunny/forecast-cache']),
+        branch('sunny/ruby-34', 'Drop the old JSON shim', 74, ahead: 4, gone: true,
+                                                              pr: gh_pr(1466, 'MERGED', 'Upgrade to Ruby 3.4')),
+        branch('sunny/bloom-log-pii', 'Scrub emails from bloom logs', 150, merged: true, ahead: 0,
+                                                                           pr: gh_pr(1460, 'MERGED', 'Log bloom events without personal data')),
+        branch('sunny/graphql-attempt', 'WIP: graphql schema for gardens', 210, ahead: 22, behind: 180,
+                                                                                pr: gh_pr(1455, 'CLOSED', 'Try GraphQL')),
+        branch('sunny/columnar-spike', 'Spike columnar bloom history', 48, ahead: 11,
+                                                                           pr: gh_pr(1493, 'OPEN', 'Spike: columnar store')),
         branch('scratch/benchmarks', 'Benchmark snapshot serializers', 400, ahead: 5, upstream: nil)
       ]
       worktrees = [
-        { path: repo, head: 'a1b2c3d4e5', branch: 'main', detached: false, locked: false, prunable: false, main: true, missing: false, dirty: 0 },
-        { path: tree['sunny/ingest-rate-limit'], head: 'b2c3d4e5f6', branch: 'sunny/ingest-rate-limit', detached: false, locked: false, prunable: false, main: false, missing: false, dirty: 3 },
-        { path: tree['sunny/forecast-cache'], head: 'c3d4e5f6a7', branch: 'sunny/forecast-cache', detached: false, locked: false, prunable: false, main: false, missing: false, dirty: 0 },
-        { path: "#{HOME}/src/petal-api-worktrees/old-experiment", head: 'd4e5f6a7b8', branch: nil, detached: true, locked: false, prunable: true, main: false, missing: true, dirty: 0 }
+        { path: repo, head: 'a1b2c3d4e5', branch: 'main', detached: false, locked: false, prunable: false, main: true,
+          missing: false, dirty: 0 },
+        { path: tree['sunny/ingest-rate-limit'], head: 'b2c3d4e5f6', branch: 'sunny/ingest-rate-limit',
+          detached: false, locked: false, prunable: false, main: false, missing: false, dirty: 3 },
+        { path: tree['sunny/forecast-cache'], head: 'c3d4e5f6a7', branch: 'sunny/forecast-cache', detached: false,
+          locked: false, prunable: false, main: false, missing: false, dirty: 0 },
+        { path: "#{HOME}/src/petal-api-worktrees/old-experiment", head: 'd4e5f6a7b8', branch: nil, detached: true,
+          locked: false, prunable: true, main: false, missing: true, dirty: 0 }
       ]
       { repo:, name: 'petal-api', home: HOME, default_branch: 'main', pr_info: true, branches:, worktrees: }
     end
 
     # ---------- 🎟️ ticket garden ----------
 
-    PEOPLE = { me: 'Sunny Sideup', maple: 'Maple Okafor', juniper: 'Juniper Tran', basil: 'Basil Moreau', wren: 'Wren Castillo' }.freeze
+    PEOPLE = { me: 'Sunny Sideup', maple: 'Maple Okafor', juniper: 'Juniper Tran', basil: 'Basil Moreau',
+               wren: 'Wren Castillo' }.freeze
 
     def parent(key, summary, type: 'Epic', status: ['In Progress', 'indeterminate'])
       { key:, summary:, type:, priority: 'Medium', status: { name: status[0], category: status[1] } }
@@ -272,17 +333,22 @@ module Demo
     TODO = ['To Do', 'new'].freeze
     DOING = ['In Progress', 'indeterminate'].freeze
     REVIEW = ['In Review', 'indeterminate'].freeze
-    DONE = ['Done', 'done'].freeze
+    DONE = %w[Done done].freeze
 
     def my_tickets
       [
-        ticket('BLOOM-41', 'Keyboard shortcuts for moving plantings between weeks', DOING, epic: :calendar, type: 'Story', priority: 'High', updated: 2, due: date_in(4)),
+        ticket('BLOOM-41', 'Keyboard shortcuts for moving plantings between weeks', DOING, epic: :calendar,
+                                                                                           type: 'Story', priority: 'High', updated: 2, due: date_in(4)),
         ticket('BLOOM-44', 'Show frost warnings on the calendar', TODO, epic: :calendar, type: 'Story', updated: 20),
-        ticket('BLOOM-47', 'Calendar jumps a week when crossing daylight saving', REVIEW, epic: :calendar, type: 'Bug', priority: 'Highest', updated: 1, labels: ['customer-reported']),
-        ticket('BLOOM-33', 'Rate limit ingest per hive, not per org', REVIEW, epic: :ingest, priority: 'High', updated: 3),
+        ticket('BLOOM-47', 'Calendar jumps a week when crossing daylight saving', REVIEW, epic: :calendar, type: 'Bug',
+                                                                                          priority: 'Highest', updated: 1, labels: ['customer-reported']),
+        ticket('BLOOM-33', 'Rate limit ingest per hive, not per org', REVIEW, epic: :ingest, priority: 'High',
+                                                                              updated: 3),
         ticket('BLOOM-35', 'Dead-letter queue for rejected pollen batches', TODO, epic: :ingest, updated: 50),
-        ticket('ROOT-9', 'Announce form errors to screen readers', DOING, epic: :a11y, type: 'Bug', updated: 8, labels: ['a11y']),
-        ticket('ROOT-11', 'Visible focus ring on the seed catalogue filters', TODO, epic: :a11y, priority: 'Low', updated: 70, labels: ['a11y']),
+        ticket('ROOT-9', 'Announce form errors to screen readers', DOING, epic: :a11y, type: 'Bug', updated: 8,
+                                                                          labels: ['a11y']),
+        ticket('ROOT-11', 'Visible focus ring on the seed catalog filters', TODO, epic: :a11y, priority: 'Low',
+                                                                                  updated: 70, labels: ['a11y']),
         ticket('BLOOM-52', 'Write the Postgres 17 upgrade runbook', TODO, type: 'Task', updated: 26, due: date_in(9))
       ]
     end
@@ -299,12 +365,18 @@ module Demo
 
     def sprint_tickets
       [
-        ticket('BLOOM-41', 'Keyboard shortcuts for moving plantings between weeks', DOING, epic: :calendar, type: 'Story', priority: 'High', updated: 2),
-        ticket('BLOOM-47', 'Calendar jumps a week when crossing daylight saving', REVIEW, epic: :calendar, type: 'Bug', priority: 'Highest', updated: 1),
-        ticket('BLOOM-45', 'Drag to copy a planting to next season', DOING, epic: :calendar, type: 'Story', who: :maple, updated: 6),
-        ticket('BLOOM-46', 'Print view for the planting calendar', TODO, epic: :calendar, who: :wren, priority: 'Low', updated: 30),
-        ticket('BLOOM-33', 'Rate limit ingest per hive, not per org', REVIEW, epic: :ingest, priority: 'High', updated: 3),
-        ticket('BLOOM-36', 'Backfill missing pollen counts from March', DOING, epic: :ingest, who: :juniper, updated: 9),
+        ticket('BLOOM-41', 'Keyboard shortcuts for moving plantings between weeks', DOING, epic: :calendar,
+                                                                                           type: 'Story', priority: 'High', updated: 2),
+        ticket('BLOOM-47', 'Calendar jumps a week when crossing daylight saving', REVIEW, epic: :calendar, type: 'Bug',
+                                                                                          priority: 'Highest', updated: 1),
+        ticket('BLOOM-45', 'Drag to copy a planting to next season', DOING, epic: :calendar, type: 'Story',
+                                                                            who: :maple, updated: 6),
+        ticket('BLOOM-46', 'Print view for the planting calendar', TODO, epic: :calendar, who: :wren, priority: 'Low',
+                                                                         updated: 30),
+        ticket('BLOOM-33', 'Rate limit ingest per hive, not per org', REVIEW, epic: :ingest, priority: 'High',
+                                                                              updated: 3),
+        ticket('BLOOM-36', 'Backfill missing pollen counts from March', DOING, epic: :ingest, who: :juniper,
+                                                                               updated: 9),
         ticket('BLOOM-38', 'Alert when ingest lag passes five minutes', TODO, epic: :ingest, who: :basil, updated: 40),
         ticket('BLOOM-29', 'Remove the legacy v1 ingest endpoint', DONE, epic: :ingest, who: :juniper, updated: 70),
         ticket('BLOOM-50', 'Bump the Rails security patch', TODO, who: nil, priority: 'High', updated: 12)
@@ -313,11 +385,13 @@ module Demo
 
     def roots_sprint_tickets
       [
-        ticket('ROOT-9', 'Announce form errors to screen readers', DOING, epic: :a11y, type: 'Bug', updated: 8, labels: ['a11y']),
-        ticket('ROOT-11', 'Visible focus ring on the seed catalogue filters', TODO, epic: :a11y, priority: 'Low', updated: 70),
+        ticket('ROOT-9', 'Announce form errors to screen readers', DOING, epic: :a11y, type: 'Bug', updated: 8,
+                                                                          labels: ['a11y']),
+        ticket('ROOT-11', 'Visible focus ring on the seed catalog filters', TODO, epic: :a11y, priority: 'Low',
+                                                                                  updated: 70),
         ticket('ROOT-12', 'Label the icon-only buttons in the toolbar', REVIEW, epic: :a11y, who: :wren, updated: 4),
         ticket('ROOT-14', 'Respect reduced motion on the bloom animation', DONE, epic: :a11y, who: :wren, updated: 30),
-        ticket('ROOT-15', 'Colour contrast pass on the dark theme', TODO, epic: :a11y, who: :maple, updated: 18)
+        ticket('ROOT-15', 'Color contrast pass on the dark theme', TODO, epic: :a11y, who: :maple, updated: 18)
       ].each_with_index.map { |ticket, position| ticket.merge(position:) }
     end
 
@@ -325,7 +399,8 @@ module Demo
       [
         ticket('BLOOM-52', 'Write the Postgres 17 upgrade runbook', TODO, updated: 26),
         ticket('BLOOM-55', 'Seasonal templates for new gardens', TODO, type: 'Story', who: :basil, updated: 50),
-        ticket('BLOOM-56', 'Export the planting calendar as iCal', TODO, epic: :calendar, type: 'Story', who: nil, updated: 90)
+        ticket('BLOOM-56', 'Export the planting calendar as iCal', TODO, epic: :calendar, type: 'Story', who: nil,
+                                                                         updated: 90)
       ].each_with_index.map { |ticket, position| ticket.merge(position:) }
     end
 

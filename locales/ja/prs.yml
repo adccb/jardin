@@ -1,0 +1,100 @@
+prs:
+  title: "PRのお庭"
+  tagline: "あなたが植えた小さなPRたち 🌱 と、その育ちぐあい"
+  main_label: "あなたのPR"
+  tabs_label: "対象のリポジトリ"
+  all_repos: "✨ すべてのリポジトリ"
+  states_label: "PRの状態"
+  search_placeholder: "🔍 タイトル、ブランチ、ラベルを検索…"
+  search_label: "PRを検索"
+  load_failed: "PRを読み込めなかったよ 😿 %{reason}"
+  repo_failed: "%{slug}: %{message}"
+  repo_count: "（%{total}件中%{selected}件）"
+  panel:
+    heading: "リポジトリ"
+    select_all: "すべてチェック"
+    clear: "すべて外す"
+    in_scope: "💝 対象"
+    nothing_picked: "まだ何も選んでないよ"
+    everything_else: "🌱 そのほか"
+    picked_all: "ぜんぶ選んだね！🎉"
+    hidden: "🙈 隠したもの"
+    hide_label: "%{name} をリストから隠す"
+    hide_title: "リストから隠す"
+    bring_back: "戻す 👀"
+    bring_back_label: "%{name} を戻す"
+    tucked_away: "%{name} をしまっておいたよ 🙈"
+  states:
+    open: "🌱 オープン"
+    merged: "💖 マージ済み"
+    closed: "🚪 クローズ済み"
+  groups:
+    mergeable:
+      title: "💖 マージできる"
+      hint: "承認済み、チェックもごきげん、コンフリクトなし"
+    needs_work:
+      title: "🛠️ 手直しが必要"
+      hint: "変更リクエスト、チェック失敗、またはコンフリクト"
+    waiting:
+      title: "👀 レビュー待ち"
+      hint: "あとはレビュアー（かCI）におまかせ"
+    drafts:
+      title: "🧸 ドラフト"
+      hint: "まだ準備中"
+  stats:
+    open:
+      one: "オープン"
+      other: "オープン"
+    ready:
+      one: "マージできる"
+      other: "マージできる"
+    needs_work:
+      one: "手直し"
+      other: "手直し"
+    waiting:
+      one: "待ち"
+      other: "待ち"
+    drafts:
+      one: "ドラフト"
+      other: "ドラフト"
+  shown:
+    open:
+      one: "オープンなPRを%{count}件表示中"
+      other: "オープンなPRを%{count}件表示中"
+    merged:
+      one: "マージ済みのPRを%{count}件表示中"
+      other: "マージ済みのPRを%{count}件表示中"
+    closed:
+      one: "クローズ済みのPRを%{count}件表示中"
+      other: "クローズ済みのPRを%{count}件表示中"
+  empty:
+    no_repos: "まずはリストからリポジトリをいくつか選んでね"
+    loading: "PRを集めてるよ…"
+    no_match: "その検索に合うものはないみたい"
+    open: "オープンなPRはないよ。おやつでも食べてきて！🍓"
+    merged: "まだマージ済みのものはないよ"
+    closed: "クローズ済みのPRはなし。すっきり！"
+  review:
+    changes_requested: "🛠️ %{names} から変更リクエスト"
+    approved: "✅ 承認済み"
+    approved_by: "✅ %{names} が承認"
+    waiting_on: "👀 %{names} の返事待ち"
+    comments_from: "💬 %{names} からコメント"
+    no_reviewers: "🫥 レビュアーはまだいないよ"
+  checks:
+    failing:
+      one: "❌ %{count}件失敗"
+      other: "❌ %{count}件失敗"
+    running:
+      one: "⏳ %{count}件実行中"
+      other: "⏳ %{count}件実行中"
+    passing:
+      one: "✅ %{count}件のチェック成功"
+      other: "✅ %{count}件のチェック成功"
+  badges:
+    conflicts: "⚔️ コンフリクト"
+    behind: "⬆️ ベースより遅れ"
+    merged: "💖 マージ済み（%{ago}）"
+    closed: "🚪 クローズ済み（%{ago}）"
+    draft: "🧸 ドラフト"
+    updated: "🌀 更新（%{ago}）"

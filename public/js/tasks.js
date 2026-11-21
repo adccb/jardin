@@ -138,7 +138,7 @@ function moveFocus(delta) {
   inputs[next].focus();
 }
 
-function neighbourOf(id) {
+function neighborOf(id) {
   const ids = focusables().map((input) => input.closest('.task-row').dataset.id);
   const index = ids.indexOf(id);
   return ids[index + 1] || ids[index - 1] || null;
@@ -171,7 +171,7 @@ async function toggleTask(id) {
   const row = [...document.querySelectorAll('.task-row')].find((r) => r.dataset.id === id);
   if (!task || !row) return;
   const finishing = !task.done_at;
-  const next = neighbourOf(id);
+  const next = neighborOf(id);
   const point = pointOf(row);
   row.querySelector('input').checked = finishing;
   row.classList.add('is-leaving');
@@ -229,7 +229,7 @@ function openRow(row) {
 }
 
 async function deleteTask(id) {
-  const next = neighbourOf(id);
+  const next = neighborOf(id);
   const result = await api('/api/tasks/delete', { id });
   if (!result.ok) return toast(failureMessage(result), 'error');
   ui.tasks = ui.tasks.filter((t) => t.id !== id);

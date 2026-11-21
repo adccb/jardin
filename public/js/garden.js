@@ -1,4 +1,5 @@
 // shared helpers for every garden page 🌸
+import { sidebarMenu } from './sidebar-menu.js';
 
 export const TOKEN = document.querySelector('meta[name="garden-token"]').content;
 export const $ = (selector) => document.querySelector(selector);
@@ -47,7 +48,7 @@ export const store = {
 export const esc = (value) => String(value ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 export const ageDays = (iso) => (Date.now() - Date.parse(iso)) / DAY;
 
-const relative = new Intl.RelativeTimeFormat(locale, { numeric: 'auto', style: locale === 'fr' ? 'long' : 'narrow' });
+const relative = new Intl.RelativeTimeFormat(locale, { numeric: 'auto', style: locale === 'en' ? 'narrow' : 'long' });
 
 export function ago(iso) {
   const days = ageDays(iso);
@@ -193,11 +194,40 @@ export function dialogItem(key) {
 export const toggle = (name, label, checked = false) =>
   `<label class="force-toggle"><input type="checkbox" name="${name}" ${checked ? 'checked' : ''}><span>${label}</span></label>`;
 
-/* ---------- language toggle ---------- */
+/* ---------- palette and language menus ---------- */
 
-document.getElementById('lang-toggle')?.addEventListener('click', (event) => {
-  document.cookie = `garden_locale=${event.currentTarget.dataset.locale}; path=/; max-age=31536000; samesite=strict`;
-  location.reload();
-});
+const remember = (name, value) => { document.cookie = `${name}=${value}; path=/; max-age=31536000; samesite=strict`; };
+
+function labelButton(button, label, emoji) {
+  button.dataset.label = label;
+  button.setAttribute('aria-label', label);
+  button.querySelector('span').textContent = emoji;
+}
+
+// Palettes switch in place; the cookie lets the server render the same palette next time.
+const paletteButton = document.getElementById('palette-button');
+if (paletteButton) {
+  sidebarMenu(paletteButton, {
+    onChoose: ({ dataset: { palette, name, emoji } }) => {
+      if (palette === document.documentElement.dataset.palette) return;
+      document.documentElement.dataset.palette = palette;
+      remember('garden_palette', palette);
+      labelButton(paletteButton, t('common.palette.current', { name }), emoji);
+      toast(t('common.palette.now_wearing', { name, emoji }));
+    },
+  });
+}
+
+// Every string on the page is in the old language, so a new language reloads.
+const languageButton = document.getElementById('language-button');
+if (languageButton) {
+  sidebarMenu(languageButton, {
+    onChoose: ({ dataset: { locale: chosen } }) => {
+      if (chosen === locale) return;
+      remember('garden_locale', chosen);
+      location.reload();
+    },
+  });
+}
 
 plantFloaties();

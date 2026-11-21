@@ -1,0 +1,91 @@
+tasks:
+  title: "タスクのお庭"
+  tagline: "自分と交わした小さな約束 💕"
+  new_task: "🌱 新しいタスク"
+  todo_label: "未着手"
+  done_label: "完了"
+  summary:
+    one: "やることがあと%{count}個 💕"
+    other: "やることがあと%{count}個 💕"
+  all_caught_up: "ぜんぶ片付いたよ 🌈"
+  empty_fresh_html: "まだなにもないよ<br><kbd>c</kbd> でタスクを植えよう"
+  empty_all_done_html: "ぜんぶ完了！！ちょっと外の空気でも吸ってきて 🌿<br><kbd>c</kbd> でタスクを植えよう"
+  done_empty: "まだ完了したものはないよ。きみならできる 💪"
+  planted: "%{ago}に植えた"
+  finished: "%{ago}に完了"
+  delete_label: "%{title}を削除"
+  hints:
+    new: "新規"
+    move: "移動"
+    done: "完了"
+    delete: "削除"
+    undo: "元に戻す"
+    done_list: "完了リスト"
+    help: "ヘルプ"
+  dialog:
+    title: "🌱 新しいタスクを植える"
+    label: "なにをする？"
+    placeholder: "なにをする？ ✨"
+    hint_html: "<kbd>enter</kbd> で植える · <kbd>esc</kbd> でキャンセル"
+    create: "植える 🌱"
+  toasts:
+    deleted: "ぽん 🫧 u で元に戻せるよ"
+    restored: "おかえり 💕"
+    nothing_to_undo: "元に戻すものはないよ 🌙"
+    load_failed: "タスクを読み込めなかった 😿 %{error}"
+  cheers:
+    - "いいね！！ 💖"
+    - "絶好調だね ✨"
+    - "ひとつ減ったね 🌷"
+    - "えらすぎる 🥹"
+    - "すっきり片付いた 🧹"
+    - "やったー！！ 🎉"
+  todoist:
+    heading: "Todoist · %{filter}"
+    tabs_label: "Todoistのリスト"
+    empty_tab: "このリストはいまからっぽ 🌈"
+    open_today: "Todoistを開く ↗️"
+    list_label: "Todoistの今日"
+    mine_heading: "あなたのぶん"
+    loading: "Todoistに聞いてるよ… 🍅"
+    empty: "Todoistに今日期限のものはないよ 🌈"
+    error: "Todoistを読み込めなかった 🥺 %{error}"
+    overdue: "🥀 期限切れ · %{date}"
+    at_time: "⏰ %{time}"
+    recurring: "🔁 くり返し"
+    done_badge: "Todoistで完了 🎉"
+    recurring_done: "🔁 また次回ね"
+    open_label: "%{title}をTodoistで開く"
+    no_delete: "これはTodoistのタスクだよ 🍅 削除はTodoistでしてね"
+    recurring_reopen: "🔁 これはTodoistでもう次の日付に移っちゃったよ"
+    reopened: "Todoistのリストに戻ったよ 💕"
+  help:
+    title: "⌨️ キーボードの魔法"
+    rows:
+      create:
+        keys_html: "<kbd>c</kbd>"
+        does: "新しいタスクを植える"
+      save:
+        keys_html: "<kbd>enter</kbd>"
+        does: "保存する（新しいタスクの入力欄で）"
+      move:
+        keys_html: "<kbd>↑</kbd> <kbd>↓</kbd> または <kbd>k</kbd> <kbd>j</kbd>"
+        does: "タスク間を移動"
+      toggle:
+        keys_html: "<kbd>x</kbd> または <kbd>space</kbd>"
+        does: "完了 / 未完了を切り替え"
+      delete:
+        keys_html: "<kbd>⌫</kbd> または <kbd>delete</kbd>"
+        does: "選択中のタスクを削除"
+      undo:
+        keys_html: "<kbd>u</kbd>"
+        does: "最後の削除を元に戻す"
+      done_list:
+        keys_html: "<kbd>d</kbd>"
+        does: "完了リストを開く / 閉じる"
+      close:
+        keys_html: "<kbd>esc</kbd>"
+        does: "開いている画面を閉じる"
+      open_todoist:
+        keys_html: "<kbd>o</kbd>"
+        does: "TodoistのタスクをTodoistで開く"

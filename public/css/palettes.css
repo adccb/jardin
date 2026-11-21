@@ -1,0 +1,190 @@
+/* Color palettes beyond fairyfloss (garden.css), picked with the sidebar switcher and kept in the garden_palette cookie.
+   Official swatches only. Each palette follows your system's light/dark. The dark sides meet WCAG AA; the light sides
+   keep colored text below AA, but where no swatch for a role reaches 3:1 that role's text uses the palette's gray,
+   with the color kept in its tint. */
+
+/* ---------- catppuccin: latte by day, mocha by night 🐈 ---------- */
+
+:root[data-palette="catppuccin"] {
+  color-scheme: light;
+  --bg: #e6e9ef;          /* mantle */
+  --glow-1: rgba(234, 118, 203, .22);
+  --glow-2: rgba(136, 57, 239, .14);
+  --glow-3: rgba(23, 146, 153, .1);
+  --dot: rgba(136, 57, 239, .07);
+  --surface: #eff1f5;     /* base */
+  --surface-2: #e6e9ef;   /* mantle */
+  --border: #bcc0cc;      /* surface1 */
+  --text: #4c4f69;        /* text */
+  --muted: #5c5f77;       /* subtext1 */
+  --pink: #8839ef;        /* mauve; pink is 2:1 */
+  --lavender: #1e66f5;    /* blue; lavender is 2.4:1 */
+  --mint: #179299;        /* teal; green is 2.8:1 */
+  --gold: #5c5f77;        /* subtext1; yellow and peach are under 3:1 */
+  --coral: #d20f39;       /* red */
+  --pink-soft: rgba(136, 57, 239, .1);
+  --lav-soft: rgba(30, 102, 245, .1);
+  --mint-soft: rgba(23, 146, 153, .07);
+  --gold-soft: rgba(223, 142, 29, .18);
+  --coral-soft: rgba(210, 15, 57, .1);
+  --on-accent: #eff1f5;   /* base */
+  --shadow: 0 6px 22px rgba(76, 79, 105, .12);
+  --shadow-hover: 0 10px 30px rgba(136, 57, 239, .18);
+  --tab-shadow: 0 -6px 18px rgba(136, 57, 239, .08);
+  --backdrop: rgba(76, 79, 105, .5);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-palette="catppuccin"] {
+    color-scheme: dark;
+    --bg: #1e1e2e;          /* base */
+    --glow-1: rgba(245, 194, 231, .12);
+    --glow-2: rgba(203, 166, 247, .14);
+    --glow-3: rgba(166, 227, 161, .08);
+    --dot: rgba(205, 214, 244, .05);
+    --surface: #181825;     /* mantle */
+    --surface-2: #313244;   /* surface0 */
+    --border: #45475a;      /* surface1 */
+    --text: #cdd6f4;        /* text */
+    --muted: #bac2de;       /* subtext1 */
+    --pink: #f5c2e7;        /* pink */
+    --lavender: #cba6f7;    /* mauve */
+    --mint: #a6e3a1;        /* green */
+    --gold: #f9e2af;        /* yellow */
+    --coral: #f38ba8;       /* red */
+    --pink-soft: rgba(245, 194, 231, .14);
+    --lav-soft: rgba(203, 166, 247, .14);
+    --mint-soft: rgba(166, 227, 161, .1);
+    --gold-soft: rgba(249, 226, 175, .1);
+    --coral-soft: rgba(243, 139, 168, .14);
+    --on-accent: #1e1e2e;   /* base */
+    --shadow: 0 6px 22px rgba(17, 17, 27, .5);
+    --shadow-hover: 0 10px 30px rgba(203, 166, 247, .2);
+    --tab-shadow: 0 -6px 18px rgba(17, 17, 27, .4);
+    --backdrop: rgba(17, 17, 27, .6);
+  }
+}
+
+/* ---------- rosé pine: dawn by day, main by night 🌹 ---------- */
+
+:root[data-palette="rose-pine"] {
+  color-scheme: light;
+  --bg: #faf4ed;          /* base */
+  --glow-1: rgba(215, 130, 126, .2);
+  --glow-2: rgba(144, 122, 169, .16);
+  --glow-3: rgba(86, 148, 159, .12);
+  --dot: rgba(70, 66, 97, .06);
+  --surface: #fffaf3;     /* surface */
+  --surface-2: #f2e9e1;   /* overlay */
+  --border: #dfdad9;      /* highlightMed */
+  --text: #464261;        /* text */
+  --muted: #464261;       /* text; subtle is under AA */
+  --pink: #b4637a;        /* love; rose is under 3:1 */
+  --lavender: #907aa9;    /* iris */
+  --mint: #286983;        /* pine */
+  --gold: #797593;        /* subtle; gold is under 3:1 */
+  --coral: #b4637a;       /* love */
+  --pink-soft: rgba(215, 130, 126, .14);
+  --lav-soft: rgba(144, 122, 169, .12);
+  --mint-soft: rgba(86, 148, 159, .12);
+  --gold-soft: rgba(234, 157, 52, .16);
+  --coral-soft: rgba(180, 99, 122, .1);
+  --on-accent: #fffaf3;   /* surface */
+  --shadow: 0 6px 22px rgba(70, 66, 97, .1);
+  --shadow-hover: 0 10px 30px rgba(180, 99, 122, .18);
+  --tab-shadow: 0 -6px 18px rgba(180, 99, 122, .08);
+  --backdrop: rgba(70, 66, 97, .45);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-palette="rose-pine"] {
+    color-scheme: dark;
+    --bg: #191724;          /* base */
+    --glow-1: rgba(235, 188, 186, .12);
+    --glow-2: rgba(196, 167, 231, .12);
+    --glow-3: rgba(156, 207, 216, .08);
+    --dot: rgba(224, 222, 244, .05);
+    --surface: #1f1d2e;     /* surface */
+    --surface-2: #26233a;   /* overlay */
+    --border: #403d52;      /* highlightMed */
+    --text: #e0def4;        /* text */
+    --muted: #908caa;       /* subtle */
+    --pink: #ebbcba;        /* rose */
+    --lavender: #c4a7e7;    /* iris */
+    --mint: #9ccfd8;        /* foam */
+    --gold: #f6c177;        /* gold */
+    --coral: #eb6f92;       /* love */
+    --pink-soft: rgba(235, 188, 186, .12);
+    --lav-soft: rgba(196, 167, 231, .12);
+    --mint-soft: rgba(156, 207, 216, .1);
+    --gold-soft: rgba(246, 193, 119, .1);
+    --coral-soft: rgba(235, 111, 146, .12);
+    --on-accent: #191724;   /* base */
+    --shadow: 0 6px 22px rgba(10, 9, 16, .45);
+    --shadow-hover: 0 10px 30px rgba(235, 188, 186, .16);
+    --tab-shadow: 0 -6px 18px rgba(10, 9, 16, .35);
+    --backdrop: rgba(10, 9, 16, .6);
+  }
+}
+
+/* ---------- everforest: light by day, dark by night, medium contrast 🌲 ---------- */
+
+:root[data-palette="everforest"] {
+  color-scheme: light;
+  --bg: #efebd4;          /* bg_dim */
+  --glow-1: rgba(141, 161, 1, .14);
+  --glow-2: rgba(58, 148, 197, .1);
+  --glow-3: rgba(53, 167, 124, .1);
+  --dot: rgba(92, 106, 114, .06);
+  --surface: #fdf6e3;     /* bg0 */
+  --surface-2: #f4f0d9;   /* bg1 */
+  --border: #e0dcc7;      /* bg4 */
+  --text: #5c6a72;        /* fg */
+  --muted: #5c6a72;       /* fg; the grays are under AA */
+  --pink: #5c6a72;        /* fg; no accent swatch reaches 3:1 here, so color lives in the bg_* tints */
+  --lavender: #708089;    /* statusline2 */
+  --mint: #5c6a72;        /* fg */
+  --gold: #5c6a72;        /* fg */
+  --coral: #5c6a72;       /* fg */
+  --pink-soft: #f0f1d2;   /* bg_green */
+  --lav-soft: #e9f0e9;    /* bg_blue */
+  --mint-soft: #f0f1d2;   /* bg_green */
+  --gold-soft: #faedcd;   /* bg_yellow */
+  --coral-soft: #fde3da;  /* bg_red */
+  --on-accent: #fdf6e3;   /* bg0 */
+  --shadow: 0 6px 22px rgba(92, 106, 114, .12);
+  --shadow-hover: 0 10px 30px rgba(141, 161, 1, .16);
+  --tab-shadow: 0 -6px 18px rgba(92, 106, 114, .08);
+  --backdrop: rgba(92, 106, 114, .45);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-palette="everforest"] {
+    color-scheme: dark;
+    --bg: #2d353b;          /* bg0 */
+    --glow-1: rgba(167, 192, 128, .12);
+    --glow-2: rgba(127, 187, 179, .1);
+    --glow-3: rgba(214, 153, 182, .08);
+    --dot: rgba(211, 198, 170, .05);
+    --surface: #232a2e;     /* bg_dim */
+    --surface-2: #2d353b;   /* bg0; grey2 is under AA on bg1 */
+    --border: #475258;      /* bg3 */
+    --text: #d3c6aa;        /* fg */
+    --muted: #9da9a0;       /* grey2 */
+    --pink: #a7c080;        /* green */
+    --lavender: #7fbbb3;    /* blue */
+    --mint: #83c092;        /* aqua */
+    --gold: #dbbc7f;        /* yellow */
+    --coral: #e67e80;       /* red */
+    --pink-soft: rgba(167, 192, 128, .1);
+    --lav-soft: rgba(127, 187, 179, .1);
+    --mint-soft: rgba(131, 192, 146, .1);
+    --gold-soft: rgba(219, 188, 127, .1);
+    --coral-soft: rgba(230, 126, 128, .1);
+    --on-accent: #232a2e;   /* bg_dim */
+    --shadow: 0 6px 22px rgba(15, 18, 20, .45);
+    --shadow-hover: 0 10px 30px rgba(167, 192, 128, .16);
+    --tab-shadow: 0 -6px 18px rgba(15, 18, 20, .35);
+    --backdrop: rgba(15, 18, 20, .6);
+  }
+}

@@ -1,0 +1,188 @@
+branches:
+  title: "ブランチのお庭"
+  tagline: "小さなgitブランチをお世話しよう ✨ しおれた子はチョキンとね 💕"
+  repo_label: "リポジトリ"
+  pr_note: "🫧 このリポジトリはGitHubにつながらなかったから、今回はPR情報なしだよ"
+  loading: "お庭に水やり中…"
+  no_repos: "ここにはまだgitリポジトリがないみたい"
+  select_visible: "表示中をすべて選択 ☑️"
+  select_item: "%{label}を選択"
+  tabs:
+    label: "花壇"
+    branches: "ブランチ"
+    worktrees: "ワークツリー"
+  stats:
+    branches:
+      one: "ブランチ"
+      other: "ブランチ"
+    worktrees:
+      one: "ワークツリー"
+      other: "ワークツリー"
+    merged:
+      one: "マージ済み"
+      other: "マージ済み"
+    gone:
+      one: "消えた"
+      other: "消えた"
+    stale:
+      one: "しおれた"
+      other: "しおれた"
+  toolbar:
+    branches:
+      filters_label: "ブランチを絞り込む"
+      search_placeholder: "🔍 ブランチとコミットを検索…"
+      search_label: "ブランチを検索"
+      sort_label: "ブランチを並べ替え"
+      shown:
+        one: "%{count}件中%{shown}件のブランチを表示"
+        other: "%{count}件中%{shown}件のブランチを表示"
+    worktrees:
+      filters_label: "ワークツリーを絞り込む"
+      search_placeholder: "🔍 ワークツリーとパスを検索…"
+      search_label: "ワークツリーを検索"
+      sort_label: "ワークツリーを並べ替え"
+      prune: "おばけを剪定 👻"
+      shown:
+        one: "%{count}件中%{shown}件のワークツリーを表示"
+        other: "%{count}件中%{shown}件のワークツリーを表示"
+  sort:
+    oldest: "🐌 古い順"
+    newest: "🐣 新しい順"
+    name: "🔤 名前順"
+    behind: "⬇️ 遅れが大きい順"
+    dirty: "🧺 未コミットが多い順"
+  filters:
+    branches:
+      merged: "💖 マージ済み"
+      gone: "👻 upstreamが消えた"
+      closed: "🚪 PRクローズ"
+      open: "🌱 オープンなPR"
+      stale: "🕸️ %{days}日以上しおれた"
+      worktree: "🏡 ワークツリー内"
+      nopr: "✨ PRなし"
+    worktrees:
+      merged: "💖 マージ済み"
+      closed: "🚪 PRクローズ"
+      open: "🌱 オープンなPR"
+      clean: "✨ きれい"
+      dirty: "🧺 未コミットの変更あり"
+      stale: "🕸️ %{days}日以上しおれた"
+      detached: "🎈 デタッチ"
+      ghost: "👻 おばけ"
+  empty:
+    tidy: "お庭はすっかりきれいだよ！"
+    branches: "ここには何も咲いてないよ… 別のフィルターを試してみてね"
+    worktrees: "一致するワークツリーがないよ… 別のフィルターを試してみてね"
+  lock:
+    default: "デフォルトブランチだから、この子は残るよ 👑"
+    worktree: "%{path} のワークツリーに住んでるよ"
+    current: "いまチェックアウト中"
+  badges:
+    pr_merged: "💖 マージ済み #%{number}"
+    pr_open: "🌱 オープン #%{number}"
+    pr_closed: "🚪 クローズ #%{number}"
+    default: "👑 デフォルト"
+    checked_out: "📍 チェックアウト中"
+    merged_in_git: "🧁 gitでマージ済み"
+    upstream_gone: "👻 upstreamが消えた"
+    local_only: "🏠 ローカルのみ"
+    ahead_behind: "%{base}より%{ahead}進んで%{behind}遅れ"
+    main_checkout: "🏰 メインのチェックアウト"
+    folder_gone: "🍂 フォルダが消えた"
+    unsaved:
+      one: "🧺 未コミット %{count}件"
+      other: "🧺 未コミット %{count}件"
+    clean: "✨ きれい"
+    prunable: "👻 剪定できる"
+    locked: "🔐 ロック中"
+  card:
+    detached_at: "🎈 %{head} でデタッチ"
+    delete: "削除 🗑️"
+    remove: "片付ける 🧹"
+    remove_with_branch: "片付けてブランチも削除 🗑️"
+    ghost_hint: "この子は「おばけを剪定 👻」で片付けてね"
+  bulkbar:
+    picked:
+      one: "%{count}件選択中"
+      other: "%{count}件選択中"
+    clear: "選択解除"
+    tidy_branches:
+      one: "%{count}件のブランチをお片付け ✨"
+      other: "%{count}件のブランチをお片付け ✨"
+    tidy_worktrees:
+      one: "%{count}件のワークツリーをお片付け ✨"
+      other: "%{count}件のワークツリーをお片付け ✨"
+  goodbyes:
+    - "ばいばい、%{name} 👋💕"
+    - "%{name}は堆肥になったよ 🌱"
+    - "チョキチョキ！%{name}はいなくなったよ ✂️✨"
+    - "%{name}は飛んでいっちゃった 🦋"
+    - "%{name}をお片付けしたよ 🧹💖"
+  toasts:
+    load_failed: "%{repo}を読み込めなかった 😿 %{error}"
+    delete_failed: "%{name}を削除できなかった 😿 %{error}"
+    worktree_removed: "ワークツリー %{path} はお引っ越ししたよ 🧳💕"
+    remove_failed: "ワークツリーを片付けられなかった 😿 %{error}"
+    pruned: "剪定したよ 👻 %{output}"
+    no_ghosts: "おばけはもういないよ 👻✨"
+    prune_failed: "剪定に失敗しちゃった 😿 %{error}"
+  dialogs:
+    git_says: "gitからのメッセージ："
+    force_delete:
+      title: "%{name}はgitではマージされてないよ 🥺"
+      squashed: "でもPRはスカッシュマージ済みだから 💖 強制削除してもたぶん全然大丈夫。"
+      unmerged: "強制削除すると、このブランチにしかないコミットは消えちゃうよ。ほんとにいいの？ 🥺"
+      confirm: "それでも強制削除 💥"
+    remove_worktree:
+      title: "このワークツリーを片付ける？ 🧹"
+      title_with_branch: "ワークツリーとブランチを片付ける？ 🗑️"
+      will_run: "実行するコマンド："
+      safe: "未コミットの変更があればgitが止めてくれるから、泣かなくて大丈夫 🛡️"
+      confirm: "うん、片付けて ✨"
+    force_remove:
+      title: "gitにダメって言われちゃった 🙅‍♀️"
+      loss_dirty_html:
+        one: "<b>%{count}件の未コミットの変更</b>が永遠に消えちゃうよ 😱"
+        other: "<b>%{count}件の未コミットの変更</b>が永遠に消えちゃうよ 😱"
+      loss_clean: "強制的に片付けるよ。"
+      confirm: "強制的に片付ける 💥"
+    prune:
+      title: "おばけワークツリーを剪定する？ 👻"
+      body_html: "%{command} を実行して、フォルダがもう消えたワークツリーを忘れるよ。"
+      confirm: "ばいばい、おばけ 👻"
+    bulk_branches:
+      title:
+        one: "%{count}件のブランチをお片付けする？ ✨"
+        other: "%{count}件のブランチをお片付けする？ ✨"
+      intro_html: "これらのローカルブランチに %{command} を実行するよ："
+      force_html: "強制削除（%{flag}）。スカッシュマージされたブランチには必要 💖 でもマージされてないコミットは消えちゃうよ"
+      confirm: "お片付けする ✨"
+      retry:
+        one: "残った%{count}件を強制削除 💥"
+        other: "残った%{count}件を強制削除 💥"
+    bulk_worktrees:
+      title:
+        one: "%{count}件のワークツリーをお片付けする？ ✨"
+        other: "%{count}件のワークツリーをお片付けする？ ✨"
+      intro_html: "これらに %{command} を実行するよ："
+      also_branches: "ブランチも削除する 🗑️"
+      force_branches_html: "それらのブランチを強制削除（%{flag}）。スカッシュマージされたものには必要 💖"
+      force_worktrees:
+        one: "未コミットの変更がある%{count}件も強制的に片付ける 😱 永遠に消えちゃうよ"
+        other: "未コミットの変更がある%{count}件も強制的に片付ける 😱 永遠に消えちゃうよ"
+      confirm: "お片付けする ✨"
+      retry:
+        one: "残った%{count}件を強制的に片付ける 💥（未コミットの変更は捨てちゃうよ）"
+        other: "残った%{count}件を強制的に片付ける 💥（未コミットの変更は捨てちゃうよ）"
+      branch_stayed: "ワークツリーは片付けたけど 🧹 ブランチは残ったよ：%{error}"
+    progress:
+      tidying: "お片付け中… 🧹"
+      force_tidying: "強制お片付け中… 💥"
+      working: "作業中… 🪄"
+      some_stayed:
+        one: "%{tidied}件お片付けしたけど、%{count}件は残っちゃった 🥺"
+        other: "%{tidied}件お片付けしたけど、%{count}件は残っちゃった 🥺"
+      all_tidied:
+        one: "%{count}件ぜんぶお片付けできたよ！🎉💖"
+        other: "%{count}件ぜんぶお片付けできたよ！🎉💖"
+      done: "ぜんぶ終わったよ 💕"

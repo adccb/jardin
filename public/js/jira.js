@@ -92,7 +92,7 @@ function sprintItem(sprint) {
   return { id: sprint.id, name: sprint.name, detail: [upcoming, dates].filter(Boolean).join(' · '), tally: sprint.mine };
 }
 
-// Ticking, unticking or hiding a sprint: load new tabs, and leave a tab that's gone.
+// Checking, unchecking or hiding a sprint: load new tabs, and leave a tab that's gone.
 function sprintScopeChanged() {
   if (!views().includes(ui.view)) ui.view = MINE;
   views().filter((view) => !ui.results[view]).forEach((view) => loadView(view));

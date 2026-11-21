@@ -38,7 +38,7 @@ tasks:
     - "look at you go ✨"
     - "one less thing 🌷"
     - "so proud of you 🥹"
-    - "done and dusted 🧹"
+    - "all wrapped up 🧹"
     - "yay!! 🎉"
   todoist:
     heading: "todoist · %{filter}"

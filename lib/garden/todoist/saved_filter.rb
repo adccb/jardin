@@ -6,7 +6,7 @@ module Garden
     # The API refuses commas (several lists in one filter), so each comma part becomes its own query.
     class SavedFilter
       # Todoist shows the inbox under a translated name, but the API only knows its real name.
-      LOCALIZED_INBOX = { 'fr' => 'boite de reception' }.freeze
+      LOCALIZED_INBOX = { 'fr' => 'boite de reception', 'es' => 'bandeja de entrada', 'ja' => 'インボックス' }.freeze
 
       attr_reader :id, :name
 
@@ -49,7 +49,7 @@ module Garden
       end
 
       def with_real_inbox(part, lang, inbox_name)
-        localized = LOCALIZED_INBOX[lang]
+        localized = LOCALIZED_INBOX[lang]&.then { self.class.normalize(_1) }
         return part unless localized && inbox_name
 
         part.gsub(/(##?)([^&|()!,]*[^&|()!,\s])/) do |ref|

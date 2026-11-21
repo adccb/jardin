@@ -1,0 +1,59 @@
+reviews:
+  title: "レビューのお庭"
+  tagline: "あなたに見てほしい小さなPRたち 👀 が、遊びに来てくれるのを待ってるよ"
+  main_label: "あなたのレビューを待っているPR"
+  search_placeholder: "🔍 タイトル、リポジトリ、作成者、ラベルを検索…"
+  search_label: "レビュー依頼を検索"
+  load_failed: "レビュー依頼を読み込めなかったよ 😿 %{reason}"
+  panel:
+    heading: "リポジトリ"
+    loading: "レビュー待ちの列をのぞいてるよ…"
+    none: "あなたを待ってるリポジトリはないよ 🌙"
+    select_all: "すべてチェック"
+    clear: "すべて外す"
+    count: "（%{total}件中%{selected}件）"
+    in_scope: "💝 表示中"
+    nothing_picked: "いまは何もチェックしてないよ"
+    filtered_out: "🌱 絞り込みで除外"
+    none_filtered: "ぜんぶのリポジトリを表示中！🎉"
+    hidden: "🙈 隠したもの"
+    hide_label: "%{name} をリストから隠す"
+    hide_title: "リストから隠す"
+    bring_back: "戻す 👀"
+    bring_back_label: "%{name} を戻す"
+    tucked_away: "%{name} をしまっておいたよ 🙈"
+  tabs_label: "依頼した相手"
+  tabs:
+    you:
+      title: "あなたに依頼"
+      hint: "名指しでレビューを頼まれたもの"
+    team:
+      title: "チームに依頼"
+      hint: "あなたがいるチーム経由で頼まれたもの"
+  stats:
+    waiting:
+      one: "待ち"
+      other: "待ち"
+    you:
+      one: "あなた宛て"
+      other: "あなた宛て"
+    team:
+      one: "チーム宛て"
+      other: "チーム宛て"
+  shown:
+    one: "レビュー依頼を%{count}件表示中"
+    other: "レビュー依頼を%{count}件表示中"
+  empty:
+    loading: "レビュー待ちの列をのぞいてるよ…"
+    no_match: "その検索に合うものはないみたい"
+    all_filtered: "依頼のあるリポジトリがぜんぶ除外されてるよ。リストでどれかチェックしてね 🗂️"
+    you: "名指しの依頼はないよ。チームのタブものぞいてみて 👥"
+    team: "チームへの依頼は来てないよ 🌿"
+    none: "だれもあなたを待ってないよ。受信箱ゼロ！🍓"
+  badges:
+    draft: "🧸 ドラフト"
+    comments:
+      one: "💬 コメント%{count}件"
+      other: "💬 コメント%{count}件"
+    opened: "🌱 オープン（%{ago}）"
+    updated: "🌀 更新（%{ago}）"

@@ -37,7 +37,7 @@ module Garden
       return api(request, path) if path.start_with?('/api/')
 
       page = @tools.find { |tool| tool.path == path }
-      page && request.method == 'GET' ? html(@layout.render(page, locale)) : not_found
+      page && request.method == 'GET' ? html(@layout.render(page, locale, Palette.for(request))) : not_found
     end
 
     def api(request, path)

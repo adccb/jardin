@@ -165,7 +165,7 @@ sequenceDiagram
    | 👀 `waiting` | everything else (review required, checks still running) |
 
    GitHub's own `mergeStateStatus` is often `UNKNOWN` or `BLOCKED` (branch protection) even when a PR is good to go, so garden judges "mergeable" from approval + checks + conflicts instead.
-5. **Drawing.** `prs.js` keeps results per state in `ui.results[state]` (a `Map` of slug → repo result), builds the tabs (✨ all + one per ticked repo), and renders the four sections. Merged/closed are fetched the first time you click those chips, then reused.
+5. **Drawing.** `prs.js` keeps results per state in `ui.results[state]` (a `Map` of slug → repo result), builds the tabs (✨ all + one per checked repo), and renders the four sections. Merged/closed are fetched the first time you click those chips, then reused.
 
 ---
 
@@ -228,7 +228,7 @@ sequenceDiagram
 6. **Everything is argv, never a shell string**: `Open3.capture3("git", "-C", repo, "branch", "-d", name)` — a branch name can't smuggle in shell commands.
 7. **Local only**: nothing ever pushes, deletes remote branches, or writes to GitHub.
 
-**Bulk tidy** (branches or worktrees) is the same calls in a loop, one at a time, with a ✅/❌ per item and a "force the N stragglers 💥" retry for anything git refused. For worktrees with "also delete their branches" ticked, it's `remove-worktree` then `delete-branch` per item; if the worktree went but the branch stayed, the retry only touches the branch.
+**Bulk tidy** (branches or worktrees) is the same calls in a loop, one at a time, with a ✅/❌ per item and a "force the N stragglers 💥" retry for anything git refused. For worktrees with "also delete their branches" checked, it's `remove-worktree` then `delete-branch` per item; if the worktree went but the branch stayed, the retry only touches the branch.
 
 ---
 
@@ -240,7 +240,7 @@ sequenceDiagram
 2. **Client** (`lib/garden/jira/client.rb`): `Net::HTTP` with basic auth. It calls `/rest/api/3/myself` first, because Jira answers bad credentials on search as an *anonymous* user with zero results instead of an error.
 3. **Search**: `POST /rest/api/3/search/jql` with `assignee = currentUser() AND statusCategory != Done` (or "… OR resolved >= -30d" with the done toggle), paging up to 500. Cached 60 s.
 4. **Ticket** (`lib/garden/jira/ticket.rb`) flattens each issue for the cards, including its assignee, whether it's yours, and its parent's key, summary, type and status.
-4½. **Sprint tabs**: `GET /api/jira/sprints` finds the Sprint custom field (`/rest/api/3/field`, by its `gh-sprint` schema type), searches `assignee = currentUser() AND sprint in openSprints()` for just that field, and returns each non-closed sprint with how many of your tickets it holds. The 🏃 side panel lists them (`public/js/scope-panel.js`, shared with the review page) and each ticked one becomes a tab. `GET /api/jira/tickets?view=sprint&sprint=<id>` reads the sprint (`/rest/agile/1.0/sprint/<id>`) and searches `sprint = <id> ORDER BY Rank ASC`, keeping that board order. In the browser, every tab is grouped into horizontal swimlanes by parent ticket (parentless tickets last); clicking a lane's heading opens the parent in the drawer.
+4½. **Sprint tabs**: `GET /api/jira/sprints` finds the Sprint custom field (`/rest/api/3/field`, by its `gh-sprint` schema type), searches `assignee = currentUser() AND sprint in openSprints()` for just that field, and returns each non-closed sprint with how many of your tickets it holds. The 🏃 side panel lists them (`public/js/scope-panel.js`, shared with the review page) and each checked one becomes a tab. `GET /api/jira/tickets?view=sprint&sprint=<id>` reads the sprint (`/rest/agile/1.0/sprint/<id>`) and searches `sprint = <id> ORDER BY Rank ASC`, keeping that board order. In the browser, every tab is grouped into horizontal swimlanes by parent ticket (parentless tickets last); clicking a lane's heading opens the parent in the drawer.
 5. **Opening a ticket**: `GET /api/jira/ticket?key=KOL-1447` (key format checked) → the issue with its description, which **`Jira::Adf`** (`lib/garden/jira/adf.rb`) converts from Atlassian Document Format to HTML — every string escaped, only `http(s)` links kept — before the drawer shows it.
 
 ---
@@ -256,22 +256,23 @@ The only page that keeps its own data. `tasks.js` → `/api/tasks/{list,create,u
 
 ---
 
-**Your Todoist filter.** If `TODOIST_TOKEN_REF` is set, `Tasks::TodoistToday` (`lib/garden/tasks/todoist_today.rb`) asks Todoist's sync endpoint for your saved filters and account language, and finds the one named by `TODOIST_FILTER` (default `aujourd'hui`; matching ignores case, emoji and apostrophe style). `Todoist::SavedFilter` (`lib/garden/todoist/saved_filter.rb`) splits its query on top-level commas, because the API refuses them, and swaps the French inbox name ("Boîte de réception") for your inbox's real name, which is the only one the API knows. Each part is fetched separately with `GET /api/v1/tasks/filter?query=…&lang=<your language>` and becomes its own tab. Tasks are flattened by `Todoist::Task` (Todoist's priority 4 is its red "p1") and sorted overdue first, then by priority and time. The filter setup is cached 10 min, task lists 30 s. Ticking calls `POST /api/v1/tasks/:id/close` and unticking `…/reopen`; recurring tasks can't be unticked because Todoist has already moved them on. The token comes from `op read` via `Garden::Secrets` on first use and lives only in memory.
+**Your Todoist filter.** If `TODOIST_TOKEN_REF` is set, `Tasks::TodoistToday` (`lib/garden/tasks/todoist_today.rb`) asks Todoist's sync endpoint for your saved filters and account language, and finds the one named by `TODOIST_FILTER` (default `aujourd'hui`; matching ignores case, emoji and apostrophe style). `Todoist::SavedFilter` (`lib/garden/todoist/saved_filter.rb`) splits its query on top-level commas, because the API refuses them, and swaps the French, Spanish or Japanese inbox name ("Boîte de réception", "Bandeja de entrada", "インボックス") for your inbox's real name, which is the only one the API knows. Each part is fetched separately with `GET /api/v1/tasks/filter?query=…&lang=<your language>` and becomes its own tab. Tasks are flattened by `Todoist::Task` (Todoist's priority 4 is its red "p1") and sorted overdue first, then by priority and time. The filter setup is cached 10 min, task lists 30 s. Checking off calls `POST /api/v1/tasks/:id/close` and unchecking `…/reopen`; recurring tasks can't be unchecked because Todoist has already moved them on. The token comes from `op read` via `Garden::Secrets` on first use and lives only in memory.
 
 ---
 
-## 7¾. English and French
+## 7¾. English, French, Spanish and Japanese
 
-Every word you see comes from `locales/<lang>/<area>.yml` (`common`, `errors`, `prs`, `tasks`, `branches`, `jira`).
+Every word you see comes from `locales/<lang>/<area>.yml` (`common`, `errors`, `prs`, `reviews`, `tasks`, `branches`, `jira`).
 
-- **Picking a language** (`Garden::Locale`, in `lib/garden/i18n.rb`): the `garden_locale` cookie wins, then your browser's `Accept-Language`, then English. The 🇫🇷 / 🇬🇧 button at the bottom of the sidebar sets the cookie and reloads.
+- **Picking a language** (`Garden::Locale`, in `lib/garden/i18n.rb`): the `garden_locale` cookie wins, then your browser's `Accept-Language`, then English. The language menu (🍔 English, 🥐 French, 🌽 Spanish, 🍙 Japanese) at the bottom of the sidebar sets the cookie and reloads.
+- **Picking a palette** (`Garden::Palette`, in `lib/garden/palette.rb`): the `garden_palette` cookie, else fairyfloss. The layout puts it on `<html data-palette=…>`, so `public/css/palettes.css` recolors the page before it paints. The color menu above the language one sets the cookie and swaps `data-palette` in place, no reload. Both menus share `public/js/sidebar-menu.js`.
 - **On the server**, `Garden::I18n.t(locale, key, **vars)` looks keys up (falling back to English, then to the key itself with a `🌐 missing translation` warning in the terminal) and fills `%{vars}`. YAML files reload automatically when they change.
 - **In templates**, `pages/*.html.erb` render through `Garden::View`, so they write `<%= t('tasks.new_task') %>`. Text is HTML-escaped unless the key ends in `_html` (used for strings with `<kbd>` in them).
-- **In the browser**, the layout embeds that page's strings as JSON (`<script id="garden-i18n">`). `garden.js` exposes `t(key, vars)`, `tp(key, count)` for plurals via `Intl.PluralRules` (French counts 0 as singular), `pick(key)` for random cheers, plus `ago()` and `formatDate()` built on `Intl` so times and dates read naturally in each language.
+- **In the browser**, the layout embeds that page's strings as JSON (`<script id="garden-i18n">`). `garden.js` exposes `t(key, vars)`, `tp(key, count)` for plurals via `Intl.PluralRules` (French counts 0 as singular; Japanese has no singular), `pick(key)` for random cheers, plus `ago()` and `formatDate()` built on `Intl` so times and dates read naturally in each language.
 - **Errors**: server code raises `Refusal.new('errors.task_empty')` (or `Jira::Error.new(…)`), and `App` translates it into the requester's language just before replying. Results that are cached for everyone (like a repo `gh` can't see) carry an `error_key` instead, which the browser translates.
 - **Not translated on purpose**: your content (task text, PR titles, Jira data) and git's own messages.
 
-**Adding a string:** put the same key in both `locales/en/<area>.yml` and `locales/fr/<area>.yml`, then use `t('<area>.<key>')` in the template or JS. Reload the page; no restart needed.
+**Adding a string:** put the same key in `locales/<lang>/<area>.yml` for every language (`en`, `fr`, `es`, `ja`), then use `t('<area>.<key>')` in the template or JS. Reload the page; no restart needed.
 
 ---
 
@@ -311,7 +312,7 @@ pages/
   layout.html.erb              sidebar + dialog + toasts around every page
   <slug>.html.erb               each page's middle bit (prs, reviews, tasks, branches, jira)
 locales/
-  en/*.yml, fr/*.yml           every word on every page, per area
+  en/ fr/ es/ ja/ *.yml        every word on every page, per area
 public/
   css/garden.css               palette (light/dark), cards, chips, tabs, sidebar, animations
   css/<tool>.css               page-specific styles

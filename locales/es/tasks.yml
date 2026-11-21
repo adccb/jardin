@@ -1,0 +1,91 @@
+tasks:
+  title: "jardín de tareas"
+  tagline: "las cositas que te prometiste 💕"
+  new_task: "🌱 tarea nueva"
+  todo_label: "por hacer"
+  done_label: "hechas"
+  summary:
+    one: "%{count} cosita por hacer 💕"
+    other: "%{count} cositas por hacer 💕"
+  all_caught_up: "todo al día 🌈"
+  empty_fresh_html: "nada pendiente por ahora<br>presiona <kbd>c</kbd> para plantar una tarea"
+  empty_all_done_html: "¡¡todo listo!! sal a tomar aire 🌿<br>presiona <kbd>c</kbd> para plantar una tarea"
+  done_empty: "nada hecho todavía. tú puedes 💪"
+  planted: "plantada %{ago}"
+  finished: "hecha %{ago}"
+  delete_label: "borrar %{title}"
+  hints:
+    new: "nueva"
+    move: "mover"
+    done: "hecha"
+    delete: "borrar"
+    undo: "deshacer"
+    done_list: "hechas"
+    help: "ayuda"
+  dialog:
+    title: "🌱 plantar una tarea nueva"
+    label: "¿qué tienes que hacer?"
+    placeholder: "¿qué tienes que hacer? ✨"
+    hint_html: "<kbd>enter</kbd> para plantar · <kbd>esc</kbd> para cancelar"
+    create: "¡a plantar! 🌱"
+  toasts:
+    deleted: "puf 🫧 presiona u para deshacer"
+    restored: "¡de vuelta! 💕"
+    nothing_to_undo: "nada que deshacer 🌙"
+    load_failed: "no se pudieron cargar tus tareas 😿 %{error}"
+  cheers:
+    - "¡¡bien!! 💖"
+    - "¡pero mírate! ✨"
+    - "una cosa menos 🌷"
+    - "qué orgullo 🥹"
+    - "listo y ordenado 🧹"
+    - "¡¡yupi!! 🎉"
+  todoist:
+    heading: "todoist · %{filter}"
+    tabs_label: "listas de todoist"
+    empty_tab: "nada en esta lista por ahora 🌈"
+    open_today: "abrir todoist ↗️"
+    list_label: "hoy en todoist"
+    mine_heading: "solo para ti"
+    loading: "preguntándole a todoist… 🍅"
+    empty: "nada vence hoy en todoist 🌈"
+    error: "no se pudo cargar todoist 🥺 %{error}"
+    overdue: "🥀 atrasada · %{date}"
+    at_time: "⏰ %{time}"
+    recurring: "🔁 se repite"
+    done_badge: "hecha en todoist 🎉"
+    recurring_done: "🔁 nos vemos la próxima"
+    open_label: "abrir %{title} en todoist"
+    no_delete: "esa vive en todoist 🍅 bórrala allá"
+    recurring_reopen: "🔁 esa ya pasó a su próxima fecha en todoist"
+    reopened: "de vuelta en tu lista de todoist 💕"
+  help:
+    title: "⌨️ magia del teclado"
+    rows:
+      create:
+        keys_html: "<kbd>c</kbd>"
+        does: "plantar una tarea nueva"
+      save:
+        keys_html: "<kbd>enter</kbd>"
+        does: "guardarla (en el cuadro de tarea nueva)"
+      move:
+        keys_html: "<kbd>↑</kbd> <kbd>↓</kbd> o <kbd>k</kbd> <kbd>j</kbd>"
+        does: "moverte entre tareas"
+      toggle:
+        keys_html: "<kbd>x</kbd> o <kbd>espacio</kbd>"
+        does: "marcar como hecha / no hecha"
+      delete:
+        keys_html: "<kbd>⌫</kbd> o <kbd>supr</kbd>"
+        does: "borrar la tarea seleccionada"
+      undo:
+        keys_html: "<kbd>u</kbd>"
+        does: "deshacer el último borrado"
+      done_list:
+        keys_html: "<kbd>d</kbd>"
+        does: "abrir / cerrar la lista de hechas"
+      close:
+        keys_html: "<kbd>esc</kbd>"
+        does: "cerrar cualquier cuadro"
+      open_todoist:
+        keys_html: "<kbd>o</kbd>"
+        does: "abrir una tarea de todoist en todoist"

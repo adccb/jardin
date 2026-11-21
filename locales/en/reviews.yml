@@ -13,7 +13,7 @@ reviews:
     clear: "clear"
     count: "(%{selected} of %{total})"
     in_scope: "💝 showing"
-    nothing_picked: "nothing ticked right now"
+    nothing_picked: "nothing checked right now"
     filtered_out: "🌱 filtered out"
     none_filtered: "showing every repo! 🎉"
     hidden: "🙈 hidden"
@@ -46,7 +46,7 @@ reviews:
   empty:
     loading: "peeking at your review queue…"
     no_match: "nothing matches that search"
-    all_filtered: "every repo with a request is filtered out. tick one in the list 🗂️"
+    all_filtered: "every repo with a request is filtered out. check one in the list 🗂️"
     you: "nobody asked you by name. peek at your team tab 👥"
     team: "no team requests waiting 🌿"
     none: "nobody's waiting on you. inbox zero! 🍓"

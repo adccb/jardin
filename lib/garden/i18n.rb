@@ -5,7 +5,7 @@ require 'yaml'
 module Garden
   # Translations from locales/<locale>/*.yml, reloaded whenever a file changes.
   module I18n
-    LOCALES = %w[en fr].freeze
+    LOCALES = %w[en fr es ja].freeze
     DEFAULT = 'en'
     DIR = File.join(ROOT, 'locales')
 
@@ -20,7 +20,7 @@ module Garden
         interpolate(value, vars.merge(count:))
       end
 
-      # The strings a page's JS needs, with English filling any French gaps.
+      # The strings a page's JS needs, with English filling any gaps.
       def bundle(locale, namespaces)
         namespaces.to_h { |ns| [ns, deep_merge(strings(DEFAULT)[ns] || {}, strings(locale)[ns] || {})] }
       end
@@ -52,8 +52,13 @@ module Garden
         key
       end
 
+      # French counts 0 and 1 as singular; Japanese has no singular form at all.
       def plural(forms, locale, count)
-        one = locale == 'fr' ? count < 2 : count == 1
+        one = case locale
+              when 'fr' then count < 2
+              when 'ja' then false
+              else count == 1
+              end
         forms[one ? 'one' : 'other'] || forms['other']
       end
 

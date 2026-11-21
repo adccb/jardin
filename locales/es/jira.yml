@@ -1,0 +1,80 @@
+jira:
+  title: "jardín de tickets"
+  tagline: "todo lo que tienes en el plato, con chispitas 🍩"
+  include_done: "incluir hechos (últimos 30 días)"
+  tickets_label: "tus tickets"
+  filter_label: "filtrar por estado"
+  search_placeholder: "🔍 busca claves, resúmenes, etiquetas…"
+  search_label: "buscar tickets"
+  sort_label: "ordenar tickets"
+  sort:
+    updated: "🌀 actualizados hace poco"
+    priority: "🔥 prioridad"
+    created: "🐣 más nuevos"
+    key: "🔤 por clave"
+  stats:
+    tickets:
+      one: "ticket"
+      other: "tickets"
+    to_do: "por hacer"
+    in_progress: "en curso"
+    high_priority: "prioridad alta"
+    done:
+      one: "hecho (30 d)"
+      other: "hechos (30 d)"
+  shown:
+    one: "mostrando %{shown} de %{count} ticket"
+    other: "mostrando %{shown} de %{count} tickets"
+  due: "⏰ vence %{date}"
+  updated: "🌀 actualizado %{ago}"
+  created: "🐣 creado %{ago}"
+  loading: "preparando tus tickets…"
+  empty:
+    nothing_assigned: "no tienes nada asignado. ¡sal a tomar aire! 🌿"
+    no_match: "ningún ticket coincide… prueba otro filtro"
+  drawer:
+    open_in_jira: "abrir en jira ↗️"
+    fetching: "trayendo el chisme…"
+    no_description: "sin descripción… qué misterio"
+  toast:
+    fetching_done: "trayendo también tus victorias ✅💕"
+  tabs:
+    label: "vistas de tickets"
+    mine: "asignados a mí"
+  lanes:
+    no_parent: "🌱 sin padre"
+    open_parent: "abrir %{key}"
+  sprint:
+    info: "🏃 %{name} · %{start} → %{end}"
+    empty: "este sprint está vacío… sospechosamente tranquilo 🌙"
+    show_done: "mostrar hechos"
+    all_done: "todo lo que queda en este sprint está hecho 🎉 marca “mostrar hechos” para verlo"
+  you: "💖 tú"
+  unassigned: "🫥 sin asignar"
+  board_order: "📋 orden del tablero"
+  stats_sprint:
+    done:
+      one: "hecho"
+      other: "hechos"
+    yours: "tuyos"
+  assignees:
+    label: "filtrar por responsable"
+    everyone: "👥 todos"
+  panel:
+    heading: "sprints"
+    select_all: "marcar todo"
+    clear: "desmarcar todo"
+    count: "(%{selected} de %{total})"
+    loading: "buscando tus sprints…"
+    none: "ninguno de tus tickets está en un sprint abierto por ahora 🏖️"
+    upcoming: "🔮 próximos"
+    in_scope: "💝 con pestaña"
+    nothing_picked: "nada marcado por ahora"
+    filtered_out: "🌱 sin pestaña"
+    none_filtered: "¡todos los sprints tienen pestaña! 🎉"
+    hidden: "🙈 ocultos"
+    hide_label: "ocultar %{name} de esta lista"
+    hide_title: "ocultar de esta lista"
+    bring_back: "traer de vuelta 👀"
+    bring_back_label: "traer de vuelta %{name}"
+    tucked_away: "%{name} guardado 🙈"

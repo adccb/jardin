@@ -1,11 +1,11 @@
 # Demo garden: the real pages and code, with every API answering from invented data.
-# usage: ruby demo_garden.rb [port]   then open http://localhost:4750/prs?lang=fr&scene=02-pr-garden-merged
+# usage: ruby demo_garden.rb [port]   then open http://localhost:4750/prs?lang=fr&palette=rose-pine&scene=02-pr-garden-merged
 require_relative '../../../lib/garden'
 require_relative 'fixtures'
 require_relative 'scenes'
 
 module Demo
-  # Pages honour ?lang= so each screenshot picks its language without cookies;
+  # Pages honor ?lang= so each screenshot picks its language without cookies;
   # the page's own API calls inherit it from their Referer.
   module LocaleFromQuery
     def for(request)
@@ -16,6 +16,14 @@ module Demo
   end
   Garden::Locale.singleton_class.prepend(LocaleFromQuery)
 
+  # Pages honor ?palette= too, so each screenshot picks its colors without cookies.
+  module PaletteFromQuery
+    def for(request)
+      Garden::Palette::ALL.find { |palette| palette.id == request.query['palette'] } || super
+    end
+  end
+  Garden::Palette.singleton_class.prepend(PaletteFromQuery)
+
   # Pages get the ?scene= script: a localStorage preset in <head>, then steps after the page's own module.
   module SceneInjection
     private
@@ -25,7 +33,8 @@ module Demo
       scene = Scenes.fetch(request.query['scene'])
       return [status, headers, body] unless scene && headers['Content-Type'].to_s.start_with?('text/html')
 
-      body = body.sub('</head>', "#{Scenes.preset_script(scene)}</head>").sub('</body>', "#{Scenes.steps_script(scene)}</body>")
+      body = body.sub('</head>', "#{Scenes.preset_script(scene)}</head>").sub('</body>',
+                                                                              "#{Scenes.steps_script(scene)}</body>")
       [status, headers, body]
     end
   end

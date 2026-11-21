@@ -1,0 +1,21 @@
+common:
+  language_name: "日本語"
+  flag: "🍙"
+  language:
+    current: "言語: %{name}"
+    menu_label: "言語"
+  palette:
+    current: "色: %{name}"
+    menu_label: "カラーパレット"
+    now_wearing: "いまは %{name} を着てるよ %{emoji}"
+  nav_label: "お庭の道具"
+  home: "お庭のトップ"
+  footer: "💖 とちょっぴりのキラキラ ✨ でできてるよ · あなたのマシンの中だけで動くよ 🔒"
+  ok: "OK ✨"
+  never_mind: "やっぱりいいや 🙈"
+  got_it: "わかった 💕"
+  close: "閉じる 💨"
+  refresh: "🔄 更新"
+  just_now: "たった今"
+  all: "🌈 すべて"
+  search: "検索"
