@@ -21,7 +21,7 @@ function render() {
   $('#hidden-count').textContent = ui.loading ? '' : tp('settings.repos.count', hidden.length);
   if (ui.loading) return note(t('settings.repos.loading'));
   const shown = ui.repos.filter(matches);
-  $('#repos-shown').textContent = ui.query ? tp('settings.repos.shown', ui.repos.length, { shown: shown.length }) : '';
+  $('#repos-shown').textContent = tp('settings.repos.shown', ui.repos.length, { shown: shown.length });
   const error = ui.error ? `<p class="repo-error">${esc(ui.error)}</p>` : '';
   $('#settings-repos').innerHTML = error
     + group(t('settings.repos.hidden_group'), shown.filter((repo) => repo.hidden), t(ui.query ? 'settings.repos.no_match' : 'settings.repos.none_hidden'))
@@ -81,6 +81,21 @@ $('#repo-search').addEventListener('input', (event) => {
 });
 
 $('#refresh').addEventListener('click', () => load({ refresh: true }));
+
+/* ---------- pages in the sidebar ---------- */
+
+// Saved in settings.json, so every page draws the same sidebar; this one updates its own straight away.
+document.querySelectorAll('input[name="page"]').forEach((input) => input.addEventListener('change', async () => {
+  const shown = input.checked;
+  const result = await api('/api/settings/page', { slug: input.value, shown });
+  if (!result.ok) {
+    input.checked = !shown;
+    return toast(failureMessage(result), 'error');
+  }
+  const item = document.querySelector(`.sidebar li[data-page="${input.value}"]`);
+  if (item) item.hidden = !shown;
+  toast(t(shown ? 'settings.pages.toasts.shown' : 'settings.pages.toasts.hidden', { name: input.dataset.name }));
+}));
 
 /* ---------- colors and language ---------- */
 

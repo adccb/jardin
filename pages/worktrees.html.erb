@@ -4,8 +4,6 @@
       <div class="controls">
         <button id="refresh" class="btn" type="button"><%= t('common.refresh') %></button>
       </div>
-      <div id="stats" class="stats"></div>
-      <p id="pr-note" class="note" hidden></p>
     </header>
 
     <div class="pr-layout" data-garden="worktrees">
@@ -23,11 +21,13 @@
       </aside>
 
       <section class="pr-main" aria-label="<%= t('branches.main_label') %>">
+        <div id="stats" class="stats"></div>
+        <p id="pr-note" class="note" hidden></p>
         <div class="tabs" role="tablist" id="repo-tabs" aria-label="<%= t('branches.repo_tabs_label') %>"></div>
         <div class="panel" id="repo-tab-panel" role="tabpanel">
           <section class="bed" id="worktrees-section" aria-label="<%= t('branches.beds.worktrees') %>">
             <div class="toolbar">
-              <div id="worktrees-filters" class="chips" role="group" aria-label="<%= t('branches.toolbar.worktrees.filters_label') %>"></div>
+              <p class="shown" id="worktrees-shown"></p>
               <div class="toolbar-row">
                 <input id="worktrees-search" type="search" placeholder="<%= t('branches.toolbar.worktrees.search_placeholder') %>" aria-label="<%= t('branches.toolbar.worktrees.search_label') %>">
                 <label class="sr-only" for="worktrees-sort"><%= t('branches.toolbar.worktrees.sort_label') %></label>
@@ -40,7 +40,7 @@
                 <button id="worktrees-select-visible" class="btn btn-small" type="button"><%= t('branches.select_visible') %></button>
                 <button id="prune" class="btn btn-small btn-soft" type="button" hidden><%= t('branches.toolbar.worktrees.prune') %></button>
               </div>
-              <p class="shown" id="worktrees-shown"></p>
+              <div id="worktrees-filters" class="chips" role="group" aria-label="<%= t('branches.toolbar.worktrees.filters_label') %>"></div>
             </div>
             <div id="worktrees" class="grid" data-bed="worktrees"></div>
           </section>

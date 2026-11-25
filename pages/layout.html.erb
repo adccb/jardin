@@ -21,11 +21,12 @@
   <nav class="sidebar" aria-label="<%= t('common.nav_label') %>">
     <a class="sidebar-brand" href="/" aria-label="<%= t('common.home') %>" title="garden">🌸</a>
     <hr class="sidebar-divider">
-<%# Settings sits at the foot of the sidebar; every other tool is listed at the top, in order. -%>
+<%# Settings sits at the foot of the sidebar; every other tool is listed at the top, in order. Pages hidden on the settings
+    page are drawn hidden (so it can bring them back without a reload), except the one you're on. -%>
 <% settings_tool = tools.find { |item| item.slug == 'settings' } -%>
     <ul>
 <% (tools - [settings_tool]).each do |item| -%>
-      <li>
+      <li data-page="<%= item.slug %>"<%= ' hidden' if hidden_pages.include?(item.slug) && item != tool %>>
         <a class="sidebar-link" href="<%= item.path %>" data-label="<%= t("#{item.slug}.title") %>"<%= ' aria-current="page"' if item == tool %>>
           <span aria-hidden="true"><%= item.emoji %></span><span class="sr-only"><%= t("#{item.slug}.title") %></span>
         </a>

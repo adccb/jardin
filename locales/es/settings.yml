@@ -7,6 +7,12 @@ settings:
   language:
     heading: "idioma"
     help: "garden habla cuatro idiomas"
+  pages:
+    heading: "páginas"
+    help: "qué páginas salen en la barra lateral; las ocultas siguen abriéndose desde su dirección"
+    toasts:
+      shown: "%{name} vuelve a la barra lateral 🌱"
+      hidden: "%{name} ya no sale en la barra lateral 🙈"
   repos:
     heading: "repos ocultos"
     help: "los repos ocultos no aparecen en ninguna parte: ni en PR, ni en revisiones, ramas o worktrees. la lista viene de GitHub, así que incluye todos los repos que ven tus cuentas de gh."

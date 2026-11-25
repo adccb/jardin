@@ -23,6 +23,7 @@ module Demo
     JS
 
     LIST = [
+      { name: '00-home', page: '/home', preset: { 'prs-repos' => PR_REPOS.to_json } },
       { name: '01-pr-garden', page: '/prs', preset: { 'prs-repos' => PR_REPOS.to_json, 'prs-tab' => 'all' } },
       { name: '02-pr-garden-merged', page: '/prs', preset: { 'prs-repos' => PR_REPOS.to_json, 'prs-tab' => 'all' },
         steps: "await wait('#prs .card'); await click('[data-state=\"merged\"]');" },

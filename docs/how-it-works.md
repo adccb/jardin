@@ -13,7 +13,7 @@ No database, no build step, no gems. Everything is Ruby's standard library plus 
 ```mermaid
 flowchart LR
   subgraph Browser
-    page["page<br/>(prs.js, reviews.js, tasks.js, branches.js, jira.js)"]
+    page["page<br/>(home.js, prs.js, reviews.js, tasks.js, branches.js, jira.js)"]
     ls[("localStorage<br/>your picks & filters")]
   end
   subgraph "garden server (127.0.0.1:4747)"
@@ -49,6 +49,7 @@ When you run `~/src/garden/bin/garden`:
 
    | slug | emoji | title | API object |
    |---|---|---|---|
+   | `home` | 🌻 | home | `Home::Api` (none of its own) |
    | `prs` | 💌 | pr garden | `Prs::Api` |
    | `reviews` | 👀 | review garden | `Reviews::Api` |
    | `tasks` | 📝 | task garden | `Tasks::Api` |
@@ -118,7 +119,7 @@ import { $, store, esc, api, toast, sprout, … } from './garden.js';
 **What lives in `localStorage`** (per browser, never sent to the server):
 `prs-repos`, `prs-tab` (PR page) · `branches-repos-excluded`, `branches-repo-tab`, `branches-sort` (branch page) · `worktrees-repos-excluded`, `worktrees-repo-tab`, `worktrees-sort` (worktree page) · `reviews-excluded` (review page) · `tasks-tabs-excluded`, `tasks-todoist-tab` (task page) · `jira-done`, `jira-sort`, `jira-sprint-sort`, `jira-view`, `jira-sprints-excluded` (Jira page).
 
-**What lives on disk** is one file, `~/.config/garden/settings.json`: `{"hidden_repos": ["owner/name", …]}`, written by `Settings::Store` (`lib/garden/settings/store.rb`) through a `.tmp` file and a rename. The ⚙️ settings page lists every repo `gh api user/repos` returns for each logged-in account (`Github::RepoList`, cached 10 min, about 12 s cold for ~1,100 repos) and ticks the hidden ones. The server then leaves those repos out before any page sees them: `Prs::Api` and `Reviews::Api` drop them by `owner/name`, and `Branches::Api` drops the checkouts whose `origin` points at one (through `Github::LocalRepos`). Panels only check and uncheck; there's no per-page hiding.
+**What lives on disk** is one file, `~/.config/garden/settings.json`: `{"hidden_repos": ["owner/name", …], "hidden_pages": ["jira", …]}`, written by `Settings::Store` (`lib/garden/settings/store.rb`) through a `.tmp` file and a rename. The ⚙️ settings page lists every repo `gh api user/repos` returns for each logged-in account (`Github::RepoList`, cached 10 min, about 12 s cold for ~1,100 repos) and ticks the hidden ones. The server then leaves those repos out before any page sees them: `Prs::Api` and `Reviews::Api` drop them by `owner/name`, and `Branches::Api` drops the checkouts whose `origin` points at one (through `Github::LocalRepos`). Panels only check and uncheck; there's no per-page hiding. Hidden pages are the layout's job: `Layout` hands `hidden_pages` to the sidebar template, which draws those links with `hidden` (so the settings page can bring one back without a reload) unless it's the page you're on, and `App` sends `/` to the first page that isn't hidden.
 
 ---
 
@@ -173,6 +174,10 @@ sequenceDiagram
 5. **Drawing.** `prs.js` keeps results per state in `ui.results[state]` (a `Map` of slug → repo result), builds the tabs (✨ all + one per checked repo), and renders the four sections. Merged/closed are fetched the first time you click those chips, then reused.
 
 ---
+
+## 4½. The home page
+
+`home.js` has no API of its own (`Home::Api` answers nothing): it calls the other pages' APIs straight from the browser, all at once, and fills one tab per garden as each answers, so a slow one never holds up the rest. 💖 is `GET /api/prs/list?state=open` for the repos ticked on the PR page (its `prs-repos` localStorage key), keeping the `mergeable` group; 👀 is `GET /api/reviews/list`, keeping requests made of you by name (each carries its CI state: `gh search` can't return checks, so `Reviews::Search` asks GraphQL for every PR's `statusCheckRollup` in one `nodes(ids:)` call per account); 📝 is `GET /api/tasks/list?tabs=late,today`, late first; 🎟️ is `GET /api/jira/tickets?view=mine`, in progress first. The stat boxes count each tab, and a garden hidden on the ⚙️ settings page gets no tab. PR, review and ticket rows are links, the whole card; Todoist rows are the task page's own rows (the home tool `shares` its strings and imports `tasks.css`) and check off the same way, with the same 6 s wait and `u` to undo.
 
 ## 5. Reading: the branch and worktree pages
 

@@ -3,7 +3,12 @@
 A walk through every page in the default 🌹 Rosé Pine colors, ☀️ light on the left and 🌙 dark on the right. Everything you see is invented: the "sunbeam-labs" team, its repos, PRs, tickets and to-dos come from [`demo/fixtures.rb`](demo/fixtures.rb), not from GitHub, Jira or Todoist.
 
 **🍔 English** · [🥐 Français](README.fr.md) · [🌽 Español](README.es.md) · [🍙 日本語](README.ja.md)  
-🎨 [Every page in the other color schemes](palettes.md)
+🎨 [Every page in the other color schemes](palettes.md) · 🧺 [Each garden in every color](by-page/README.md)
+
+## 🌻 home
+
+The home page: what's ready to merge, waiting on your review, due today and on your plate in Jira.
+![00-home](en/00-home.jpg)
 
 ## 💌 pr garden
 
@@ -58,7 +63,7 @@ A ticket opened in the drawer.
 
 ## ⚙️ settings
 
-Colors and language up top, then hiding repos everywhere at once; the repo list comes from GitHub.
+Colors and language up top, which pages the sidebar shows, then hiding repos everywhere at once; the repo list comes from GitHub.
 ![14-settings](en/14-settings.jpg)
 
 ## Retaking them

@@ -30,6 +30,7 @@ local_repos = Garden::Github::LocalRepos.new(finder)
 # Branches and worktrees are two pages over the same repos, so they share one API (and its snapshot cache).
 branches_api = Garden::Branches::Api.new(root: options[:root], settings:, local_repos:)
 tools = [
+  Garden::Tool.new(slug: "home", emoji: "🌻", api: Garden::Home::Api.new, shares: ["tasks"]),
   Garden::Tool.new(slug: "prs", emoji: "💌", api: Garden::Prs::Api.new(repos: local_repos, settings:)),
   Garden::Tool.new(slug: "reviews", emoji: "👀", api: Garden::Reviews::Api.new(hidden_slugs: -> { settings.hidden_slugs })),
   Garden::Tool.new(slug: "tasks", emoji: "📝", api: Garden::Tasks::Api.new(todoist: Garden::Todoist::Client.from_env)),
@@ -41,7 +42,7 @@ tools = [
 
 $stdout.sync = true
 url = "http://localhost:#{options[:port]}"
-app = Garden::App.new(port: options[:port], tools:)
+app = Garden::App.new(port: options[:port], tools:, settings:)
 
 trap("INT") do
   puts "\n🌙 garden closed, sweet dreams 💕"

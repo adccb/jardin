@@ -4,7 +4,6 @@
       <div class="controls">
         <button id="refresh" class="btn" type="button"><%= t('common.refresh') %></button>
       </div>
-      <div id="stats" class="stats"></div>
     </header>
 
     <div class="pr-layout">
@@ -22,14 +21,15 @@
       </aside>
 
       <section class="pr-main" aria-label="<%= t('prs.main_label') %>">
+        <div id="stats" class="stats"></div>
         <div class="tabs" role="tablist" aria-label="<%= t('prs.tabs_label') %>" id="repo-tabs"></div>
         <div class="panel" role="tabpanel" id="pr-panel">
           <div class="toolbar">
-            <div id="state-chips" class="chips" role="group" aria-label="<%= t('prs.states_label') %>"></div>
+            <p class="shown" id="shown"></p>
             <div class="toolbar-row">
               <input id="search" type="search" placeholder="<%= t('prs.search_placeholder') %>" aria-label="<%= t('prs.search_label') %>">
             </div>
-            <p class="shown" id="shown"></p>
+            <div id="state-chips" class="chips" role="group" aria-label="<%= t('prs.states_label') %>"></div>
           </div>
           <div id="prs"></div>
         </div>

@@ -4,10 +4,13 @@ module Garden
   module Reviews
     # Open PRs awaiting your review, across every gh account, since @me differs per account.
     # review-requested:@me includes team requests; user-review-requested:@me is only you by name.
+    # gh search can't return checks, so each account then asks GraphQL for every PR's rollup in batches of 100.
     class Search
       TTL = 90
       LIMIT = 100
-      FIELDS = %w[number title url repository author isDraft labels createdAt updatedAt commentsCount].freeze
+      FIELDS = %w[id number title url repository author isDraft labels createdAt updatedAt commentsCount].freeze
+      NODE_ID = /\A[\w=-]+\z/
+      ROLLUP = 'nodes(ids: %s) { ... on PullRequest { id commits(last: 1) { nodes { commit { statusCheckRollup { state } } } } } }'
       QUERIES = { all: 'review-requested:@me', you: 'user-review-requested:@me' }.freeze
 
       def initialize(accounts: Github::Accounts.new)
@@ -42,7 +45,26 @@ module Garden
       def search_account(login)
         env = @accounts.env_for(login) or return
         found = QUERIES.transform_values { |query| run(env, query) }
-        found.values.all? ? found : nil
+        return nil unless found.values.all?
+
+        states = rollups(env, found.values.flatten.map { _1['id'] })
+        found.each_value { |prs| prs.each { |pr| pr['ciState'] = states[pr['id']] } }
+        found
+      end
+
+      # { node id => SUCCESS / FAILURE / PENDING / ERROR / EXPECTED }; a PR without checks, or a failed call, is left out.
+      def rollups(env, ids)
+        ids.uniq.select { _1.to_s.match?(NODE_ID) }.each_slice(100).each_with_object({}) do |batch, states|
+          out, _err, status = Open3.capture3(env, 'gh', 'api', 'graphql', '-f', "query={ #{format(ROLLUP, batch.to_json)} }")
+          next unless status.success?
+
+          JSON.parse(out).dig('data', 'nodes').to_a.compact.each do |node|
+            state = node.dig('commits', 'nodes', 0, 'commit', 'statusCheckRollup', 'state')
+            states[node['id']] = state if state
+          end
+        rescue JSON::ParserError, Errno::ENOENT
+          next
+        end
       end
 
       def run(env, query)

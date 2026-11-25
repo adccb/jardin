@@ -3,7 +3,12 @@
 デフォルトの 🌹 Rosé Pine カラーで全ページをめぐるツアー。左が ☀️ ライト、右が 🌙 ダーク。ここに写っているものはすべて架空のもの：「sunbeam-labs」チーム、そのリポジトリ、PR、チケット、タスクは GitHub や Jira、Todoist ではなく [`demo/fixtures.rb`](demo/fixtures.rb) から来ているよ。
 
 [🍔 English](README.md) · [🥐 Français](README.fr.md) · [🌽 Español](README.es.md) · **🍙 日本語**  
-🎨 [ほかのカラーパレットで見る全ページ（英語）](palettes.md)
+🎨 [ほかのカラーパレットで見る全ページ（英語）](palettes.md) · 🧺 [お庭ごとに全カラー（英語）](by-page/README.md)
+
+## 🌻 ホーム
+
+ホーム：マージできるPR、あなたのレビュー待ち、今日のタスク、Jiraのチケットをひと目で。
+![00-home](ja/00-home.jpg)
 
 ## 💌 PRのお庭
 
@@ -58,7 +63,7 @@
 
 ## ⚙️ 設定
 
-上に色と言語、その下でリポジトリをまとめてどこでも隠す。リポジトリのリストはGitHubから。
+上に色と言語、サイドバーに出すページ、その下でリポジトリをまとめてどこでも隠す。リポジトリのリストはGitHubから。
 ![14-settings](ja/14-settings.jpg)
 
 ## 撮り直しかた

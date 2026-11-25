@@ -20,10 +20,8 @@ reviews:
   tabs:
     you:
       title: "te pidieron"
-      hint: "alguien te pidió por tu nombre"
     team:
       title: "le pidieron a tu equipo"
-      hint: "pedida a través de un equipo del que eres parte"
   stats:
     waiting:
       one: "en espera"

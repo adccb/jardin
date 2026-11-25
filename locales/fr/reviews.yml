@@ -20,10 +20,8 @@ reviews:
   tabs:
     you:
       title: "pour toi"
-      hint: "quelqu'un t'a demandée par ton nom"
     team:
       title: "pour ton équipe"
-      hint: "demandée via une équipe dont tu fais partie"
   stats:
     waiting:
       one: "en attente"

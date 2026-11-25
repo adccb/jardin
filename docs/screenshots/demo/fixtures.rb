@@ -145,7 +145,8 @@ module Demo
       raw = { 'repository' => { 'nameWithOwner' => "#{ORG}/#{repo}" }, 'number' => number, 'title' => title,
               'url' => "https://github.com/#{ORG}/#{repo}/pull/#{number}", 'author' => { 'login' => author },
               'isDraft' => false, 'labels' => [], 'commentsCount' => 0, 'createdAt' => days(2), 'updatedAt' => ago(4) }
-      Garden::Reviews::Request.new(raw.merge(extra), via:).to_h
+      ci = { 0 => 'SUCCESS', 1 => 'FAILURE', 2 => 'SUCCESS', 3 => 'PENDING' }.fetch(number % 4)
+      Garden::Reviews::Request.new(raw.merge('ciState' => ci).merge(extra), via:).to_h
     end
 
     def review_requests

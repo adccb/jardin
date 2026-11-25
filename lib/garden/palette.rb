@@ -10,9 +10,7 @@ module Garden
       Choice.new(id: 'rose-pine', name: 'Rosé Pine', emoji: '🌹'),
       Choice.new(id: 'catppuccin', name: 'Catppuccin', emoji: '🐈'),
       Choice.new(id: 'everforest', name: 'Everforest', emoji: '🌲'),
-      Choice.new(id: 'nightfox', name: 'Nightfox', emoji: '🦊'),
-      Choice.new(id: 'dracula', name: 'Dracula', emoji: '🧛'),
-      Choice.new(id: 'tokyo-night', name: 'Tokyo Night', emoji: '🌃')
+      Choice.new(id: 'dracula', name: 'Dracula', emoji: '🧛')
     ].freeze
 
     def self.for(request) = ALL.find { |palette| palette.id == request.cookies[COOKIE] } || ALL.first

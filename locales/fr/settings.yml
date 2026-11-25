@@ -7,6 +7,12 @@ settings:
   language:
     heading: "langue"
     help: "garden parle quatre langues"
+  pages:
+    heading: "pages"
+    help: "les pages qui apparaissent dans la barre latérale ; celles qu'on cache s'ouvrent toujours depuis leur adresse"
+    toasts:
+      shown: "%{name} revient dans la barre latérale 🌱"
+      hidden: "%{name} sort de la barre latérale 🙈"
   repos:
     heading: "dépôts cachés"
     help: "les dépôts cachés n'apparaissent nulle part : ni dans les PR, ni dans les relectures, les branches ou les worktrees. la liste vient de GitHub, donc elle contient tous les dépôts que tes comptes gh voient."

@@ -6,7 +6,6 @@
         <label class="field done-toggle"><input id="include-done" type="checkbox"> <span aria-hidden="true">✅</span> <%= t('jira.include_done') %></label>
         <label class="field done-toggle" id="sprint-done-toggle" hidden><input id="show-sprint-done" type="checkbox"> <span aria-hidden="true">✅</span> <%= t('jira.sprint.show_done') %></label>
       </div>
-      <div id="stats" class="stats"></div>
     </header>
 
     <div class="pr-layout">
@@ -24,11 +23,13 @@
       </aside>
 
       <section class="pr-main" aria-label="<%= t('jira.tickets_label') %>">
+        <div id="stats" class="stats"></div>
     <div class="tabs jira-tabs" role="tablist" id="jira-tabs" aria-label="<%= t('jira.tabs.label') %>"></div>
 
     <section class="panel" id="jira-panel" role="tabpanel" aria-labelledby="jira-tab-mine">
       <div class="toolbar">
-        <div id="status-filters" class="chips" role="group" aria-label="<%= t('jira.filter_label') %>"></div>
+        <p class="shown" id="shown"></p>
+        <p class="sprint-info" id="sprint-info" hidden></p>
         <div class="toolbar-row">
           <input id="search" type="search" placeholder="<%= t('jira.search_placeholder') %>" aria-label="<%= t('jira.search_label') %>">
           <label class="sr-only" for="sort"><%= t('jira.sort_label') %></label>
@@ -40,8 +41,7 @@
             <option value="rank"><%= t('jira.board_order') %></option>
           </select>
         </div>
-        <p class="sprint-info" id="sprint-info" hidden></p>
-        <p class="shown" id="shown"></p>
+        <div id="status-filters" class="chips" role="group" aria-label="<%= t('jira.filter_label') %>"></div>
       </div>
       <div id="tickets" class="lanes"></div>
     </section>

@@ -1,0 +1,75 @@
+home:
+  title: "accueil"
+  tagline: "un peu de chaque jardin, tout au même endroit 🌷"
+  greeting:
+    morning: "bonjour"
+    afternoon: "bon après-midi"
+    evening: "bonsoir"
+  tabs_label: "tes jardins"
+  search_placeholder: "🔍 chercher dans cet onglet…"
+  search_label: "chercher dans cet onglet"
+  chips_label: "filtrer cet onglet"
+  shown:
+    one: "%{shown} affiché sur %{count}"
+    other: "%{shown} affichés sur %{count}"
+  no_match: "rien ne correspond 🌙 essaie un autre filtre"
+  ci:
+    passing: "✅ checks au vert"
+    failing: "❌ checks en échec"
+    pending: "⏳ checks en cours"
+  loading: "je jette un œil… 🫖"
+  failed: "impossible de charger celui-ci 🥺 %{error}"
+  all_clear: "rien n'a besoin de toi pour l'instant 🌈"
+  no_cards: "tous les jardins sont cachés dans les réglages 🙈"
+  more:
+    one: "+ %{count} de plus"
+    other: "+ %{count} de plus"
+  stats:
+    prs:
+      one: "à merger"
+      other: "à merger"
+    reviews:
+      one: "relecture pour toi"
+      other: "relectures pour toi"
+    tasks:
+      one: "tâche aujourd'hui"
+      other: "tâches aujourd'hui"
+    jira:
+      one: "ticket ouvert"
+      other: "tickets ouverts"
+  cards:
+    prs:
+      heading: "prêtes à merger"
+      open: "jardin des PR →"
+      empty: "rien de prêt à merger pour l'instant 🌱"
+      no_repos: "choisis d'abord des dépôts dans le jardin des PR 💌"
+      needs_work:
+        one: "%{count} à retravailler"
+        other: "%{count} à retravailler"
+    reviews:
+      heading: "en attente de ta relecture"
+      open: "jardin des relectures →"
+      empty: "personne ne t'attend 🌙"
+      draft: "🧸 brouillon"
+      team:
+        one: "%{count} de plus pour ton équipe"
+        other: "%{count} de plus pour ton équipe"
+    tasks:
+      heading: "aujourd'hui dans todoist"
+      open: "jardin des tâches →"
+      empty: "rien de prévu aujourd'hui 🌈"
+      not_set_up: "todoist n'est pas encore configuré 🍅"
+      late: "🐌 %{date}"
+      late_count:
+        one: "%{count} en retard"
+        other: "%{count} en retard"
+    jira:
+      heading: "tes tickets"
+      open: "jardin des tickets →"
+      empty: "aucun ticket ouvert 🏝️"
+      chips:
+        in_progress: "🏃 en cours"
+        to_do: "🌱 à faire"
+      in_progress:
+        one: "%{count} en cours"
+        other: "%{count} en cours"

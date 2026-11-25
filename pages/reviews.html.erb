@@ -4,7 +4,6 @@
       <div class="controls">
         <button id="refresh" class="btn" type="button"><%= t('common.refresh') %></button>
       </div>
-      <div id="stats" class="stats"></div>
     </header>
 
     <div class="pr-layout">
@@ -22,15 +21,15 @@
       </aside>
 
       <section class="pr-main" aria-label="<%= t('reviews.main_label') %>">
+        <div id="stats" class="stats"></div>
         <div class="tabs" role="tablist" aria-label="<%= t('reviews.tabs_label') %>" id="via-tabs"></div>
         <div class="panel" role="tabpanel" id="review-panel">
           <div class="toolbar">
+            <p class="shown" id="shown"></p>
             <div class="toolbar-row">
               <input id="search" type="search" placeholder="<%= t('reviews.search_placeholder') %>" aria-label="<%= t('reviews.search_label') %>">
             </div>
-            <p class="shown" id="shown"></p>
           </div>
-          <p class="tab-hint" id="tab-hint"></p>
           <div id="reviews"></div>
         </div>
       </section>

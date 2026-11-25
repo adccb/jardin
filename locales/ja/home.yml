@@ -1,0 +1,75 @@
+home:
+  title: "ホーム"
+  tagline: "どのお庭もちょっとずつ、ここでまとめて 🌷"
+  greeting:
+    morning: "おはよう"
+    afternoon: "こんにちは"
+    evening: "こんばんは"
+  tabs_label: "あなたのお庭"
+  search_placeholder: "🔍 このタブを検索…"
+  search_label: "このタブを検索"
+  chips_label: "このタブを絞り込む"
+  shown:
+    one: "%{count}件中%{shown}件を表示"
+    other: "%{count}件中%{shown}件を表示"
+  no_match: "一致するものはないよ 🌙 ほかの絞り込みを試してね"
+  ci:
+    passing: "✅ チェック成功"
+    failing: "❌ チェック失敗"
+    pending: "⏳ チェック実行中"
+  loading: "のぞいてるよ… 🫖"
+  failed: "これは読み込めなかった 🥺 %{error}"
+  all_clear: "いまはなにも待ってないよ 🌈"
+  no_cards: "どのお庭も設定で隠されてるよ 🙈"
+  more:
+    one: "ほか%{count}件"
+    other: "ほか%{count}件"
+  stats:
+    prs:
+      one: "マージ待ち"
+      other: "マージ待ち"
+    reviews:
+      one: "あなたへのレビュー"
+      other: "あなたへのレビュー"
+    tasks:
+      one: "今日のタスク"
+      other: "今日のタスク"
+    jira:
+      one: "未完了チケット"
+      other: "未完了チケット"
+  cards:
+    prs:
+      heading: "マージできるPR"
+      open: "PRのお庭 →"
+      empty: "マージできるものはまだないよ 🌱"
+      no_repos: "まずPRのお庭でリポジトリを選んでね 💌"
+      needs_work:
+        one: "%{count}件は手直しが必要"
+        other: "%{count}件は手直しが必要"
+    reviews:
+      heading: "あなたのレビュー待ち"
+      open: "レビューのお庭 →"
+      empty: "あなたを待ってる人はいないよ 🌙"
+      draft: "🧸 下書き"
+      team:
+        one: "チーム宛てにあと%{count}件"
+        other: "チーム宛てにあと%{count}件"
+    tasks:
+      heading: "Todoistの今日"
+      open: "タスクのお庭 →"
+      empty: "今日が期限のものはないよ 🌈"
+      not_set_up: "Todoistがまだ設定されてないよ 🍅"
+      late: "🐌 %{date}"
+      late_count:
+        one: "%{count}件が期限切れ"
+        other: "%{count}件が期限切れ"
+    jira:
+      heading: "あなたのチケット"
+      open: "チケットのお庭 →"
+      empty: "未完了のチケットはないよ 🏝️"
+      chips:
+        in_progress: "🏃 進行中"
+        to_do: "🌱 未着手"
+      in_progress:
+        one: "%{count}件が進行中"
+        other: "%{count}件が進行中"

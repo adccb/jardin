@@ -4,11 +4,13 @@ module Garden
   class App
     include Responses
 
-    def initialize(port:, tools:)
+    # settings: where hidden pages come from (the sidebar leaves them out, and / skips to the first one shown).
+    def initialize(port:, tools:, settings: Settings::Store.new(nil))
       @tools = tools
       @token = SecureRandom.hex(16)
       @allowed_hosts = ["localhost:#{port}", "127.0.0.1:#{port}"]
-      @layout = Layout.new(tools:, token: @token)
+      @settings = settings
+      @layout = Layout.new(tools:, token: @token, settings:)
       @assets = Assets.new(File.join(ROOT, 'public'))
     end
 
@@ -32,12 +34,17 @@ module Garden
 
     def route(request, locale)
       path = request.path
-      return redirect(@tools.first.path) if path == '/'
+      return redirect(home.path) if path == '/'
       return @assets.serve(path.delete_prefix('/assets/')) if path.start_with?('/assets/')
       return api(request, path) if path.start_with?('/api/')
 
       page = @tools.find { |tool| tool.path == path }
       page && request.method == 'GET' ? html(@layout.render(page, locale, Palette.for(request))) : not_found
+    end
+
+    def home
+      hidden = @settings.hidden_pages
+      @tools.find { |tool| !hidden.include?(tool.slug) } || @tools.first
     end
 
     def api(request, path)

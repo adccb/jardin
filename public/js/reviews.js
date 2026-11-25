@@ -50,7 +50,6 @@ function renderTabs() {
       aria-selected="${active}" tabindex="${active ? 0 : -1}"><span aria-hidden="true">${TAB_EMOJI[via]}</span> ${esc(t(`reviews.tabs.${via}.title`))} <span class="tab-count">${count}</span></button>`;
   }).join('');
   $('#review-panel').setAttribute('aria-labelledby', `tab-${ui.tab}`);
-  $('#tab-hint').textContent = t(`reviews.tabs.${ui.tab}.hint`);
 }
 
 function selectTab(via, { focus = false } = {}) {

@@ -1,0 +1,75 @@
+home:
+  title: "inicio"
+  tagline: "un poquito de cada jardín, todo en un lugar 🌷"
+  greeting:
+    morning: "buenos días"
+    afternoon: "buenas tardes"
+    evening: "buenas noches"
+  tabs_label: "tus jardines"
+  search_placeholder: "🔍 buscar en esta pestaña…"
+  search_label: "buscar en esta pestaña"
+  chips_label: "filtrar esta pestaña"
+  shown:
+    one: "mostrando %{shown} de %{count}"
+    other: "mostrando %{shown} de %{count}"
+  no_match: "nada coincide 🌙 prueba otro filtro"
+  ci:
+    passing: "✅ checks en verde"
+    failing: "❌ checks fallando"
+    pending: "⏳ checks corriendo"
+  loading: "echando un vistazo… 🫖"
+  failed: "no se pudo cargar 🥺 %{error}"
+  all_clear: "nada te necesita ahora mismo 🌈"
+  no_cards: "todos los jardines están ocultos en ajustes 🙈"
+  more:
+    one: "+ %{count} más"
+    other: "+ %{count} más"
+  stats:
+    prs:
+      one: "para fusionar"
+      other: "para fusionar"
+    reviews:
+      one: "revisión para ti"
+      other: "revisiones para ti"
+    tasks:
+      one: "tarea hoy"
+      other: "tareas hoy"
+    jira:
+      one: "ticket abierto"
+      other: "tickets abiertos"
+  cards:
+    prs:
+      heading: "listas para fusionar"
+      open: "jardín de PR →"
+      empty: "nada listo para fusionar todavía 🌱"
+      no_repos: "primero elige repos en el jardín de PR 💌"
+      needs_work:
+        one: "%{count} por pulir"
+        other: "%{count} por pulir"
+    reviews:
+      heading: "esperando tu revisión"
+      open: "jardín de revisiones →"
+      empty: "nadie te está esperando 🌙"
+      draft: "🧸 borrador"
+      team:
+        one: "%{count} más para tu equipo"
+        other: "%{count} más para tu equipo"
+    tasks:
+      heading: "hoy en todoist"
+      open: "jardín de tareas →"
+      empty: "nada vence hoy 🌈"
+      not_set_up: "todoist todavía no está configurado 🍅"
+      late: "🐌 %{date}"
+      late_count:
+        one: "%{count} atrasada"
+        other: "%{count} atrasadas"
+    jira:
+      heading: "tus tickets"
+      open: "jardín de tickets →"
+      empty: "no hay tickets abiertos 🏝️"
+      chips:
+        in_progress: "🏃 en curso"
+        to_do: "🌱 por hacer"
+      in_progress:
+        one: "%{count} en curso"
+        other: "%{count} en curso"

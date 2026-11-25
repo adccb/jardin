@@ -20,10 +20,8 @@ reviews:
   tabs:
     you:
       title: "あなたに依頼"
-      hint: "名指しでレビューを頼まれたもの"
     team:
       title: "チームに依頼"
-      hint: "あなたがいるチーム経由で頼まれたもの"
   stats:
     waiting:
       one: "待ち"

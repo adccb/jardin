@@ -62,6 +62,7 @@ branches_api = Demo::FakeApi.new(
   'GET state' => ->(q, *) { f.branch_state(q['repo']) }
 )
 tools = [
+  Garden::Tool.new(slug: 'home', emoji: '🌻', api: Garden::Home::Api.new, shares: ['tasks']),
   Garden::Tool.new(slug: 'prs', emoji: '💌', api: Demo::FakeApi.new(
     'GET repos' => ->(*) { { repos: f.pr_repos } },
     'GET list' => ->(q, *) { f.pr_list(q['state'] || 'open', q['repos'].to_s.split(',')) }

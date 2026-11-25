@@ -4,8 +4,6 @@
       <div class="controls">
         <button id="refresh" class="btn" type="button"><%= t('common.refresh') %></button>
       </div>
-      <div id="stats" class="stats"></div>
-      <p id="pr-note" class="note" hidden></p>
     </header>
 
     <div class="pr-layout" data-garden="branches">
@@ -23,11 +21,13 @@
       </aside>
 
       <section class="pr-main" aria-label="<%= t('branches.main_label') %>">
+        <div id="stats" class="stats"></div>
+        <p id="pr-note" class="note" hidden></p>
         <div class="tabs" role="tablist" id="repo-tabs" aria-label="<%= t('branches.repo_tabs_label') %>"></div>
         <div class="panel" id="repo-tab-panel" role="tabpanel">
           <section class="bed" id="branches-section" aria-label="<%= t('branches.beds.branches') %>">
             <div class="toolbar">
-              <div id="branches-filters" class="chips" role="group" aria-label="<%= t('branches.toolbar.branches.filters_label') %>"></div>
+              <p class="shown" id="branches-shown"></p>
               <div class="toolbar-row">
                 <input id="branches-search" type="search" placeholder="<%= t('branches.toolbar.branches.search_placeholder') %>" aria-label="<%= t('branches.toolbar.branches.search_label') %>">
                 <label class="sr-only" for="branches-sort"><%= t('branches.toolbar.branches.sort_label') %></label>
@@ -39,7 +39,7 @@
                 </select>
                 <button id="branches-select-visible" class="btn btn-small" type="button"><%= t('branches.select_visible') %></button>
               </div>
-              <p class="shown" id="branches-shown"></p>
+              <div id="branches-filters" class="chips" role="group" aria-label="<%= t('branches.toolbar.branches.filters_label') %>"></div>
             </div>
             <div id="branches" class="grid" data-bed="branches"></div>
           </section>

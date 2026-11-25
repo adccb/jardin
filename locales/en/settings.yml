@@ -7,6 +7,12 @@ settings:
   language:
     heading: "language"
     help: "garden speaks four languages"
+  pages:
+    heading: "pages"
+    help: "which pages show in the sidebar; hidden ones still open from their address"
+    toasts:
+      shown: "%{name} is back in the sidebar 🌱"
+      hidden: "%{name} tucked out of the sidebar 🙈"
   repos:
     heading: "hidden repos"
     help: "hidden repos don't show up anywhere: not in the PR, review, branch or worktree pages. the list comes from GitHub, so it's every repo your gh accounts can see."

@@ -17,6 +17,7 @@ errors:
   bad_ticket_key: "%{key} doesn't look like a ticket key 🤔"
   bad_sprint: "%{id} doesn't look like a sprint 🤔"
   bad_repo_slug: "%{slug} doesn't look like owner/repo 🤔"
+  bad_page: "%{slug} isn't a page that can be hidden 🤔"
   settings_unsaved: "settings need a place to live 🗂️ start garden with --config-dir"
   no_gh_access_repos: "couldn't ask GitHub for your repos 🐙 is gh logged in?"
   task_empty: "a task needs some words 🥺"

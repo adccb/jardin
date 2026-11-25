@@ -2,7 +2,7 @@
 
 module Garden
   module Settings
-    # The settings page: every repo GitHub says you can see, which ones are hidden everywhere, and hiding or showing one.
+    # The settings page: hiding repos everywhere (from the list GitHub gives) and pages from the sidebar.
     class Api
       include Responses
 
@@ -15,6 +15,7 @@ module Garden
         case [request.method, action]
         in ['GET', 'repos'] then json(200, repos(refresh: request.query['refresh'] == '1'))
         in ['POST', 'hide'] then json(200, hide(request.params))
+        in ['POST', 'page'] then json(200, page(request.params))
         else not_found
         end
       end
@@ -28,6 +29,11 @@ module Garden
         known = (listed || []).map { |repo| { **repo, hidden: hidden.include?(repo[:slug]) } }
         missing = (hidden - known.map { _1[:slug] }).map { |slug| { slug:, hidden: true, gone: true } }
         { ok: !listed.nil?, error_key: listed ? nil : 'errors.no_gh_access_repos', repos: missing + known }.compact
+      end
+
+      def page(params)
+        @store.set_page_hidden(params['slug'].to_s, params['shown'] != true)
+        { ok: true }
       end
 
       def hide(params)

@@ -166,16 +166,23 @@ select, input[type="search"] {
 .btn-soft { background: var(--pink-soft); border-color: transparent; box-shadow: none; }
 .btn-small { padding: 5px 12px; font-size: .85rem; }
 
-.stats { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 20px; }
+/* The stat boxes share the content width in equal columns, labels on one line; on a narrow screen they wrap to more rows. */
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-top: 20px; }
 .stat {
+  box-sizing: border-box; min-width: 0; text-align: center;
   background: var(--surface); border: 2px solid var(--border); border-radius: 18px;
-  padding: 8px 16px; box-shadow: var(--shadow); min-width: 96px;
+  padding: 8px 12px; box-shadow: var(--shadow);
 }
 .stat b { display: block; font-size: 1.5rem; line-height: 1.1; color: var(--pink); }
-.stat span { font-size: .85rem; color: var(--muted); font-weight: 600; }
+.stat span { font-size: .85rem; color: var(--muted); font-weight: 600; white-space: nowrap; }
 .note { margin: 14px auto 0; color: var(--muted); font-weight: 700; }
 
-.tabs { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 30px; padding: 0 6px; border-bottom: 3px dotted var(--border); }
+/* One line of tabs that scrolls sideways when it doesn't fit; the top padding keeps the selected tab's shadow unclipped. */
+.tabs {
+  display: flex; flex-wrap: nowrap; gap: 6px; margin-top: 22px; padding: 8px 6px 0; border-bottom: 3px dotted var(--border);
+  overflow-x: auto; overflow-y: hidden; scrollbar-width: thin; overscroll-behavior-x: contain;
+}
+.tabs .tab { flex: none; white-space: nowrap; }
 .tab {
   font: inherit; font-family: var(--font-display); font-weight: 600; font-size: 1.25rem;
   cursor: pointer; color: var(--muted); background: transparent;
@@ -197,7 +204,13 @@ select, input[type="search"] {
 .toolbar { display: grid; gap: 12px; margin-bottom: 16px; }
 .toolbar-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
 .toolbar-row input[type="search"] { flex: 1 1 220px; min-width: 0; }
-.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+/* Filter chips sit on one line under the search row and scroll sideways; the padding leaves room for their hover lift. */
+.chips {
+  display: flex; flex-wrap: nowrap; gap: 8px; padding: 3px 2px 6px;
+  overflow-x: auto; scrollbar-width: thin; overscroll-behavior-x: contain;
+}
+.chips .chip { flex: none; white-space: nowrap; }
+.chips[hidden] { display: none; }
 .chip {
   font: inherit; font-family: var(--font-display); font-weight: 500; font-size: .9rem;
   cursor: pointer; border-radius: 999px; padding: 6px 12px;
@@ -383,6 +396,9 @@ footer { margin-top: 48px; text-align: center; color: var(--muted); font-weight:
 /* repo side panel, shared by pr garden 💌, review garden 👀, ticket garden 🎀 and branch garden 🌸 */
 
 .pr-layout { display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 22px; align-items: start; margin-top: 26px; }
+/* On a page with a side panel, the stat boxes open the main column, level with the top of the panel. */
+.pr-main > .stats { margin-top: 0; }
+.pr-main > .stats ~ .tabs { margin-top: 18px; }
 
 .repo-panel {
   position: sticky; top: 16px; max-height: calc(100vh - 32px); overflow: auto;

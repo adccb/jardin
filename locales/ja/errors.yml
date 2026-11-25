@@ -17,6 +17,7 @@ errors:
   bad_ticket_key: "%{key}はチケットキーじゃなさそう 🤔"
   bad_sprint: "%{id}はスプリントじゃなさそう 🤔"
   bad_repo_slug: "%{slug} は owner/repo の形じゃなさそう 🤔"
+  bad_page: "%{slug} は隠せるページじゃないよ 🤔"
   settings_unsaved: "設定の置き場所がないよ 🗂️ --config-dir をつけて garden を起動してね"
   no_gh_access_repos: "GitHubにリポジトリを聞けなかった 🐙 gh にログインしてる？"
   task_empty: "タスクには何か言葉が必要だよ 🥺"

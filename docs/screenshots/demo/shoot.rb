@@ -17,7 +17,7 @@ GUTTER = 36
 JPEG_QUALITY = 85
 LANGS = %w[en fr es ja].freeze
 DEFAULT_PALETTE = 'rose-pine'
-OTHER_PALETTES = %w[catppuccin everforest nightfox dracula tokyo-night].freeze
+OTHER_PALETTES = %w[catppuccin everforest dracula].freeze
 THEMES = { 'light' => 1, 'dark' => 0 }.freeze
 CAPTIONS = { 'en' => %w[light dark], 'fr' => %w[clair sombre], 'es' => %w[claro oscuro], 'ja' => %w[ライト ダーク] }.freeze
 WORK = File.join(Dir.tmpdir, 'garden-screenshots')

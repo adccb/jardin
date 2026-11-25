@@ -15,17 +15,15 @@ module Demo
       'rose-pine' => ['🌹', 'Rosé Pine', 'The default: Dawn by day, Main by night.'],
       'catppuccin' => ['🐈', 'Catppuccin', 'Latte by day, Mocha by night.'],
       'everforest' => ['🌲', 'Everforest', 'Light by day, Dark by night, both at medium contrast.'],
-      'nightfox' => ['🦊', 'Nightfox', 'Dayfox by day, Nightfox by night.'],
-      'dracula' => ['🧛', 'Dracula', 'Alucard by day, Dracula by night.'],
-      'tokyo-night' => ['🌃', 'Tokyo Night', 'Day by day, Moon by night.']
+      'dracula' => ['🧛', 'Dracula', 'Alucard by day, Dracula by night.']
     }.freeze
-    PAGE_EMOJI = { 'prs' => '💌', 'reviews' => '👀', 'tasks' => '📝', 'branches' => '🌿', 'worktrees' => '🏡', 'jira' => '🎟️', 'settings' => '⚙️' }.freeze
+    PAGE_EMOJI = { 'home' => '🌻', 'prs' => '💌', 'reviews' => '👀', 'tasks' => '📝', 'branches' => '🌿', 'worktrees' => '🏡', 'jira' => '🎟️', 'settings' => '⚙️' }.freeze
 
     TEXT = {
       'en' => {
         title: '📸 garden, all dressed up',
         intro: 'A walk through every page in the default 🌹 Rosé Pine colors, ☀️ light on the left and 🌙 dark on the right. Everything you see is invented: the "sunbeam-labs" team, its repos, PRs, tickets and to-dos come from [`demo/fixtures.rb`](demo/fixtures.rb), not from GitHub, Jira or Todoist.',
-        palettes: '🎨 [Every page in the other color schemes](palettes.md)',
+        palettes: '🎨 [Every page in the other color schemes](palettes.md) · 🧺 [Each garden in every color](by-page/README.md)',
         retake: 'Retaking them',
         retake_body: 'The demo server runs the real pages with every API swapped for the invented data, and each `?scene=` stages a page (tabs, dialogs, saved filters). The shooter drives headless Chrome, so it needs Google Chrome installed; `gallery.rb` then rewrites these pages.',
         comments: ['every scene, every language and palette', 'just one scene', 'rewrite the gallery pages'],
@@ -34,7 +32,7 @@ module Demo
       'fr' => {
         title: '📸 garden, sur son trente-et-un',
         intro: "Une visite de chaque page dans les couleurs par défaut 🌹 Rosé Pine, ☀️ en clair à gauche et 🌙 en sombre à droite. Tout ce que tu vois est inventé : l'équipe « sunbeam-labs », ses dépôts, ses PR, ses tickets et ses tâches viennent de [`demo/fixtures.rb`](demo/fixtures.rb), pas de GitHub, Jira ou Todoist.",
-        palettes: '🎨 [Chaque page dans les autres palettes (en anglais)](palettes.md)',
+        palettes: '🎨 [Chaque page dans les autres palettes (en anglais)](palettes.md) · 🧺 [Chaque jardin dans toutes les couleurs (en anglais)](by-page/README.md)',
         retake: 'Les refaire',
         retake_body: 'Le serveur de démo fait tourner les vraies pages, avec chaque API remplacée par les données inventées, et chaque `?scene=` met une page en scène (onglets, fenêtres, filtres enregistrés). Le photographe pilote Chrome sans interface, donc il faut que Google Chrome soit installé ; `gallery.rb` réécrit ensuite ces pages.',
         comments: ['chaque scène, langue et palette', 'juste une scène', 'réécrire les galeries'],
@@ -43,7 +41,7 @@ module Demo
       'es' => {
         title: '📸 garden, bien arreglado',
         intro: 'Un paseo por cada página con los colores predeterminados 🌹 Rosé Pine, ☀️ en claro a la izquierda y 🌙 en oscuro a la derecha. Todo lo que ves es inventado: el equipo «sunbeam-labs», sus repos, PR, tickets y tareas vienen de [`demo/fixtures.rb`](demo/fixtures.rb), no de GitHub, Jira ni Todoist.',
-        palettes: '🎨 [Cada página en las otras paletas (en inglés)](palettes.md)',
+        palettes: '🎨 [Cada página en las otras paletas (en inglés)](palettes.md) · 🧺 [Cada jardín en todos los colores (en inglés)](by-page/README.md)',
         retake: 'Cómo volver a tomarlas',
         retake_body: 'El servidor de demo corre las páginas reales con cada API cambiada por los datos inventados, y cada `?scene=` prepara una página (pestañas, diálogos, filtros guardados). El fotógrafo maneja Chrome sin interfaz, así que necesita Google Chrome instalado; después `gallery.rb` reescribe estas páginas.',
         comments: ['cada escena, idioma y paleta', 'solo una escena', 'reescribir las galerías'],
@@ -52,7 +50,7 @@ module Demo
       'ja' => {
         title: '📸 おめかしした garden',
         intro: 'デフォルトの 🌹 Rosé Pine カラーで全ページをめぐるツアー。左が ☀️ ライト、右が 🌙 ダーク。ここに写っているものはすべて架空のもの：「sunbeam-labs」チーム、そのリポジトリ、PR、チケット、タスクは GitHub や Jira、Todoist ではなく [`demo/fixtures.rb`](demo/fixtures.rb) から来ているよ。',
-        palettes: '🎨 [ほかのカラーパレットで見る全ページ（英語）](palettes.md)',
+        palettes: '🎨 [ほかのカラーパレットで見る全ページ（英語）](palettes.md) · 🧺 [お庭ごとに全カラー（英語）](by-page/README.md)',
         retake: '撮り直しかた',
         retake_body: 'デモサーバーは本物のページを動かしつつ、すべての API を架空のデータに差し替えているよ。`?scene=` ごとにページを演出（タブ、ダイアログ、保存したフィルター）するんだ。撮影係はヘッドレスの Chrome を操作するので、Google Chrome が必要。そのあと `gallery.rb` がこれらのページを書き直すよ。',
         comments: ['全シーン、全言語、全パレット', 'ひとつのシーンだけ', 'ギャラリーを書き直す'],
@@ -60,7 +58,13 @@ module Demo
       }
     }.freeze
 
-    CAPTIONS = {
+CAPTIONS = {
+  '00-home' => {
+    'en' => "The home page: what's ready to merge, waiting on your review, due today and on your plate in Jira.",
+    'fr' => "L'accueil : ce qui est prêt à merger, ce qui attend ta relecture, ce qui est prévu aujourd'hui et tes tickets Jira.",
+    'es' => 'El inicio: lo que está listo para fusionar, lo que espera tu revisión, lo que vence hoy y tus tickets de Jira.',
+    'ja' => 'ホーム：マージできるPR、あなたのレビュー待ち、今日のタスク、Jiraのチケットをひと目で。'
+  },
       '01-pr-garden' => {
         'en' => 'Your open PRs, grouped into ready to merge, needs work, waiting on review and drafts, with a repo panel on the left.',
         'fr' => 'Tes PR ouvertes, rangées en prêtes à merger, à retravailler, en attente de relecture et brouillons, avec la liste des dépôts à gauche.',
@@ -132,10 +136,10 @@ module Demo
         'es' => 'Un ticket abierto en el panel lateral.', 'ja' => 'パネルで開いたチケット。'
       },
       '14-settings' => {
-        'en' => 'Colors and language up top, then hiding repos everywhere at once; the repo list comes from GitHub.',
-        'fr' => "Couleurs et langue en haut, puis cacher des dépôts partout d'un coup ; la liste des dépôts vient de GitHub.",
-        'es' => 'Colores e idioma arriba, y debajo ocultar repos en todas partes a la vez; la lista de repos viene de GitHub.',
-        'ja' => '上に色と言語、その下でリポジトリをまとめてどこでも隠す。リポジトリのリストはGitHubから。'
+        'en' => 'Colors and language up top, which pages the sidebar shows, then hiding repos everywhere at once; the repo list comes from GitHub.',
+        'fr' => "Couleurs et langue en haut, les pages de la barre latérale, puis cacher des dépôts partout d'un coup ; la liste des dépôts vient de GitHub.",
+        'es' => 'Colores e idioma arriba, las páginas de la barra lateral, y debajo ocultar repos en todas partes a la vez; la lista de repos viene de GitHub.',
+        'ja' => '上に色と言語、サイドバーに出すページ、その下でリポジトリをまとめてどこでも隠す。リポジトリのリストはGitHubから。'
       }
     }.freeze
 
@@ -204,16 +208,39 @@ module Demo
 
         Every page in every color scheme, ☀️ light on the left and 🌙 dark on the right, in English. Open a scheme to see
         it; pick one in the app on the ⚙️ settings page. The [main gallery](README.md) has
-        Rosé Pine in every language.
+        Rosé Pine in every language, and [by page](by-page/README.md) lines up each garden's front page in every scheme.
 
         #{PALETTES.map { |id, details| palette_section(id, details) }.join("\n")}
+      MD
+    end
+
+    # Each garden's first scene, shown in every palette in turn, so you can compare the schemes page by page.
+    # It lives in by-page/ and points at the same images as the other galleries rather than copying them.
+    def by_page_page
+      sections = Scenes::LIST.chunk_while { |a, b| page_slug(a) == page_slug(b) }.map(&:first).map do |scene|
+        slug = page_slug(scene)
+        shots = PALETTES.map do |id, (emoji, name, _sides)|
+          "### #{emoji} #{name}\n\n![#{scene[:name]} in #{name}](../#{palette_dir(id)}/#{scene[:name]}.jpg)\n"
+        end
+        "## #{PAGE_EMOJI.fetch(slug)} #{Garden::I18n.t('en', "#{slug}.title")}\n\n#{CAPTIONS.fetch(scene[:name]).fetch('en')}\n\n#{shots.join("\n")}"
+      end
+      <<~MD
+        # 🧺 each garden in every color
+
+        The front page of every garden in each color scheme, one after another, ☀️ light on the left and 🌙 dark on the
+        right, in English. The [main gallery](../README.md) walks through every scene, and [palettes](../palettes.md)
+        groups them by scheme.
+
+        #{sections.join("\n")}
       MD
     end
 
     def write
       LANGS.each { |lang| File.write(File.join(ROOT, FILES.fetch(lang)), language_page(lang)) }
       File.write(File.join(ROOT, 'palettes.md'), palette_page)
-      (FILES.values + ['palettes.md']).each { puts "✓ docs/screenshots/#{_1}" }
+      FileUtils.mkdir_p(File.join(ROOT, 'by-page'))
+      File.write(File.join(ROOT, 'by-page', 'README.md'), by_page_page)
+      (FILES.values + ['palettes.md', 'by-page/README.md']).each { puts "✓ docs/screenshots/#{_1}" }
     end
   end
 end

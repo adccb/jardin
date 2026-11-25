@@ -2,12 +2,15 @@
 
 Every page in every color scheme, ☀️ light on the left and 🌙 dark on the right, in English. Open a scheme to see
 it; pick one in the app on the ⚙️ settings page. The [main gallery](README.md) has
-Rosé Pine in every language.
+Rosé Pine in every language, and [by page](by-page/README.md) lines up each garden's front page in every scheme.
 
 <details open>
 <summary><h2>🌹 Rosé Pine</h2></summary>
 
 The default: Dawn by day, Main by night.
+
+The home page: what's ready to merge, waiting on your review, due today and on your plate in Jira.
+![00-home](en/00-home.jpg)
 
 Your open PRs, grouped into ready to merge, needs work, waiting on review and drafts, with a repo panel on the left.
 ![01-pr-garden](en/01-pr-garden.jpg)
@@ -48,7 +51,7 @@ A sprint tab, with everyone's tickets and per-lane people filters.
 A ticket opened in the drawer.
 ![13-ticket-garden-ticket](en/13-ticket-garden-ticket.jpg)
 
-Colors and language up top, then hiding repos everywhere at once; the repo list comes from GitHub.
+Colors and language up top, which pages the sidebar shows, then hiding repos everywhere at once; the repo list comes from GitHub.
 ![14-settings](en/14-settings.jpg)
 
 </details>
@@ -57,6 +60,9 @@ Colors and language up top, then hiding repos everywhere at once; the repo list 
 <summary><h2>🐈 Catppuccin</h2></summary>
 
 Latte by day, Mocha by night.
+
+The home page: what's ready to merge, waiting on your review, due today and on your plate in Jira.
+![00-home](palettes/catppuccin/00-home.jpg)
 
 Your open PRs, grouped into ready to merge, needs work, waiting on review and drafts, with a repo panel on the left.
 ![01-pr-garden](palettes/catppuccin/01-pr-garden.jpg)
@@ -97,7 +103,7 @@ A sprint tab, with everyone's tickets and per-lane people filters.
 A ticket opened in the drawer.
 ![13-ticket-garden-ticket](palettes/catppuccin/13-ticket-garden-ticket.jpg)
 
-Colors and language up top, then hiding repos everywhere at once; the repo list comes from GitHub.
+Colors and language up top, which pages the sidebar shows, then hiding repos everywhere at once; the repo list comes from GitHub.
 ![14-settings](palettes/catppuccin/14-settings.jpg)
 
 </details>
@@ -106,6 +112,9 @@ Colors and language up top, then hiding repos everywhere at once; the repo list 
 <summary><h2>🌲 Everforest</h2></summary>
 
 Light by day, Dark by night, both at medium contrast.
+
+The home page: what's ready to merge, waiting on your review, due today and on your plate in Jira.
+![00-home](palettes/everforest/00-home.jpg)
 
 Your open PRs, grouped into ready to merge, needs work, waiting on review and drafts, with a repo panel on the left.
 ![01-pr-garden](palettes/everforest/01-pr-garden.jpg)
@@ -146,57 +155,8 @@ A sprint tab, with everyone's tickets and per-lane people filters.
 A ticket opened in the drawer.
 ![13-ticket-garden-ticket](palettes/everforest/13-ticket-garden-ticket.jpg)
 
-Colors and language up top, then hiding repos everywhere at once; the repo list comes from GitHub.
+Colors and language up top, which pages the sidebar shows, then hiding repos everywhere at once; the repo list comes from GitHub.
 ![14-settings](palettes/everforest/14-settings.jpg)
-
-</details>
-
-<details>
-<summary><h2>🦊 Nightfox</h2></summary>
-
-Dayfox by day, Nightfox by night.
-
-Your open PRs, grouped into ready to merge, needs work, waiting on review and drafts, with a repo panel on the left.
-![01-pr-garden](palettes/nightfox/01-pr-garden.jpg)
-
-The merged chip, for admiring what already landed.
-![02-pr-garden-merged](palettes/nightfox/02-pr-garden-merged.jpg)
-
-PRs that asked for your review by name.
-![03-review-garden](palettes/nightfox/03-review-garden.jpg)
-
-The team tab, with one repo unchecked in the panel.
-![04-review-garden-team](palettes/nightfox/04-review-garden-team.jpg)
-
-The lists panel on the left, with today and late showing as tabs.
-![05-task-garden](palettes/nightfox/05-task-garden.jpg)
-
-Planting a new task (`c`).
-![06-task-garden-new-task](palettes/nightfox/06-task-garden-new-task.jpg)
-
-The keyboard help (`?`).
-![07-task-garden-keyboard-help](palettes/nightfox/07-task-garden-keyboard-help.jpg)
-
-One tab per repo in the panel, its branches showing PR state, upstream and worktree badges.
-![08-branch-garden](palettes/nightfox/08-branch-garden.jpg)
-
-Tidying two merged branches at once.
-![09-branch-garden-tidy](palettes/nightfox/09-branch-garden-tidy.jpg)
-
-One tab per repo of worktrees, including a ghost whose folder is gone.
-![10-worktree-garden](palettes/nightfox/10-worktree-garden.jpg)
-
-Your tickets in swimlanes by epic, with the sprints panel on the left.
-![11-ticket-garden](palettes/nightfox/11-ticket-garden.jpg)
-
-A sprint tab, with everyone's tickets and per-lane people filters.
-![12-ticket-garden-sprint](palettes/nightfox/12-ticket-garden-sprint.jpg)
-
-A ticket opened in the drawer.
-![13-ticket-garden-ticket](palettes/nightfox/13-ticket-garden-ticket.jpg)
-
-Colors and language up top, then hiding repos everywhere at once; the repo list comes from GitHub.
-![14-settings](palettes/nightfox/14-settings.jpg)
 
 </details>
 
@@ -204,6 +164,9 @@ Colors and language up top, then hiding repos everywhere at once; the repo list 
 <summary><h2>🧛 Dracula</h2></summary>
 
 Alucard by day, Dracula by night.
+
+The home page: what's ready to merge, waiting on your review, due today and on your plate in Jira.
+![00-home](palettes/dracula/00-home.jpg)
 
 Your open PRs, grouped into ready to merge, needs work, waiting on review and drafts, with a repo panel on the left.
 ![01-pr-garden](palettes/dracula/01-pr-garden.jpg)
@@ -244,57 +207,8 @@ A sprint tab, with everyone's tickets and per-lane people filters.
 A ticket opened in the drawer.
 ![13-ticket-garden-ticket](palettes/dracula/13-ticket-garden-ticket.jpg)
 
-Colors and language up top, then hiding repos everywhere at once; the repo list comes from GitHub.
+Colors and language up top, which pages the sidebar shows, then hiding repos everywhere at once; the repo list comes from GitHub.
 ![14-settings](palettes/dracula/14-settings.jpg)
-
-</details>
-
-<details>
-<summary><h2>🌃 Tokyo Night</h2></summary>
-
-Day by day, Moon by night.
-
-Your open PRs, grouped into ready to merge, needs work, waiting on review and drafts, with a repo panel on the left.
-![01-pr-garden](palettes/tokyo-night/01-pr-garden.jpg)
-
-The merged chip, for admiring what already landed.
-![02-pr-garden-merged](palettes/tokyo-night/02-pr-garden-merged.jpg)
-
-PRs that asked for your review by name.
-![03-review-garden](palettes/tokyo-night/03-review-garden.jpg)
-
-The team tab, with one repo unchecked in the panel.
-![04-review-garden-team](palettes/tokyo-night/04-review-garden-team.jpg)
-
-The lists panel on the left, with today and late showing as tabs.
-![05-task-garden](palettes/tokyo-night/05-task-garden.jpg)
-
-Planting a new task (`c`).
-![06-task-garden-new-task](palettes/tokyo-night/06-task-garden-new-task.jpg)
-
-The keyboard help (`?`).
-![07-task-garden-keyboard-help](palettes/tokyo-night/07-task-garden-keyboard-help.jpg)
-
-One tab per repo in the panel, its branches showing PR state, upstream and worktree badges.
-![08-branch-garden](palettes/tokyo-night/08-branch-garden.jpg)
-
-Tidying two merged branches at once.
-![09-branch-garden-tidy](palettes/tokyo-night/09-branch-garden-tidy.jpg)
-
-One tab per repo of worktrees, including a ghost whose folder is gone.
-![10-worktree-garden](palettes/tokyo-night/10-worktree-garden.jpg)
-
-Your tickets in swimlanes by epic, with the sprints panel on the left.
-![11-ticket-garden](palettes/tokyo-night/11-ticket-garden.jpg)
-
-A sprint tab, with everyone's tickets and per-lane people filters.
-![12-ticket-garden-sprint](palettes/tokyo-night/12-ticket-garden-sprint.jpg)
-
-A ticket opened in the drawer.
-![13-ticket-garden-ticket](palettes/tokyo-night/13-ticket-garden-ticket.jpg)
-
-Colors and language up top, then hiding repos everywhere at once; the repo list comes from GitHub.
-![14-settings](palettes/tokyo-night/14-settings.jpg)
 
 </details>
 

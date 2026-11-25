@@ -17,6 +17,7 @@ errors:
   bad_ticket_key: "%{key} ne ressemble pas à une clé de ticket 🤔"
   bad_sprint: "%{id} ne ressemble pas à un sprint 🤔"
   bad_repo_slug: "%{slug} ne ressemble pas à owner/dépôt 🤔"
+  bad_page: "%{slug} n'est pas une page qu'on peut cacher 🤔"
   settings_unsaved: "les réglages ont besoin d'un endroit où vivre 🗂️ lance garden avec --config-dir"
   no_gh_access_repos: "impossible de demander tes dépôts à GitHub 🐙 gh est-il connecté ?"
   task_empty: "une tâche a besoin de quelques mots 🥺"

@@ -1,0 +1,75 @@
+home:
+  title: "home"
+  tagline: "a little of every garden, all in one place 🌷"
+  greeting:
+    morning: "good morning"
+    afternoon: "good afternoon"
+    evening: "good evening"
+  tabs_label: "your gardens"
+  search_placeholder: "🔍 search this tab…"
+  search_label: "search this tab"
+  chips_label: "filter this tab"
+  shown:
+    one: "showing %{shown} of %{count}"
+    other: "showing %{shown} of %{count}"
+  no_match: "nothing matches 🌙 try another filter"
+  ci:
+    passing: "✅ checks passing"
+    failing: "❌ checks failing"
+    pending: "⏳ checks running"
+  loading: "peeking in… 🫖"
+  failed: "couldn't load this one 🥺 %{error}"
+  all_clear: "nothing needs you right now 🌈"
+  no_cards: "every garden is hidden on the settings page 🙈"
+  more:
+    one: "+ %{count} more"
+    other: "+ %{count} more"
+  stats:
+    prs:
+      one: "to merge"
+      other: "to merge"
+    reviews:
+      one: "review for you"
+      other: "reviews for you"
+    tasks:
+      one: "task today"
+      other: "tasks today"
+    jira:
+      one: "open ticket"
+      other: "open tickets"
+  cards:
+    prs:
+      heading: "ready to merge"
+      open: "pr garden →"
+      empty: "nothing ready to merge yet 🌱"
+      no_repos: "pick some repos on the pr garden first 💌"
+      needs_work:
+        one: "%{count} needs work"
+        other: "%{count} need work"
+    reviews:
+      heading: "waiting on your review"
+      open: "review garden →"
+      empty: "no one is waiting on you 🌙"
+      draft: "🧸 draft"
+      team:
+        one: "%{count} more for your team"
+        other: "%{count} more for your team"
+    tasks:
+      heading: "today in todoist"
+      open: "task garden →"
+      empty: "nothing due today 🌈"
+      not_set_up: "todoist isn't set up yet 🍅"
+      late: "🐌 %{date}"
+      late_count:
+        one: "%{count} is late"
+        other: "%{count} are late"
+    jira:
+      heading: "your tickets"
+      open: "ticket garden →"
+      empty: "no open tickets 🏝️"
+      chips:
+        in_progress: "🏃 in progress"
+        to_do: "🌱 to do"
+      in_progress:
+        one: "%{count} in progress"
+        other: "%{count} in progress"

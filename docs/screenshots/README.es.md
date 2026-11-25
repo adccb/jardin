@@ -3,7 +3,12 @@
 Un paseo por cada página con los colores predeterminados 🌹 Rosé Pine, ☀️ en claro a la izquierda y 🌙 en oscuro a la derecha. Todo lo que ves es inventado: el equipo «sunbeam-labs», sus repos, PR, tickets y tareas vienen de [`demo/fixtures.rb`](demo/fixtures.rb), no de GitHub, Jira ni Todoist.
 
 [🍔 English](README.md) · [🥐 Français](README.fr.md) · **🌽 Español** · [🍙 日本語](README.ja.md)  
-🎨 [Cada página en las otras paletas (en inglés)](palettes.md)
+🎨 [Cada página en las otras paletas (en inglés)](palettes.md) · 🧺 [Cada jardín en todos los colores (en inglés)](by-page/README.md)
+
+## 🌻 inicio
+
+El inicio: lo que está listo para fusionar, lo que espera tu revisión, lo que vence hoy y tus tickets de Jira.
+![00-home](es/00-home.jpg)
 
 ## 💌 jardín de PR
 
@@ -58,7 +63,7 @@ Un ticket abierto en el panel lateral.
 
 ## ⚙️ ajustes
 
-Colores e idioma arriba, y debajo ocultar repos en todas partes a la vez; la lista de repos viene de GitHub.
+Colores e idioma arriba, las páginas de la barra lateral, y debajo ocultar repos en todas partes a la vez; la lista de repos viene de GitHub.
 ![14-settings](es/14-settings.jpg)
 
 ## Cómo volver a tomarlas

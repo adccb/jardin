@@ -3,14 +3,15 @@
 module Garden
   # What ERB templates can call: t, h, locale, palette. Keys ending in _html are trusted markup; everything else is escaped.
   class View
-    attr_reader :locale, :tool, :tools, :token, :palette
+    attr_reader :locale, :tool, :tools, :token, :palette, :hidden_pages
 
-    def initialize(locale:, tool:, tools:, token:, palette:)
+    def initialize(locale:, tool:, tools:, token:, palette:, hidden_pages: [])
       @locale = locale
       @tool = tool
       @tools = tools
       @token = token
       @palette = palette
+      @hidden_pages = hidden_pages
     end
 
     def render(path) = ERB.new(File.read(path), trim_mode: '-').result(binding)

@@ -31,13 +31,26 @@
       </section>
     </div>
 
+    <section class="settings-card settings-pages" aria-labelledby="pages-title">
+      <h2 id="pages-title"><span aria-hidden="true">🧭</span> <%= t('settings.pages.heading') %></h2>
+      <p class="settings-help"><%= t('settings.pages.help') %></p>
+      <div class="settings-choices" role="group" aria-labelledby="pages-title">
+<% tools.reject { |item| item.slug == 'settings' }.each do |item| -%>
+        <label class="settings-choice">
+          <input type="checkbox" name="page" value="<%= item.slug %>" data-name="<%= t("#{item.slug}.title") %>"<%= ' checked' unless hidden_pages.include?(item.slug) %>>
+          <span aria-hidden="true"><%= item.emoji %></span> <%= t("#{item.slug}.title") %>
+        </label>
+<% end -%>
+      </div>
+    </section>
+
     <section class="settings-card" aria-labelledby="hidden-repos-title">
       <h2 id="hidden-repos-title"><span aria-hidden="true">🙈</span> <%= t('settings.repos.heading') %> <small id="hidden-count"></small></h2>
       <p class="settings-help"><%= t('settings.repos.help') %></p>
+      <p class="shown" id="repos-shown"></p>
       <div class="toolbar-row">
         <input id="repo-search" type="search" placeholder="<%= t('settings.repos.search_placeholder') %>" aria-label="<%= t('settings.repos.search_label') %>">
         <button id="refresh" class="btn btn-small" type="button"><%= t('common.refresh') %></button>
       </div>
-      <p class="shown" id="repos-shown"></p>
       <div id="settings-repos"></div>
     </section>

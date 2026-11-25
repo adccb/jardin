@@ -5,13 +5,14 @@ module Garden
   class Layout
     TEMPLATE = File.join(ROOT, 'pages', 'layout.html.erb')
 
-    def initialize(tools:, token:)
+    def initialize(tools:, token:, settings:)
       @tools = tools
       @token = token
+      @settings = settings
     end
 
     def render(tool, locale, palette)
-      View.new(locale:, tool:, tools: @tools, token: @token, palette:).render(TEMPLATE)
+      View.new(locale:, tool:, tools: @tools, token: @token, palette:, hidden_pages: @settings.hidden_pages).render(TEMPLATE)
     end
   end
 end

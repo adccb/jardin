@@ -20,10 +20,8 @@ reviews:
   tabs:
     you:
       title: "asked you"
-      hint: "someone requested you by name"
     team:
       title: "asked your team"
-      hint: "requested through a team you're on"
   stats:
     waiting:
       one: "waiting"

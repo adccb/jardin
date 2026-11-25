@@ -8,7 +8,8 @@ kbd {
 }
 .btn-primary kbd { color: inherit; background: rgba(255, 255, 255, .25); border-color: currentColor; }
 
-.task-garden { max-width: 720px; margin: 8px auto 0; }
+/* Fills the main column beside the lists panel, like every other page's tab content. */
+.task-garden { margin: 0; }
 
 .task-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
 
@@ -55,7 +56,7 @@ kbd {
 
 .key-hints {
   display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 16px;
-  max-width: 720px; margin: 34px auto 0; font-size: .85rem; font-weight: 700; color: var(--muted);
+  margin: 34px 0 0; font-size: .85rem; font-weight: 700; color: var(--muted);
 }
 
 .task-dialog { width: min(520px, calc(100% - 32px)); }

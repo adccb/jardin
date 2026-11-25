@@ -1,0 +1,37 @@
+    <header class="hero">
+      <h1><span class="bob" aria-hidden="true">🌻</span> <span class="title" id="greeting"><%= t('home.title') %></span> <span class="bob" aria-hidden="true">🌸</span></h1>
+      <p class="tagline" id="home-summary"><%= t('home.tagline') %></p>
+      <div class="controls">
+        <button id="refresh" class="btn" type="button"><%= t('common.refresh') %></button>
+      </div>
+      <div id="stats" class="stats"></div>
+    </header>
+
+<%# One tab per garden that isn't hidden on the settings page; home.js fills each from that garden's own API. -%>
+<% sections = [%w[prs 💖], %w[reviews 👀], %w[tasks 📝], %w[jira 🎟️]].select { |slug, _| tools.any? { _1.slug == slug } && !hidden_pages.include?(slug) } -%>
+<% if sections.empty? -%>
+    <p class="home-note"><%= t('home.no_cards') %></p>
+<% else -%>
+    <section class="home" aria-label="<%= t('home.tabs_label') %>">
+      <div class="tabs" role="tablist" id="home-tabs" aria-label="<%= t('home.tabs_label') %>">
+<% sections.each do |slug, emoji| -%>
+        <button type="button" class="tab" role="tab" id="home-tab-<%= slug %>" data-tab="<%= slug %>" aria-controls="home-panel"
+                aria-selected="false" tabindex="-1">
+          <span aria-hidden="true"><%= emoji %></span> <%= t("home.cards.#{slug}.heading") %> <span class="tab-count" data-count></span>
+        </button>
+<% end -%>
+      </div>
+      <div class="panel" id="home-panel" role="tabpanel" aria-busy="true">
+        <div class="toolbar">
+          <p class="shown" id="home-shown"></p>
+          <div class="toolbar-row">
+            <input id="home-search" type="search" placeholder="<%= t('home.search_placeholder') %>" aria-label="<%= t('home.search_label') %>">
+          </div>
+          <div id="home-chips" class="chips" role="group" aria-label="<%= t('home.chips_label') %>" hidden></div>
+        </div>
+        <p class="home-note" id="home-note"><%= t('home.loading') %></p>
+        <ul class="home-list" id="home-list"></ul>
+        <p class="home-foot" id="home-foot"></p>
+      </div>
+    </section>
+<% end -%>
