@@ -16,12 +16,6 @@ reviews:
     nothing_picked: "いまは何もチェックしてないよ"
     filtered_out: "🌱 絞り込みで除外"
     none_filtered: "ぜんぶのリポジトリを表示中！🎉"
-    hidden: "🙈 隠したもの"
-    hide_label: "%{name} をリストから隠す"
-    hide_title: "リストから隠す"
-    bring_back: "戻す 👀"
-    bring_back_label: "%{name} を戻す"
-    tucked_away: "%{name} をしまっておいたよ 🙈"
   tabs_label: "依頼した相手"
   tabs:
     you:

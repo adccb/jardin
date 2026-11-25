@@ -21,8 +21,10 @@
   <nav class="sidebar" aria-label="<%= t('common.nav_label') %>">
     <a class="sidebar-brand" href="/" aria-label="<%= t('common.home') %>" title="garden">🌸</a>
     <hr class="sidebar-divider">
+<%# Settings sits at the foot of the sidebar; every other tool is listed at the top, in order. -%>
+<% settings_tool = tools.find { |item| item.slug == 'settings' } -%>
     <ul>
-<% tools.each do |item| -%>
+<% (tools - [settings_tool]).each do |item| -%>
       <li>
         <a class="sidebar-link" href="<%= item.path %>" data-label="<%= t("#{item.slug}.title") %>"<%= ' aria-current="page"' if item == tool %>>
           <span aria-hidden="true"><%= item.emoji %></span><span class="sr-only"><%= t("#{item.slug}.title") %></span>
@@ -30,36 +32,13 @@
       </li>
 <% end -%>
     </ul>
-    <div class="sidebar-menu sidebar-menu-first">
-      <button type="button" class="sidebar-link sidebar-toggle" id="palette-button" aria-haspopup="menu" aria-expanded="false"
-              aria-controls="palette-menu" data-label="<%= t('common.palette.current', name: palette.name) %>"
-              aria-label="<%= t('common.palette.current', name: palette.name) %>">
-        <span aria-hidden="true"><%= palette.emoji %></span>
-      </button>
-      <div class="menu" id="palette-menu" role="menu" aria-label="<%= t('common.palette.menu_label') %>" hidden>
-<% palettes.each do |choice| -%>
-        <button type="button" role="menuitemradio" tabindex="-1" aria-checked="<%= choice == palette %>"
-                data-palette="<%= choice.id %>" data-name="<%= h(choice.name) %>" data-emoji="<%= choice.emoji %>">
-          <span aria-hidden="true"><%= choice.emoji %></span> <%= choice.name %>
-        </button>
-<% end -%>
-      </div>
+<% if settings_tool -%>
+    <div class="sidebar-foot">
+      <a class="sidebar-link" href="<%= settings_tool.path %>" data-label="<%= t("#{settings_tool.slug}.title") %>"<%= ' aria-current="page"' if settings_tool == tool %>>
+        <span aria-hidden="true"><%= settings_tool.emoji %></span><span class="sr-only"><%= t("#{settings_tool.slug}.title") %></span>
+      </a>
     </div>
-    <div class="sidebar-menu">
-      <button type="button" class="sidebar-link sidebar-toggle" id="language-button" aria-haspopup="menu" aria-expanded="false"
-              aria-controls="language-menu" data-label="<%= t('common.language.current', name: language_name(locale)) %>"
-              aria-label="<%= t('common.language.current', name: language_name(locale)) %>">
-        <span aria-hidden="true"><%= flag(locale) %></span>
-      </button>
-      <div class="menu" id="language-menu" role="menu" aria-label="<%= t('common.language.menu_label') %>" hidden>
-<% locales.each do |choice| -%>
-        <button type="button" role="menuitemradio" tabindex="-1" aria-checked="<%= choice == locale %>"
-                data-locale="<%= choice %>" lang="<%= choice %>">
-          <span aria-hidden="true"><%= flag(choice) %></span> <%= language_name(choice) %>
-        </button>
 <% end -%>
-      </div>
-    </div>
   </nav>
 
   <main class="wrap">

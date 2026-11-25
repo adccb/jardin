@@ -1,0 +1,33 @@
+settings:
+  title: "settings"
+  tagline: "how your garden grows ⚙️ changes save as you go"
+  colors:
+    heading: "colors"
+    help: "every page follows your system’s light or dark; pick the palette here"
+  language:
+    heading: "language"
+    help: "garden speaks four languages"
+  repos:
+    heading: "hidden repos"
+    help: "hidden repos don't show up anywhere: not in the PR, review, branch or worktree pages. the list comes from GitHub, so it's every repo your gh accounts can see."
+    search_placeholder: "🔍 search repos…"
+    search_label: "search repos"
+    loading: "asking GitHub for your repos… 🐙"
+    count:
+      one: "(%{count} hidden)"
+      other: "(%{count} hidden)"
+    shown:
+      one: "showing %{shown} of %{count} repo"
+      other: "showing %{shown} of %{count} repos"
+    hidden_group: "🙈 hidden everywhere"
+    shown_group: "🌱 showing"
+    none_hidden: "nothing hidden 🌈"
+    no_match: "no repos match 🌙"
+    hide_label: "hide %{slug} everywhere"
+    badges:
+      private: "🔒 private"
+      archived: "📦 archived"
+      gone: "👻 not on GitHub anymore"
+    toasts:
+      hidden: "%{slug} hidden everywhere 🙈"
+      shown: "%{slug} is back 👀"

@@ -2,37 +2,32 @@
 
 module Garden
   module Tasks
+    # The task page's API. Every task lives in Todoist; without TODOIST_TOKEN_REF the page says how to set it up.
     class Api
       include Responses
 
-      def initialize(path:, todoist: Todoist::Client.new(token: nil), todoist_filter: "aujourd'hui")
-        @store = Store.new(path)
-        @todoist = TodoistToday.new(todoist, filter_name: todoist_filter)
+      def initialize(todoist: Todoist::Client.new(token: nil))
+        @todoist = TodoistToday.new(todoist)
       end
 
       def call(request, action)
         case [request.method, action]
-        in ['GET', 'list'] then json(200, tasks: @store.all)
-        in ['POST', 'create'] then json(200, ok: true, task: @store.create(request.params['title']))
-        in ['POST', 'update'] then json(200, ok: true, task: update(request.params))
-        in ['POST', 'delete'] then json(200, ok: true, task: @store.delete(request.params['id'].to_s))
-        in ['POST', 'restore'] then json(200, ok: true, task: @store.restore(request.params['task']))
-        in ['GET', 'todoist'] then json(200, todoist(request.query))
-        in ['POST', 'todoist/close'] then json(200, @todoist.close(request.params['id'].to_s))
-        in ['POST', 'todoist/reopen'] then json(200, @todoist.reopen(request.params['id'].to_s))
+        in ['GET', 'list'] then json(200, list(request.query))
+        in ['POST', 'create'] then json(200, @todoist.create(request.params['text']))
+        in ['POST', 'close'] then json(200, @todoist.close(request.params['id'].to_s))
+        in ['POST', 'delete'] then json(200, @todoist.delete(request.params['id'].to_s))
         else not_found
         end
       end
 
       private
 
-      def todoist(query)
+      def list(query)
         return { enabled: false } unless @todoist.enabled?
 
-        { enabled: true, **@todoist.view(refresh: query['refresh'] == '1') }
+        keys = query['tabs']&.split(',') || TodoistToday::DEFAULT_SECTIONS
+        { enabled: true, **@todoist.view(keys:, refresh: query['refresh'] == '1') }
       end
-
-      def update(params) = @store.update(params['id'].to_s, done: params['done'] == true)
     end
   end
 end

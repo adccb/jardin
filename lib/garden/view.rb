@@ -32,7 +32,7 @@ module Garden
     def flag(code) = I18n.t(code, 'common.flag')
 
     def i18n_json
-      JSON.generate(locale:, strings: I18n.bundle(locale, ['common', 'errors', tool.slug])).gsub('</', '<\/')
+      JSON.generate(locale:, strings: I18n.bundle(locale, ['common', 'errors', *tool.shares, tool.slug])).gsub('</', '<\/')
     end
   end
 end

@@ -1,6 +1,6 @@
 # 📸 garden, all dressed up
 
-A walk through every page in the default 🍭 fairyfloss colors, ☀️ light on the left and 🌙 dark on the right. Everything you see is invented: the "sunbeam-labs" team, its repos, PRs, tickets and to-dos come from [`demo/fixtures.rb`](demo/fixtures.rb), not from GitHub, Jira or Todoist.
+A walk through every page in the default 🌹 Rosé Pine colors, ☀️ light on the left and 🌙 dark on the right. Everything you see is invented: the "sunbeam-labs" team, its repos, PRs, tickets and to-dos come from [`demo/fixtures.rb`](demo/fixtures.rb), not from GitHub, Jira or Todoist.
 
 **🍔 English** · [🥐 Français](README.fr.md) · [🌽 Español](README.es.md) · [🍙 日本語](README.ja.md)  
 🎨 [Every page in the other color schemes](palettes.md)
@@ -18,12 +18,12 @@ The merged chip, for admiring what already landed.
 PRs that asked for your review by name.
 ![03-review-garden](en/03-review-garden.jpg)
 
-The team tab, with one repo unchecked and another tucked into the hidden group.
+The team tab, with one repo unchecked in the panel.
 ![04-review-garden-team](en/04-review-garden-team.jpg)
 
 ## 📝 task garden
 
-Today's Todoist filter in tabs, your own tasks below, and the done list open.
+The lists panel on the left, with today and late showing as tabs.
 ![05-task-garden](en/05-task-garden.jpg)
 
 Planting a new task (`c`).
@@ -34,14 +34,16 @@ The keyboard help (`?`).
 
 ## 🌿 branch garden
 
-Local branches with their PR state, upstream and worktree badges.
+One tab per repo in the panel, its branches showing PR state, upstream and worktree badges.
 ![08-branch-garden](en/08-branch-garden.jpg)
 
 Tidying two merged branches at once.
 ![09-branch-garden-tidy](en/09-branch-garden-tidy.jpg)
 
-Worktrees, including a ghost whose folder is gone.
-![10-branch-garden-worktrees](en/10-branch-garden-worktrees.jpg)
+## 🏡 worktree garden
+
+One tab per repo of worktrees, including a ghost whose folder is gone.
+![10-worktree-garden](en/10-worktree-garden.jpg)
 
 ## 🎟️ ticket garden
 
@@ -54,10 +56,10 @@ A sprint tab, with everyone's tickets and per-lane people filters.
 A ticket opened in the drawer.
 ![13-ticket-garden-ticket](en/13-ticket-garden-ticket.jpg)
 
-## 🎨 colors
+## ⚙️ settings
 
-The color menu at the bottom of the sidebar, above the language one.
-![14-color-menu](en/14-color-menu.jpg)
+Colors and language up top, then hiding repos everywhere at once; the repo list comes from GitHub.
+![14-settings](en/14-settings.jpg)
 
 ## Retaking them
 

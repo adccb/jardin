@@ -16,12 +16,6 @@ reviews:
     nothing_picked: "nada marcado por ahora"
     filtered_out: "🌱 filtrados"
     none_filtered: "¡mostrando todos los repos! 🎉"
-    hidden: "🙈 ocultos"
-    hide_label: "ocultar %{name} de esta lista"
-    hide_title: "ocultar de esta lista"
-    bring_back: "traer de vuelta 👀"
-    bring_back_label: "traer de vuelta %{name}"
-    tucked_away: "%{name} guardadito 🙈"
   tabs_label: "quién pidió"
   tabs:
     you:

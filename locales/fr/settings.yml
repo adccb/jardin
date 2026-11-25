@@ -1,0 +1,33 @@
+settings:
+  title: "réglages"
+  tagline: "comment pousse ton jardin ⚙️ tout s’enregistre au fur et à mesure"
+  colors:
+    heading: "couleurs"
+    help: "chaque page suit le mode clair ou sombre de ton système ; choisis la palette ici"
+  language:
+    heading: "langue"
+    help: "garden parle quatre langues"
+  repos:
+    heading: "dépôts cachés"
+    help: "les dépôts cachés n'apparaissent nulle part : ni dans les PR, ni dans les relectures, les branches ou les worktrees. la liste vient de GitHub, donc elle contient tous les dépôts que tes comptes gh voient."
+    search_placeholder: "🔍 chercher un dépôt…"
+    search_label: "chercher un dépôt"
+    loading: "je demande tes dépôts à GitHub… 🐙"
+    count:
+      one: "(%{count} caché)"
+      other: "(%{count} cachés)"
+    shown:
+      one: "%{shown} dépôt affiché sur %{count}"
+      other: "%{shown} dépôts affichés sur %{count}"
+    hidden_group: "🙈 cachés partout"
+    shown_group: "🌱 affichés"
+    none_hidden: "rien de caché 🌈"
+    no_match: "aucun dépôt ne correspond 🌙"
+    hide_label: "cacher %{slug} partout"
+    badges:
+      private: "🔒 privé"
+      archived: "📦 archivé"
+      gone: "👻 n'est plus sur GitHub"
+    toasts:
+      hidden: "%{slug} caché partout 🙈"
+      shown: "%{slug} est de retour 👀"

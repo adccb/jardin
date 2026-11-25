@@ -1,4 +1,4 @@
-# Writes the screenshot galleries: README.md, README.fr.md, README.es.md and README.ja.md (fairyfloss, one per language)
+# Writes the screenshot galleries: README.md, README.fr.md, README.es.md and README.ja.md (Rosé Pine, one per language)
 # and palettes.md (every scene in each other palette, in English). Page names come from the app's own locale files.
 # usage: ruby gallery.rb   (run after shoot.rb; it writes into docs/screenshots)
 require_relative '../../../lib/garden'
@@ -12,19 +12,20 @@ module Demo
     LANGS = %w[en fr es ja].freeze
     FILES = { 'en' => 'README.md', 'fr' => 'README.fr.md', 'es' => 'README.es.md', 'ja' => 'README.ja.md' }.freeze
     PALETTES = {
-      'fairyfloss' => ['🍭', 'fairyfloss', 'The default: a light take by day, the original fairyfloss by night.'],
+      'rose-pine' => ['🌹', 'Rosé Pine', 'The default: Dawn by day, Main by night.'],
       'catppuccin' => ['🐈', 'Catppuccin', 'Latte by day, Mocha by night.'],
-      'rose-pine' => ['🌹', 'Rosé Pine', 'Dawn by day, Main by night.'],
-      'everforest' => ['🌲', 'Everforest', 'Light by day, Dark by night, both at medium contrast.']
+      'everforest' => ['🌲', 'Everforest', 'Light by day, Dark by night, both at medium contrast.'],
+      'nightfox' => ['🦊', 'Nightfox', 'Dayfox by day, Nightfox by night.'],
+      'dracula' => ['🧛', 'Dracula', 'Alucard by day, Dracula by night.'],
+      'tokyo-night' => ['🌃', 'Tokyo Night', 'Day by day, Moon by night.']
     }.freeze
-    PAGE_EMOJI = { 'prs' => '💌', 'reviews' => '👀', 'tasks' => '📝', 'branches' => '🌿', 'jira' => '🎟️' }.freeze
+    PAGE_EMOJI = { 'prs' => '💌', 'reviews' => '👀', 'tasks' => '📝', 'branches' => '🌿', 'worktrees' => '🏡', 'jira' => '🎟️', 'settings' => '⚙️' }.freeze
 
     TEXT = {
       'en' => {
         title: '📸 garden, all dressed up',
-        intro: 'A walk through every page in the default 🍭 fairyfloss colors, ☀️ light on the left and 🌙 dark on the right. Everything you see is invented: the "sunbeam-labs" team, its repos, PRs, tickets and to-dos come from [`demo/fixtures.rb`](demo/fixtures.rb), not from GitHub, Jira or Todoist.',
+        intro: 'A walk through every page in the default 🌹 Rosé Pine colors, ☀️ light on the left and 🌙 dark on the right. Everything you see is invented: the "sunbeam-labs" team, its repos, PRs, tickets and to-dos come from [`demo/fixtures.rb`](demo/fixtures.rb), not from GitHub, Jira or Todoist.',
         palettes: '🎨 [Every page in the other color schemes](palettes.md)',
-        colors: '🎨 colors',
         retake: 'Retaking them',
         retake_body: 'The demo server runs the real pages with every API swapped for the invented data, and each `?scene=` stages a page (tabs, dialogs, saved filters). The shooter drives headless Chrome, so it needs Google Chrome installed; `gallery.rb` then rewrites these pages.',
         comments: ['every scene, every language and palette', 'just one scene', 'rewrite the gallery pages'],
@@ -32,9 +33,8 @@ module Demo
       },
       'fr' => {
         title: '📸 garden, sur son trente-et-un',
-        intro: "Une visite de chaque page dans les couleurs par défaut 🍭 fairyfloss, ☀️ en clair à gauche et 🌙 en sombre à droite. Tout ce que tu vois est inventé : l'équipe « sunbeam-labs », ses dépôts, ses PR, ses tickets et ses tâches viennent de [`demo/fixtures.rb`](demo/fixtures.rb), pas de GitHub, Jira ou Todoist.",
+        intro: "Une visite de chaque page dans les couleurs par défaut 🌹 Rosé Pine, ☀️ en clair à gauche et 🌙 en sombre à droite. Tout ce que tu vois est inventé : l'équipe « sunbeam-labs », ses dépôts, ses PR, ses tickets et ses tâches viennent de [`demo/fixtures.rb`](demo/fixtures.rb), pas de GitHub, Jira ou Todoist.",
         palettes: '🎨 [Chaque page dans les autres palettes (en anglais)](palettes.md)',
-        colors: '🎨 couleurs',
         retake: 'Les refaire',
         retake_body: 'Le serveur de démo fait tourner les vraies pages, avec chaque API remplacée par les données inventées, et chaque `?scene=` met une page en scène (onglets, fenêtres, filtres enregistrés). Le photographe pilote Chrome sans interface, donc il faut que Google Chrome soit installé ; `gallery.rb` réécrit ensuite ces pages.',
         comments: ['chaque scène, langue et palette', 'juste une scène', 'réécrire les galeries'],
@@ -42,9 +42,8 @@ module Demo
       },
       'es' => {
         title: '📸 garden, bien arreglado',
-        intro: 'Un paseo por cada página con los colores predeterminados 🍭 fairyfloss, ☀️ en claro a la izquierda y 🌙 en oscuro a la derecha. Todo lo que ves es inventado: el equipo «sunbeam-labs», sus repos, PR, tickets y tareas vienen de [`demo/fixtures.rb`](demo/fixtures.rb), no de GitHub, Jira ni Todoist.',
+        intro: 'Un paseo por cada página con los colores predeterminados 🌹 Rosé Pine, ☀️ en claro a la izquierda y 🌙 en oscuro a la derecha. Todo lo que ves es inventado: el equipo «sunbeam-labs», sus repos, PR, tickets y tareas vienen de [`demo/fixtures.rb`](demo/fixtures.rb), no de GitHub, Jira ni Todoist.',
         palettes: '🎨 [Cada página en las otras paletas (en inglés)](palettes.md)',
-        colors: '🎨 colores',
         retake: 'Cómo volver a tomarlas',
         retake_body: 'El servidor de demo corre las páginas reales con cada API cambiada por los datos inventados, y cada `?scene=` prepara una página (pestañas, diálogos, filtros guardados). El fotógrafo maneja Chrome sin interfaz, así que necesita Google Chrome instalado; después `gallery.rb` reescribe estas páginas.',
         comments: ['cada escena, idioma y paleta', 'solo una escena', 'reescribir las galerías'],
@@ -52,9 +51,8 @@ module Demo
       },
       'ja' => {
         title: '📸 おめかしした garden',
-        intro: 'デフォルトの 🍭 fairyfloss カラーで全ページをめぐるツアー。左が ☀️ ライト、右が 🌙 ダーク。ここに写っているものはすべて架空のもの：「sunbeam-labs」チーム、そのリポジトリ、PR、チケット、タスクは GitHub や Jira、Todoist ではなく [`demo/fixtures.rb`](demo/fixtures.rb) から来ているよ。',
+        intro: 'デフォルトの 🌹 Rosé Pine カラーで全ページをめぐるツアー。左が ☀️ ライト、右が 🌙 ダーク。ここに写っているものはすべて架空のもの：「sunbeam-labs」チーム、そのリポジトリ、PR、チケット、タスクは GitHub や Jira、Todoist ではなく [`demo/fixtures.rb`](demo/fixtures.rb) から来ているよ。',
         palettes: '🎨 [ほかのカラーパレットで見る全ページ（英語）](palettes.md)',
-        colors: '🎨 色',
         retake: '撮り直しかた',
         retake_body: 'デモサーバーは本物のページを動かしつつ、すべての API を架空のデータに差し替えているよ。`?scene=` ごとにページを演出（タブ、ダイアログ、保存したフィルター）するんだ。撮影係はヘッドレスの Chrome を操作するので、Google Chrome が必要。そのあと `gallery.rb` がこれらのページを書き直すよ。',
         comments: ['全シーン、全言語、全パレット', 'ひとつのシーンだけ', 'ギャラリーを書き直す'],
@@ -82,16 +80,16 @@ module Demo
         'ja' => '名前指定でレビューを依頼された PR。'
       },
       '04-review-garden-team' => {
-        'en' => 'The team tab, with one repo unchecked and another tucked into the hidden group.',
-        'fr' => "L'onglet équipe, avec un dépôt décoché et un autre mis de côté dans les cachés.",
-        'es' => 'La pestaña del equipo, con un repo desmarcado y otro guardado entre los ocultos.',
-        'ja' => 'チームのタブ。リポジトリをひとつチェックから外し、もうひとつは隠したものへ。'
+        'en' => 'The team tab, with one repo unchecked in the panel.',
+        'fr' => "L'onglet équipe, avec un dépôt décoché dans le panneau.",
+        'es' => 'La pestaña del equipo, con un repo desmarcado en el panel.',
+        'ja' => 'チームのタブ。パネルでリポジトリをひとつチェックから外した状態。'
       },
       '05-task-garden' => {
-        'en' => "Today's Todoist filter in tabs, your own tasks below, and the done list open.",
-        'fr' => 'Le filtre Todoist du jour en onglets, tes propres tâches en dessous, et la liste des terminées ouverte.',
-        'es' => 'El filtro de Todoist de hoy en pestañas, tus propias tareas abajo y la lista de hechas abierta.',
-        'ja' => '今日の Todoist フィルターをタブで、その下に自分のタスク、完了リストも開いた状態。'
+        'en' => 'The lists panel on the left, with today and late showing as tabs.',
+        'fr' => "Le panneau des listes à gauche, avec aujourd'hui et en retard affichées en onglets.",
+        'es' => 'El panel de listas a la izquierda, con hoy y atrasadas como pestañas.',
+        'ja' => '左にリストのパネル、「今日」と「期限切れ」をタブで表示。'
       },
       '06-task-garden-new-task' => {
         'en' => 'Planting a new task (`c`).', 'fr' => 'Planter une nouvelle tâche (`c`).',
@@ -102,20 +100,20 @@ module Demo
         'es' => 'La ayuda del teclado (`?`).', 'ja' => 'キーボードのヘルプ（`?`）。'
       },
       '08-branch-garden' => {
-        'en' => 'Local branches with their PR state, upstream and worktree badges.',
-        'fr' => "Les branches locales avec l'état de leur PR, leur upstream et leur worktree.",
-        'es' => 'Las ramas locales con el estado de su PR, su upstream y su worktree.',
-        'ja' => 'ローカルブランチと、その PR の状態、upstream、ワークツリーのバッジ。'
+        'en' => 'One tab per repo in the panel, its branches showing PR state, upstream and worktree badges.',
+        'fr' => "Un onglet par dépôt du panneau, avec l'état de la PR, l'upstream et le worktree de chaque branche.",
+        'es' => 'Una pestaña por cada repo del panel, con el estado de la PR, el upstream y el worktree de cada rama.',
+        'ja' => 'パネルのリポジトリごとにタブ。各ブランチの PR の状態、upstream、ワークツリーのバッジ。'
       },
       '09-branch-garden-tidy' => {
         'en' => 'Tidying two merged branches at once.', 'fr' => "Ranger deux branches mergées d'un coup.",
         'es' => 'Ordenar dos ramas fusionadas de una vez.', 'ja' => 'マージ済みのブランチをふたつまとめてお片付け。'
       },
-      '10-branch-garden-worktrees' => {
-        'en' => 'Worktrees, including a ghost whose folder is gone.',
-        'fr' => 'Les worktrees, dont un fantôme dont le dossier a disparu.',
-        'es' => 'Los worktrees, incluido un fantasma cuya carpeta ya no existe.',
-        'ja' => 'ワークツリー。フォルダが消えたおばけもいるよ。'
+      '10-worktree-garden' => {
+        'en' => 'One tab per repo of worktrees, including a ghost whose folder is gone.',
+        'fr' => 'Un onglet de worktrees par dépôt, dont un fantôme dont le dossier a disparu.',
+        'es' => 'Una pestaña de worktrees por repo, incluido un fantasma cuya carpeta ya no existe.',
+        'ja' => 'リポジトリごとのワークツリーのタブ。フォルダが消えたおばけもいるよ。'
       },
       '11-ticket-garden' => {
         'en' => 'Your tickets in swimlanes by epic, with the sprints panel on the left.',
@@ -133,11 +131,11 @@ module Demo
         'en' => 'A ticket opened in the drawer.', 'fr' => 'Un ticket ouvert dans le tiroir.',
         'es' => 'Un ticket abierto en el panel lateral.', 'ja' => 'パネルで開いたチケット。'
       },
-      '14-color-menu' => {
-        'en' => 'The color menu at the bottom of the sidebar, above the language one.',
-        'fr' => 'Le menu des couleurs en bas de la barre latérale, au-dessus de celui des langues.',
-        'es' => 'El menú de colores al pie de la barra lateral, encima del de idiomas.',
-        'ja' => 'サイドバーの下にある色のメニュー。言語メニューのすぐ上。'
+      '14-settings' => {
+        'en' => 'Colors and language up top, then hiding repos everywhere at once; the repo list comes from GitHub.',
+        'fr' => "Couleurs et langue en haut, puis cacher des dépôts partout d'un coup ; la liste des dépôts vient de GitHub.",
+        'es' => 'Colores e idioma arriba, y debajo ocultar repos en todas partes a la vez; la lista de repos viene de GitHub.',
+        'ja' => '上に色と言語、その下でリポジトリをまとめてどこでも隠す。リポジトリのリストはGitHubから。'
       }
     }.freeze
 
@@ -151,16 +149,11 @@ module Demo
 
     def page_slug(scene) = scene[:page].delete_prefix('/')
 
-    # Consecutive scenes on one page share a heading; the color menu gets its own.
+    # Consecutive scenes on one page share a heading.
     def sections(lang)
-      Scenes::LIST.chunk_while { |a, b| page_slug(a) == page_slug(b) && b[:name] != '14-color-menu' }.map do |scenes|
-        heading = if scenes.first[:name] == '14-color-menu'
-                    TEXT.fetch(lang)[:colors]
-                  else
-                    "#{PAGE_EMOJI.fetch(page_slug(scenes.first))} #{Garden::I18n.t(lang,
-                                                                                   "#{page_slug(scenes.first)}.title")}"
-                  end
-        [heading, scenes]
+      Scenes::LIST.chunk_while { |a, b| page_slug(a) == page_slug(b) }.map do |scenes|
+        slug = page_slug(scenes.first)
+        ["#{PAGE_EMOJI.fetch(slug)} #{Garden::I18n.t(lang, "#{slug}.title")}", scenes]
       end
     end
 
@@ -194,13 +187,13 @@ module Demo
       "# #{text[:title]}\n\n#{text[:intro]}\n\n#{language_links(lang)}\n\n#{body.join("\n")}\n#{retake(lang)}"
     end
 
-    # Fairyfloss reuses the English shots from the main gallery; the others have their own folders.
-    def palette_dir(id) = id == 'fairyfloss' ? 'en' : "palettes/#{id}"
+    # Rosé Pine, the default, reuses the English shots from the main gallery; the others have their own folders.
+    def palette_dir(id) = id == 'rose-pine' ? 'en' : "palettes/#{id}"
 
     # One folding section per palette; the default starts open. The blank lines let GitHub render the Markdown inside.
     def palette_section(id, (emoji, name, sides))
       figures = Scenes::LIST.map { figure(_1, 'en', palette_dir(id)) }.join("\n")
-      "<details#{if id == 'fairyfloss'
+      "<details#{if id == 'rose-pine'
                    ' open'
                  end}>\n<summary><h2>#{emoji} #{name}</h2></summary>\n\n#{sides}\n\n#{figures}\n</details>\n"
     end
@@ -210,8 +203,8 @@ module Demo
         # 🎨 garden in every color
 
         Every page in every color scheme, ☀️ light on the left and 🌙 dark on the right, in English. Open a scheme to see
-        it; pick one in the app from the color menu at the bottom of the sidebar. The [main gallery](README.md) has
-        fairyfloss in every language.
+        it; pick one in the app on the ⚙️ settings page. The [main gallery](README.md) has
+        Rosé Pine in every language.
 
         #{PALETTES.map { |id, details| palette_section(id, details) }.join("\n")}
       MD

@@ -18,12 +18,6 @@ prs:
     nothing_picked: "まだ何も選んでないよ"
     everything_else: "🌱 そのほか"
     picked_all: "ぜんぶ選んだね！🎉"
-    hidden: "🙈 隠したもの"
-    hide_label: "%{name} をリストから隠す"
-    hide_title: "リストから隠す"
-    bring_back: "戻す 👀"
-    bring_back_label: "%{name} を戻す"
-    tucked_away: "%{name} をしまっておいたよ 🙈"
   states:
     open: "🌱 オープン"
     merged: "💖 マージ済み"

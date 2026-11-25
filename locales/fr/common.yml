@@ -1,12 +1,7 @@
 common:
   language_name: "Français"
   flag: "🥐"
-  language:
-    current: "langue : %{name}"
-    menu_label: "langue"
   palette:
-    current: "couleurs : %{name}"
-    menu_label: "palette de couleurs"
     now_wearing: "on s'habille en %{name} %{emoji}"
   nav_label: "outils du jardin"
   home: "accueil du jardin"

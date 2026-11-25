@@ -13,7 +13,7 @@ No database, no build step, no gems. Everything is Ruby's standard library plus 
 ```mermaid
 flowchart LR
   subgraph Browser
-    page["page<br/>(prs.js, reviews.js, branches.js, jira.js)"]
+    page["page<br/>(prs.js, reviews.js, tasks.js, branches.js, jira.js)"]
     ls[("localStorage<br/>your picks & filters")]
   end
   subgraph "garden server (127.0.0.1:4747)"
@@ -43,7 +43,7 @@ flowchart LR
 
 When you run `~/src/garden/bin/garden`:
 
-1. **Options are parsed** (`OptionParser`): `--port` (default 4747), `--root` (default `~/src`), `--jira-site`, `--[no-]open`.
+1. **Options are parsed** (`OptionParser`): `--port` (default 4747), `--root` (default `~/src`), `--jira-site`, `--config-dir` (default `~/.config/garden`, where `settings.json` lives), `--[no-]open`.
 2. **`lib/garden.rb` is loaded.** It requires the stdlib bits (`socket`, `json`, `open3`, `net/http`, `erb`…) and every file under `lib/garden/`.
 3. **Tools are registered.** A tool is one page in the suite — `Garden::Tool` (`lib/garden/tool.rb`) is just a little record:
 
@@ -51,8 +51,11 @@ When you run `~/src/garden/bin/garden`:
    |---|---|---|---|
    | `prs` | 💌 | pr garden | `Prs::Api` |
    | `reviews` | 👀 | review garden | `Reviews::Api` |
+   | `tasks` | 📝 | task garden | `Tasks::Api` |
    | `branches` | 🌿 | branch garden | `Branches::Api` |
+   | `worktrees` | 🏡 | worktree garden | the same `Branches::Api` object |
    | `jira` | 🎟️ | ticket garden | `Jira::Api` |
+   | `settings` | ⚙️ | settings | `Settings::Api` |
 
    Order matters: the **first** tool is the home page and the top of the sidebar.
 4. **`Garden::App` is built** (`lib/garden/app.rb`). It invents a random **garden token** (`SecureRandom.hex(16)`) for this run and remembers which `Host` headers are allowed (`localhost:4747`, `127.0.0.1:4747`).
@@ -113,7 +116,9 @@ import { $, store, esc, api, toast, sprout, … } from './garden.js';
 | `ago`, `ageEmoji`, `plural` | "3d ago 🌱" style formatting. |
 
 **What lives in `localStorage`** (per browser, never sent to the server):
-`prs-repos`, `prs-hidden`, `prs-tab` (PR page) · `repo`, `tab`, `branches-sort`, `worktrees-sort` (branches page) · `reviews-excluded`, `reviews-hidden` (review page) · `jira-done`, `jira-sort`, `jira-sprint-sort`, `jira-view`, `jira-sprints-excluded`, `jira-sprints-hidden` (Jira page).
+`prs-repos`, `prs-tab` (PR page) · `branches-repos-excluded`, `branches-repo-tab`, `branches-sort` (branch page) · `worktrees-repos-excluded`, `worktrees-repo-tab`, `worktrees-sort` (worktree page) · `reviews-excluded` (review page) · `tasks-tabs-excluded`, `tasks-todoist-tab` (task page) · `jira-done`, `jira-sort`, `jira-sprint-sort`, `jira-view`, `jira-sprints-excluded` (Jira page).
+
+**What lives on disk** is one file, `~/.config/garden/settings.json`: `{"hidden_repos": ["owner/name", …]}`, written by `Settings::Store` (`lib/garden/settings/store.rb`) through a `.tmp` file and a rename. The ⚙️ settings page lists every repo `gh api user/repos` returns for each logged-in account (`Github::RepoList`, cached 10 min, about 12 s cold for ~1,100 repos) and ticks the hidden ones. The server then leaves those repos out before any page sees them: `Prs::Api` and `Reviews::Api` drop them by `owner/name`, and `Branches::Api` drops the checkouts whose `origin` points at one (through `Github::LocalRepos`). Panels only check and uncheck; there's no per-page hiding.
 
 ---
 
@@ -146,7 +151,7 @@ sequenceDiagram
 **Step by step:**
 
 1. **Which repos exist?** `Github::LocalRepos` (`lib/garden/github/local_repos.rb`) asks `Branches::RepoFinder` for every folder directly in `~/src` whose `.git` is a *directory* (linked worktrees have a `.git` *file*, so they're skipped). For each, `git remote get-url origin` → the last two path pieces → `owner/repo`. Checkouts of the same GitHub repo (like `k2.5` and `k3`) collapse into one entry; repos with no remote are dropped. The scan is cached for 60 s.
-2. **The side panel** is drawn from that list. Your ticks live in `localStorage` (`prs-repos`), hidden repos in `prs-hidden`. Nothing about your selection is stored on the server.
+2. **The side panel** is drawn from that list. Repos hidden on the ⚙️ settings page are already gone from it. Your ticks live in `localStorage` (`prs-repos`); nothing about your selection is stored on the server.
 3. **Fetching PRs.** For the chosen repos and state, `Prs::Fetcher` (`lib/garden/prs/fetcher.rb`):
    - asks `Github::Accounts` (`lib/garden/github/accounts.rb`) for every logged-in gh account — the active one plus any others from `gh auth status --json hosts`;
    - runs `gh pr list --repo SLUG --author @me --state STATE --json …` **once per account**, each with that account's token in `GH_TOKEN` (fetched via `gh auth token --user LOGIN`), so your active gh account is never switched;
@@ -169,9 +174,9 @@ sequenceDiagram
 
 ---
 
-## 5. Reading: the branches page
+## 5. Reading: the branch and worktree pages
 
-Same shape, different tools:
+Two pages over the same data. Both run `branches.js` (`worktrees.js` just imports it, and the worktree tool `shares` the branch page's strings); the page's `data-garden` attribute says which bed it shows. Each has its own 🪴 repo panel, and every repo checked there is a tab. Neither page ever shows the default branch: the branch page hides it, and the worktree page hides the main checkout and any worktree on the default branch, since none of them can be tidied.
 
 `branches.js` → `GET /api/branches/repos` and `GET /api/branches/state?repo=…` → `Branches::Api` → `Branches::Snapshot`, which runs in parallel:
 
@@ -179,7 +184,7 @@ Same shape, different tools:
 - **`WorktreeReport`** — `git worktree list --porcelain`, then `git status --porcelain` in each worktree (in threads) to count unsaved changes. This is the slow bit on k2: about 3 s across 20 checkouts.
 - **`Branches::PullRequests`** — one `gh pr list --state all` per repo (cached 2 min) so squash-merged branches show as 💖 merged even though git can't tell.
 
-The JSON comes back as `{branches, worktrees, default_branch, pr_info}` and `branches.js` does all filtering, sorting and searching in the browser.
+The JSON comes back as `{branches, worktrees, default_branch, pr_info}` and `branches.js` does all filtering, sorting and searching in the browser. Each checked repo is fetched once and kept until it leaves the panel; the stats at the top add up every checked repo, and the tab you're on shows one.
 
 ---
 
@@ -247,25 +252,24 @@ sequenceDiagram
 
 ## 7½. The task page
 
-The only page that keeps its own data. `tasks.js` → `/api/tasks/{list,create,update,delete,restore}` → `Tasks::Store` (`lib/garden/tasks/store.rb`), which reads and writes one JSON file: `~/.local/share/garden/tasks.json` (or `--data-dir`).
+Everything on this page lives in Todoist; garden keeps no task data of its own. `tasks.js` → `/api/tasks/{list,create,close,delete}` → `Tasks::TodoistToday` (`lib/garden/tasks/todoist_today.rb`) → `Todoist::Client` (`lib/garden/todoist/client.rb`). Without `TODOIST_TOKEN_REF`, `list` answers `{enabled: false}`, the page explains the setup, and every change is refused with `errors.todoist.not_set_up`.
 
-- Every change takes a lock, loads the file, edits the list and writes it back to a `.tmp` file before renaming it into place, so a crash never leaves half a list.
-- Titles are trimmed, newlines squashed, 1–500 characters. A task is just `{id, title, created_at, done_at}`; "done" means `done_at` is set.
-- Undo after a delete sends the deleted task back to `restore`, which re-validates it (UUID id, real timestamps) and refuses duplicates.
+- **Planting**: text is trimmed, newlines squashed, 1–500 characters, then sent to Todoist's quick add (`POST /api/v1/tasks/quick`), which reads dates, `#projects`, `p1`–`p4` and `@labels`. If it found no date, a follow-up `POST /api/v1/tasks/:id` sets `due_string: "today"` so the task shows up in the today tab. The page then reloads and jumps to whichever tab holds the new task, or says it isn't in any list you're showing.
+- **Checking off and deleting** wait in the browser: the row is hidden at once and the `close` or `delete` goes out after 6 seconds (the length of the "press u to undo" toast), because Todoist can't undelete and the page has no done list to uncheck from. `u` cancels the waiting one, starting another sends the one before straight away, and `pagehide` sends a waiting one with `fetch(…, {keepalive: true})` so closing the tab doesn't lose it.
 - All the keyboard handling lives in the browser: one `keydown` listener maps keys to actions, ignoring them while you type or while a dialog is open, and focus is moved to the next task after every change so you never lose your place.
 
 ---
 
-**Your Todoist filter.** If `TODOIST_TOKEN_REF` is set, `Tasks::TodoistToday` (`lib/garden/tasks/todoist_today.rb`) asks Todoist's sync endpoint for your saved filters and account language, and finds the one named by `TODOIST_FILTER` (default `aujourd'hui`; matching ignores case, emoji and apostrophe style). `Todoist::SavedFilter` (`lib/garden/todoist/saved_filter.rb`) splits its query on top-level commas, because the API refuses them, and swaps the French, Spanish or Japanese inbox name ("Boîte de réception", "Bandeja de entrada", "インボックス") for your inbox's real name, which is the only one the API knows. Each part is fetched separately with `GET /api/v1/tasks/filter?query=…&lang=<your language>` and becomes its own tab. Tasks are flattened by `Todoist::Task` (Todoist's priority 4 is its red "p1") and sorted overdue first, then by priority and time. The filter setup is cached 10 min, task lists 30 s. Checking off calls `POST /api/v1/tasks/:id/close` and unchecking `…/reopen`; recurring tasks can't be unchecked because Todoist has already moved them on. The token comes from `op read` via `Garden::Secrets` on first use and lives only in memory.
+**The tabs.** The 🗂️ lists panel is the same `ScopePanel` as the PR and ticket pages, over four fixed lists; `list?tabs=today,late` asks for just the checked ones. `Tasks::TodoistToday` fetches ☀️ today, 🐌 late and 📅 upcoming as Todoist filter queries (`today`, `overdue`, `due after: today`) with `GET /api/v1/tasks/filter?query=…&lang=en` (English filter words, so `lang=en` whatever your Todoist language), and 📥 inbox as `GET /api/v1/tasks?project_id=<your inbox>`. Tasks are flattened by `Todoist::Task` (Todoist's priority 4 is its red "p1"; project ids become names from `GET /api/v1/projects`); upcoming is sorted soonest first, the others overdue first, then by priority and time. Project names are cached 10 min and each list 30 s on its own; any change clears the lists. The token comes from `op read` via `Garden::Secrets` on first use and lives only in memory.
 
 ---
 
 ## 7¾. English, French, Spanish and Japanese
 
-Every word you see comes from `locales/<lang>/<area>.yml` (`common`, `errors`, `prs`, `reviews`, `tasks`, `branches`, `jira`).
+Every word you see comes from `locales/<lang>/<area>.yml` (`common`, `errors`, `prs`, `reviews`, `tasks`, `branches`, `worktrees`, `jira`, `settings`).
 
-- **Picking a language** (`Garden::Locale`, in `lib/garden/i18n.rb`): the `garden_locale` cookie wins, then your browser's `Accept-Language`, then English. The language menu (🍔 English, 🥐 French, 🌽 Spanish, 🍙 Japanese) at the bottom of the sidebar sets the cookie and reloads.
-- **Picking a palette** (`Garden::Palette`, in `lib/garden/palette.rb`): the `garden_palette` cookie, else fairyfloss. The layout puts it on `<html data-palette=…>`, so `public/css/palettes.css` recolors the page before it paints. The color menu above the language one sets the cookie and swaps `data-palette` in place, no reload. Both menus share `public/js/sidebar-menu.js`.
+- **Picking a language** (`Garden::Locale`, in `lib/garden/i18n.rb`): the `garden_locale` cookie wins, then your browser's `Accept-Language`, then English. The 🌐 language card on the ⚙️ settings page (🍔 English, 🥐 French, 🌽 Spanish, 🍙 Japanese) sets the cookie and reloads.
+- **Picking a palette** (`Garden::Palette`, in `lib/garden/palette.rb`): the `garden_palette` cookie, else Rosé Pine (whose colors are the defaults in `public/css/garden.css`). The layout puts it on `<html data-palette=…>`, so `public/css/palettes.css` recolors the page before it paints. The 🎨 colors card on the settings page sets the cookie and swaps `data-palette` in place, no reload. The ⚙️ settings link is pinned to the foot of the sidebar; every other tool is listed at the top.
 - **On the server**, `Garden::I18n.t(locale, key, **vars)` looks keys up (falling back to English, then to the key itself with a `🌐 missing translation` warning in the terminal) and fills `%{vars}`. YAML files reload automatically when they change.
 - **In templates**, `pages/*.html.erb` render through `Garden::View`, so they write `<%= t('tasks.new_task') %>`. Text is HTML-escaped unless the key ends in `_html` (used for strings with `<kbd>` in them).
 - **In the browser**, the layout embeds that page's strings as JSON (`<script id="garden-i18n">`). `garden.js` exposes `t(key, vars)`, `tp(key, count)` for plurals via `Intl.PluralRules` (French counts 0 as singular; Japanese has no singular), `pick(key)` for random cheers, plus `ago()` and `formatDate()` built on `Intl` so times and dates read naturally in each language.
@@ -301,16 +305,19 @@ lib/garden/
   app.rb                       host/token checks, routing: / · /<tool> · /assets/* · /api/<tool>/<action>
   layout.rb + assets.rb        HTML shell (ERB) and static files
   responses.rb                 json / html / redirect / not_found helpers
-  tool.rb                      the Tool record (slug, emoji, title, api)
+  tool.rb                      the Tool record (slug, emoji, api, shares)
   git.rb                       Open3 wrapper around `git -C dir …`
-  github/                      gh accounts, ~/src → owner/repo
+  github/                      gh accounts, ~/src → owner/repo, every repo your accounts can see
   prs/                         💌 api, fetcher, pull_request, checks, review
   reviews/                     👀 api, search, request
   branches/                    🌿 api, snapshot, branch/worktree reports, gardener, PR badges
   jira/                        🎟️ api, client, credentials, ticket, adf
+  tasks/                       📝 api, the Todoist-backed task page
+  todoist/                     Todoist API client and task flattening
+  settings/                    ⚙️ store (settings.json) and the settings page api
 pages/
   layout.html.erb              sidebar + dialog + toasts around every page
-  <slug>.html.erb               each page's middle bit (prs, reviews, tasks, branches, jira)
+  <slug>.html.erb               each page's middle bit (prs, reviews, tasks, branches, worktrees, jira, settings)
 locales/
   en/ fr/ es/ ja/ *.yml        every word on every page, per area
 public/

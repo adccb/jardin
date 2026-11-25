@@ -5,8 +5,10 @@ module Garden
     class Api
       include Responses
 
-      def initialize(search: Search.new)
+      # hidden_slugs: the owner/name of repos hidden on the settings page; their requests are left out.
+      def initialize(search: Search.new, hidden_slugs: -> { [] })
         @search = search
+        @hidden_slugs = hidden_slugs
       end
 
       def call(request, action)
@@ -22,7 +24,9 @@ module Garden
         requests = @search.requests(refresh:)
         return { ok: false, error_key: 'errors.no_gh_access_reviews', requests: [] } unless requests
 
-        { ok: true, requests: requests.sort_by { |pr| pr[:updated].to_s }.reverse }
+        hidden = @hidden_slugs.call
+        shown = requests.reject { |pr| hidden.include?(pr[:repo]) }
+        { ok: true, requests: shown.sort_by { |pr| pr[:updated].to_s }.reverse }
       end
     end
   end

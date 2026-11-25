@@ -18,12 +18,6 @@ prs:
     nothing_picked: "rien de choisi pour l'instant"
     everything_else: "🌱 tout le reste"
     picked_all: "tu les as tous pris ! 🎉"
-    hidden: "🙈 cachés"
-    hide_label: "cacher %{name} de cette liste"
-    hide_title: "cacher de cette liste"
-    bring_back: "faire revenir 👀"
-    bring_back_label: "faire revenir %{name}"
-    tucked_away: "%{name} mis de côté 🙈"
   states:
     open: "🌱 ouvertes"
     merged: "💖 fusionnées"

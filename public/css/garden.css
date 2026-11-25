@@ -4,63 +4,64 @@
   --font-body: "Nunito", "Hiragino Maru Gothic ProN", ui-rounded, system-ui, sans-serif;
 }
 
+/* Rosé Pine, the default palette: dawn by day, main by night 🌹. The others live in palettes.css. */
 :root {
   color-scheme: light;
-  --bg: #fff0f7;
-  --glow-1: #ffd6ea;
-  --glow-2: #e9ddff;
-  --glow-3: #d6fbe9;
-  --dot: rgba(194, 38, 107, .07);
-  --surface: #ffffff;
-  --surface-2: #fff6fb;
-  --border: #f6c6dd;
-  --text: #5a5475;
-  --muted: #7d7299;
-  --pink: #c2266b;
-  --lavender: #7a4fd1;
-  --mint: #17774f;
-  --gold: #8a6500;
-  --coral: #c0392b;
-  --pink-soft: #ffe1ee;
-  --lav-soft: #efe7ff;
-  --mint-soft: #dcfbec;
-  --gold-soft: #fff4c4;
-  --coral-soft: #ffe3e0;
-  --on-accent: #ffffff;
-  --shadow: 0 6px 22px rgba(194, 38, 107, .12);
-  --shadow-hover: 0 10px 30px rgba(122, 79, 209, .2);
-  --tab-shadow: 0 -6px 18px rgba(194, 38, 107, .08);
-  --backdrop: rgba(90, 84, 117, .55);
+  --bg: #faf4ed;          /* base */
+  --glow-1: rgba(215, 130, 126, .2);
+  --glow-2: rgba(144, 122, 169, .16);
+  --glow-3: rgba(86, 148, 159, .12);
+  --dot: rgba(70, 66, 97, .06);
+  --surface: #fffaf3;     /* surface */
+  --surface-2: #f2e9e1;   /* overlay */
+  --border: #dfdad9;      /* highlightMed */
+  --text: #464261;        /* text */
+  --muted: #464261;       /* text; subtle is under AA */
+  --pink: #b4637a;        /* love; rose is under 3:1 */
+  --lavender: #907aa9;    /* iris */
+  --mint: #286983;        /* pine */
+  --gold: #797593;        /* subtle; gold is under 3:1 */
+  --coral: #b4637a;       /* love */
+  --pink-soft: rgba(215, 130, 126, .14);
+  --lav-soft: rgba(144, 122, 169, .12);
+  --mint-soft: rgba(86, 148, 159, .12);
+  --gold-soft: rgba(234, 157, 52, .16);
+  --coral-soft: rgba(180, 99, 122, .1);
+  --on-accent: #fffaf3;   /* surface */
+  --shadow: 0 6px 22px rgba(70, 66, 97, .1);
+  --shadow-hover: 0 10px 30px rgba(180, 99, 122, .18);
+  --tab-shadow: 0 -6px 18px rgba(180, 99, 122, .08);
+  --backdrop: rgba(70, 66, 97, .45);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     color-scheme: dark;
-    --bg: #5a5475;
-    --glow-1: rgba(255, 184, 209, .22);
-    --glow-2: rgba(197, 163, 255, .22);
-    --glow-3: rgba(194, 255, 223, .12);
-    --dot: rgba(255, 184, 209, .07);
-    --surface: #464060;
-    --surface-2: #4f4869;
-    --border: #8077a8;
-    --text: #f8f8f2;
-    --muted: #d9d2ef;
-    --pink: #ffb8d1;
-    --lavender: #c5a3ff;
-    --mint: #c2ffdf;
-    --gold: #ffea00;
-    --coral: #ff857f;
-    --pink-soft: rgba(255, 184, 209, .14);
-    --lav-soft: rgba(197, 163, 255, .14);
-    --mint-soft: rgba(194, 255, 223, .1);
-    --gold-soft: rgba(255, 234, 0, .1);
-    --coral-soft: rgba(255, 133, 127, .14);
-    --on-accent: #3b3552;
-    --shadow: 0 6px 22px rgba(20, 14, 40, .35);
-    --shadow-hover: 0 10px 30px rgba(255, 184, 209, .22);
-    --tab-shadow: 0 -6px 18px rgba(194, 38, 107, .08);
-    --backdrop: rgba(90, 84, 117, .55);
+    --bg: #191724;          /* base */
+    --glow-1: rgba(235, 188, 186, .12);
+    --glow-2: rgba(196, 167, 231, .12);
+    --glow-3: rgba(156, 207, 216, .08);
+    --dot: rgba(224, 222, 244, .05);
+    --surface: #1f1d2e;     /* surface */
+    --surface-2: #26233a;   /* overlay */
+    --border: #403d52;      /* highlightMed */
+    --text: #e0def4;        /* text */
+    --muted: #908caa;       /* subtle */
+    --pink: #ebbcba;        /* rose */
+    --lavender: #c4a7e7;    /* iris */
+    --mint: #9ccfd8;        /* foam */
+    --gold: #f6c177;        /* gold */
+    --coral: #eb6f92;       /* love */
+    --pink-soft: rgba(235, 188, 186, .12);
+    --lav-soft: rgba(196, 167, 231, .12);
+    --mint-soft: rgba(156, 207, 216, .1);
+    --gold-soft: rgba(246, 193, 119, .1);
+    --coral-soft: rgba(235, 111, 146, .12);
+    --on-accent: #191724;   /* base */
+    --shadow: 0 6px 22px rgba(10, 9, 16, .45);
+    --shadow-hover: 0 10px 30px rgba(235, 188, 186, .16);
+    --tab-shadow: 0 -6px 18px rgba(10, 9, 16, .35);
+    --backdrop: rgba(10, 9, 16, .6);
   }
 }
 
@@ -351,26 +352,8 @@ footer { margin-top: 48px; text-align: center; color: var(--muted); font-weight:
   .sidebar-link { width: 44px; height: 44px; font-size: 1.35rem; border-radius: 14px; }
 }
 
-.sidebar-toggle { border: none; background: transparent; cursor: pointer; font: inherit; font-size: 1.5rem; }
-.sidebar-menu { position: relative; }
-.sidebar-menu-first { margin-top: auto; }
-.sidebar-link[aria-expanded="true"] { background: var(--pink-soft); }
-.sidebar-link[aria-expanded="true"]::after { opacity: 0; }
-
-.menu {
-  position: absolute; left: calc(100% + 14px); bottom: 0; z-index: 10; min-width: 190px;
-  display: grid; gap: 4px; padding: 8px; background: var(--surface);
-  border: 2px solid var(--pink); border-radius: 18px; box-shadow: var(--shadow-hover);
-}
-.menu[hidden] { display: none; }
-.menu [role="menuitemradio"] {
-  display: flex; align-items: center; gap: 10px; padding: 8px 12px; border: none; border-radius: 12px;
-  background: transparent; color: var(--text); cursor: pointer; text-align: left; white-space: nowrap;
-  font-family: var(--font-display); font-size: 1rem; font-weight: 600;
-}
-.menu [role="menuitemradio"]:hover, .menu [role="menuitemradio"]:focus-visible { background: var(--pink-soft); }
-.menu [role="menuitemradio"]:focus-visible { outline: 2px solid var(--pink); outline-offset: -2px; }
-.menu [role="menuitemradio"][aria-checked="true"]::after { content: "✓"; margin-left: auto; padding-left: 12px; color: var(--pink); font-weight: 700; }
+/* ⚙️ settings sits at the foot of the sidebar */
+.sidebar-foot { margin-top: auto; }
 
 /* PR cards, shared by pr garden 💌 and review garden 👀 */
 
@@ -423,19 +406,6 @@ footer { margin-top: 48px; text-align: center; color: var(--muted); font-weight:
 .repo-empty { margin: 4px 9px; font-size: .9rem; font-weight: 700; color: var(--muted); }
 .repo-row { display: flex; align-items: flex-start; gap: 2px; }
 .repo-row .repo-option { flex: 1; min-width: 0; }
-.repo-row.is-hidden { align-items: center; opacity: .75; }
-.repo-row.is-hidden .link-btn { font-size: .85rem; white-space: nowrap; padding-right: 6px; }
-.repo-hide {
-  flex: none; margin-top: 4px; width: 30px; height: 30px; border-radius: 10px; border: none; cursor: pointer;
-  background: transparent; font-size: 1rem; opacity: 0; transition: opacity .15s ease, background .15s ease;
-}
-.repo-row:hover .repo-hide, .repo-hide:focus-visible { opacity: 1; }
-.repo-hide:hover { background: var(--lav-soft); }
-@media (hover: none) { .repo-hide { opacity: .6; } }
-.repo-hidden summary { list-style: none; cursor: pointer; }
-.repo-hidden summary::-webkit-details-marker { display: none; }
-.repo-hidden summary::after { content: " ▸"; color: var(--muted); }
-.repo-hidden[open] summary::after { content: " ▾"; }
 .repo-option { display: flex; gap: 10px; align-items: flex-start; padding: 7px 9px; border-radius: 14px; cursor: pointer; transition: background .15s ease; }
 .repo-option:hover { background: var(--pink-soft); }
 .repo-option input { width: 18px; height: 18px; margin: 2px 0 0; accent-color: var(--pink); cursor: pointer; flex: none; }

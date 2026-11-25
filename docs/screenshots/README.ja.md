@@ -1,6 +1,6 @@
 # 📸 おめかしした garden
 
-デフォルトの 🍭 fairyfloss カラーで全ページをめぐるツアー。左が ☀️ ライト、右が 🌙 ダーク。ここに写っているものはすべて架空のもの：「sunbeam-labs」チーム、そのリポジトリ、PR、チケット、タスクは GitHub や Jira、Todoist ではなく [`demo/fixtures.rb`](demo/fixtures.rb) から来ているよ。
+デフォルトの 🌹 Rosé Pine カラーで全ページをめぐるツアー。左が ☀️ ライト、右が 🌙 ダーク。ここに写っているものはすべて架空のもの：「sunbeam-labs」チーム、そのリポジトリ、PR、チケット、タスクは GitHub や Jira、Todoist ではなく [`demo/fixtures.rb`](demo/fixtures.rb) から来ているよ。
 
 [🍔 English](README.md) · [🥐 Français](README.fr.md) · [🌽 Español](README.es.md) · **🍙 日本語**  
 🎨 [ほかのカラーパレットで見る全ページ（英語）](palettes.md)
@@ -18,12 +18,12 @@
 名前指定でレビューを依頼された PR。
 ![03-review-garden](ja/03-review-garden.jpg)
 
-チームのタブ。リポジトリをひとつチェックから外し、もうひとつは隠したものへ。
+チームのタブ。パネルでリポジトリをひとつチェックから外した状態。
 ![04-review-garden-team](ja/04-review-garden-team.jpg)
 
 ## 📝 タスクのお庭
 
-今日の Todoist フィルターをタブで、その下に自分のタスク、完了リストも開いた状態。
+左にリストのパネル、「今日」と「期限切れ」をタブで表示。
 ![05-task-garden](ja/05-task-garden.jpg)
 
 新しいタスクを植える（`c`）。
@@ -34,14 +34,16 @@
 
 ## 🌿 ブランチのお庭
 
-ローカルブランチと、その PR の状態、upstream、ワークツリーのバッジ。
+パネルのリポジトリごとにタブ。各ブランチの PR の状態、upstream、ワークツリーのバッジ。
 ![08-branch-garden](ja/08-branch-garden.jpg)
 
 マージ済みのブランチをふたつまとめてお片付け。
 ![09-branch-garden-tidy](ja/09-branch-garden-tidy.jpg)
 
-ワークツリー。フォルダが消えたおばけもいるよ。
-![10-branch-garden-worktrees](ja/10-branch-garden-worktrees.jpg)
+## 🏡 ワークツリーのお庭
+
+リポジトリごとのワークツリーのタブ。フォルダが消えたおばけもいるよ。
+![10-worktree-garden](ja/10-worktree-garden.jpg)
 
 ## 🎟️ チケットのお庭
 
@@ -54,10 +56,10 @@
 パネルで開いたチケット。
 ![13-ticket-garden-ticket](ja/13-ticket-garden-ticket.jpg)
 
-## 🎨 色
+## ⚙️ 設定
 
-サイドバーの下にある色のメニュー。言語メニューのすぐ上。
-![14-color-menu](ja/14-color-menu.jpg)
+上に色と言語、その下でリポジトリをまとめてどこでも隠す。リポジトリのリストはGitHubから。
+![14-settings](ja/14-settings.jpg)
 
 ## 撮り直しかた
 

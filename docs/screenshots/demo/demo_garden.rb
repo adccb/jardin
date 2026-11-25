@@ -57,6 +57,10 @@ end
 
 port = Integer(ARGV.fetch(0, '4750'))
 f = Demo::Fixtures
+branches_api = Demo::FakeApi.new(
+  'GET repos' => ->(*) { { repos: f.branch_repos } },
+  'GET state' => ->(q, *) { f.branch_state(q['repo']) }
+)
 tools = [
   Garden::Tool.new(slug: 'prs', emoji: '💌', api: Demo::FakeApi.new(
     'GET repos' => ->(*) { { repos: f.pr_repos } },
@@ -66,17 +70,17 @@ tools = [
     'GET list' => ->(*) { { ok: true, requests: f.review_requests } }
   )),
   Garden::Tool.new(slug: 'tasks', emoji: '📝', api: Demo::FakeApi.new(
-    'GET list' => ->(_q, locale, _r) { { tasks: f.tasks(locale) } },
-    'GET todoist' => ->(_q, locale, _r) { f.todoist(locale) }
+    'GET list' => ->(q, locale, _r) { f.todoist(locale, q['tabs'] || 'today,late') }
   )),
-  Garden::Tool.new(slug: 'branches', emoji: '🌿', api: Demo::FakeApi.new(
-    'GET repos' => ->(*) { { repos: f.branch_repos } },
-    'GET state' => ->(q, *) { f.branch_state(q['repo']) }
-  )),
+  Garden::Tool.new(slug: 'branches', emoji: '🌿', api: branches_api),
+  Garden::Tool.new(slug: 'worktrees', emoji: '🏡', api: branches_api, shares: ['branches']),
   Garden::Tool.new(slug: 'jira', emoji: '🎟️', api: Demo::FakeApi.new(
     'GET tickets' => ->(q, *) { q['view'] == 'sprint' ? f.jira_sprint_view(q['sprint']) : f.jira_mine },
     'GET sprints' => ->(*) { { sprints: f.jira_sprints } },
     'GET ticket' => ->(q, *) { f.jira_ticket(q['key']) }
+  )),
+  Garden::Tool.new(slug: 'settings', emoji: '⚙️', api: Demo::FakeApi.new(
+    'GET repos' => ->(*) { { ok: true, repos: f.settings_repos } }
   ))
 ]
 

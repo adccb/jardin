@@ -2,75 +2,98 @@
 
 module Garden
   module Tasks
-    # Your saved Todoist filter for the task page: one section per comma part, each its own list.
-    # Cached briefly; closing or reopening a task busts the cache.
+    # The task page, all of it in Todoist: whichever of four lists you show as tabs (today, late, inbox,
+    # upcoming), and planting, closing and deleting tasks.
+    # Each list is cached briefly on its own; any change busts them all.
     class TodoistToday
       extend Forwardable
 
       TTL = 30
-      SETUP_TTL = 600
+      PROJECTS_TTL = 600
+      MAX_TEXT = 500
       ID_FORMAT = /\A[A-Za-z0-9_-]{1,64}\z/
+      # Filter queries are English filter words, whatever your Todoist language. The inbox is fetched by project.
+      QUERIES = { 'today' => 'today', 'late' => 'overdue', 'upcoming' => 'due after: today' }.freeze
+      SECTIONS = %w[today late inbox upcoming].freeze
+      DEFAULT_SECTIONS = %w[today late].freeze
 
       def_delegators :@client, :enabled?
 
-      def initialize(client, filter_name:)
+      def initialize(client)
         @client = client
-        @filter_name = filter_name
         @lock = Mutex.new
-        @cached = nil
-        @setup = nil
+        @cache = {}
+        @projects = nil
       end
 
-      def view(refresh: false)
-        @lock.synchronize { @cached = nil if refresh || stale?(@cached, TTL) }
-        @cached&.fetch(:value) || fresh_view(refresh:)
+      # Keys outside SECTIONS are dropped; the tabs come back in SECTIONS order.
+      def view(keys: DEFAULT_SECTIONS, refresh: false)
+        @lock.synchronize { @cache.clear } if refresh
+        projects = projects(refresh:)
+        wanted = SECTIONS & keys
+        sections = wanted.map { |key| Thread.new { cached(key) { section(key, projects) } } }
+        { sections: sections.map(&:value) }
+      end
+
+      # Quick add reads Todoist's syntax; a task it found no date in is due today, so it lands on the page.
+      def create(text)
+        task = nil
+        result = change do
+          task = @client.quick_add(clean(text))
+          @client.update(task['id'], due_string: 'today') if task['due'].nil?
+        end
+        result.merge(id: task['id'])
       end
 
       def close(id) = change { @client.close(checked(id)) }
-      def reopen(id) = change { @client.reopen(checked(id)) }
+      def delete(id) = change { @client.delete(checked(id)) }
 
       private
 
-      def fresh_view(refresh:)
-        setup = setup(refresh:)
-        value = {
-          filter: { name: setup[:filter].name, url: setup[:filter].url },
-          sections: setup[:parts].map { |part| Thread.new { section(part, setup) } }.map(&:value)
-        }
-        @lock.synchronize { @cached = { value:, at: Time.now } }
+      def cached(key)
+        @lock.synchronize do
+          entry = @cache[key]
+          return entry[:value] if entry && !stale?(entry, TTL)
+        end
+        value = yield
+        @lock.synchronize { @cache[key] = { value:, at: Time.now } }
         value
       end
 
-      def section(part, setup)
-        today = Date.today.iso8601
-        tasks = @client.filter_tasks(part[:query], lang: setup[:lang])
-                       .map { |task| Todoist::Task.new(task, projects: setup[:project_names], today:) }
-        { label: part[:label], tasks: tasks.sort_by(&:sort_key).map(&:to_h) }
+      def section(key, projects)
+        raw = key == 'inbox' ? @client.project_tasks(projects[:inbox_id]) : @client.filter_tasks(QUERIES.fetch(key), lang: 'en')
+        tasks = raw.map { |task| flatten(task, projects) }
+        { key:, tasks: tasks.sort_by { key == 'upcoming' ? _1.date_key : _1.sort_key }.map(&:to_h) }
       end
 
-      # The filter, your language and project names change rarely, so they're cached longer.
-      def setup(refresh:)
-        @lock.synchronize { @setup = nil if refresh || stale?(@setup, SETUP_TTL) }
-        @setup&.fetch(:value) || fresh_setup
-      end
+      def flatten(task, projects) = Todoist::Task.new(task, projects: projects[:names], today: Date.today.iso8601)
 
-      def fresh_setup
-        filters, lang = @client.filters_and_lang
-        projects = @client.projects
-        filter = Todoist::SavedFilter.find(filters, @filter_name)
-        inbox_name = projects.find { |project| project['inbox_project'] }&.fetch('name', nil)
-        value = {
-          filter:, lang:, parts: filter.parts(lang:, inbox_name:),
-          project_names: projects.to_h { |project| [project['id'], project['name']] }
-        }
-        @lock.synchronize { @setup = { value:, at: Time.now } }
-        value
+      # Project names (and which one is your inbox) change rarely, so they're cached longer.
+      def projects(refresh:)
+        @lock.synchronize { @projects = nil if refresh || stale?(@projects, PROJECTS_TTL) }
+        @projects&.fetch(:value) || begin
+          list = @client.projects
+          value = { names: list.to_h { |project| [project['id'], project['name']] },
+                    inbox_id: list.find { |project| project['inbox_project'] }&.fetch('id', nil) }
+          @lock.synchronize { @projects = { value:, at: Time.now } }
+          value
+        end
       end
 
       def change
+        raise Refusal.new('errors.todoist.not_set_up') unless enabled?
+
         yield
-        @lock.synchronize { @cached = nil }
+        @lock.synchronize { @cache.clear }
         { ok: true }
+      end
+
+      def clean(text)
+        words = text.to_s.gsub(/\s+/, ' ').strip
+        raise Refusal.new('errors.task_empty') if words.empty?
+        raise Refusal.new('errors.task_too_long', max: MAX_TEXT) if words.length > MAX_TEXT
+
+        words
       end
 
       def checked(id)

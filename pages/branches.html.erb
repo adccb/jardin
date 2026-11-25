@@ -8,7 +8,7 @@
       <p id="pr-note" class="note" hidden></p>
     </header>
 
-    <div class="pr-layout">
+    <div class="pr-layout" data-garden="branches">
       <aside class="repo-panel" aria-labelledby="repo-panel-title">
         <details id="repo-details" open>
           <summary>
@@ -22,62 +22,35 @@
         </details>
       </aside>
 
-      <section class="pr-main" aria-label="<%= t('branches.tabs.label') %>">
-    <div class="tabs" role="tablist" aria-label="<%= t('branches.tabs.label') %>">
-      <button type="button" class="tab" role="tab" id="tab-branches" aria-controls="panel-branches" data-tab="branches">
-        <span aria-hidden="true">🌿</span> <%= t('branches.tabs.branches') %> <span class="tab-count" id="branches-count"></span><span class="tab-picked" id="branches-picked"></span>
-      </button>
-      <button type="button" class="tab" role="tab" id="tab-worktrees" aria-controls="panel-worktrees" data-tab="worktrees">
-        <span aria-hidden="true">🏡</span> <%= t('branches.tabs.worktrees') %> <span class="tab-count" id="worktrees-count"></span><span class="tab-picked" id="worktrees-picked"></span>
-      </button>
-    </div>
-
-    <section class="panel" id="panel-branches" role="tabpanel" aria-labelledby="tab-branches" hidden>
-      <div class="toolbar">
-        <div id="branches-filters" class="chips" role="group" aria-label="<%= t('branches.toolbar.branches.filters_label') %>"></div>
-        <div class="toolbar-row">
-          <input id="branches-search" type="search" placeholder="<%= t('branches.toolbar.branches.search_placeholder') %>" aria-label="<%= t('branches.toolbar.branches.search_label') %>">
-          <label class="sr-only" for="branches-sort"><%= t('branches.toolbar.branches.sort_label') %></label>
-          <select id="branches-sort">
-            <option value="oldest"><%= t('branches.sort.oldest') %></option>
-            <option value="newest"><%= t('branches.sort.newest') %></option>
-            <option value="name"><%= t('branches.sort.name') %></option>
-            <option value="behind"><%= t('branches.sort.behind') %></option>
-          </select>
-          <button id="branches-select-visible" class="btn btn-small" type="button"><%= t('branches.select_visible') %></button>
+      <section class="pr-main" aria-label="<%= t('branches.main_label') %>">
+        <div class="tabs" role="tablist" id="repo-tabs" aria-label="<%= t('branches.repo_tabs_label') %>"></div>
+        <div class="panel" id="repo-tab-panel" role="tabpanel">
+          <section class="bed" id="branches-section" aria-label="<%= t('branches.beds.branches') %>">
+            <div class="toolbar">
+              <div id="branches-filters" class="chips" role="group" aria-label="<%= t('branches.toolbar.branches.filters_label') %>"></div>
+              <div class="toolbar-row">
+                <input id="branches-search" type="search" placeholder="<%= t('branches.toolbar.branches.search_placeholder') %>" aria-label="<%= t('branches.toolbar.branches.search_label') %>">
+                <label class="sr-only" for="branches-sort"><%= t('branches.toolbar.branches.sort_label') %></label>
+                <select id="branches-sort">
+                  <option value="oldest"><%= t('branches.sort.oldest') %></option>
+                  <option value="newest"><%= t('branches.sort.newest') %></option>
+                  <option value="name"><%= t('branches.sort.name') %></option>
+                  <option value="behind"><%= t('branches.sort.behind') %></option>
+                </select>
+                <button id="branches-select-visible" class="btn btn-small" type="button"><%= t('branches.select_visible') %></button>
+              </div>
+              <p class="shown" id="branches-shown"></p>
+            </div>
+            <div id="branches" class="grid" data-bed="branches"></div>
+          </section>
         </div>
-        <p class="shown" id="branches-shown"></p>
-      </div>
-      <div id="branches" class="grid" data-bed="branches"></div>
-    </section>
-
-    <section class="panel" id="panel-worktrees" role="tabpanel" aria-labelledby="tab-worktrees" hidden>
-      <div class="toolbar">
-        <div id="worktrees-filters" class="chips" role="group" aria-label="<%= t('branches.toolbar.worktrees.filters_label') %>"></div>
-        <div class="toolbar-row">
-          <input id="worktrees-search" type="search" placeholder="<%= t('branches.toolbar.worktrees.search_placeholder') %>" aria-label="<%= t('branches.toolbar.worktrees.search_label') %>">
-          <label class="sr-only" for="worktrees-sort"><%= t('branches.toolbar.worktrees.sort_label') %></label>
-          <select id="worktrees-sort">
-            <option value="oldest"><%= t('branches.sort.oldest') %></option>
-            <option value="newest"><%= t('branches.sort.newest') %></option>
-            <option value="name"><%= t('branches.sort.name') %></option>
-            <option value="dirty"><%= t('branches.sort.dirty') %></option>
-          </select>
-          <button id="worktrees-select-visible" class="btn btn-small" type="button"><%= t('branches.select_visible') %></button>
-          <button id="prune" class="btn btn-small btn-soft" type="button" hidden><%= t('branches.toolbar.worktrees.prune') %></button>
-        </div>
-        <p class="shown" id="worktrees-shown"></p>
-      </div>
-      <div id="worktrees" class="grid" data-bed="worktrees"></div>
-    </section>
       </section>
     </div>
-
 
     <div id="bulkbar" class="bulkbar" hidden>
       <span id="bulk-count"></span>
       <div class="actions">
         <button id="bulk-clear" class="btn btn-small btn-soft" type="button"><%= t('branches.bulkbar.clear') %></button>
-        <button id="bulk-tidy" class="btn btn-small btn-primary" type="button"></button>
+        <button id="bulk-tidy-branches" class="btn btn-small btn-primary" type="button"></button>
       </div>
     </div>

@@ -1,6 +1,6 @@
 # 📸 garden, bien arreglado
 
-Un paseo por cada página con los colores predeterminados 🍭 fairyfloss, ☀️ en claro a la izquierda y 🌙 en oscuro a la derecha. Todo lo que ves es inventado: el equipo «sunbeam-labs», sus repos, PR, tickets y tareas vienen de [`demo/fixtures.rb`](demo/fixtures.rb), no de GitHub, Jira ni Todoist.
+Un paseo por cada página con los colores predeterminados 🌹 Rosé Pine, ☀️ en claro a la izquierda y 🌙 en oscuro a la derecha. Todo lo que ves es inventado: el equipo «sunbeam-labs», sus repos, PR, tickets y tareas vienen de [`demo/fixtures.rb`](demo/fixtures.rb), no de GitHub, Jira ni Todoist.
 
 [🍔 English](README.md) · [🥐 Français](README.fr.md) · **🌽 Español** · [🍙 日本語](README.ja.md)  
 🎨 [Cada página en las otras paletas (en inglés)](palettes.md)
@@ -18,12 +18,12 @@ El filtro de fusionadas, para admirar lo que ya llegó.
 Las PR que te pidieron revisión por tu nombre.
 ![03-review-garden](es/03-review-garden.jpg)
 
-La pestaña del equipo, con un repo desmarcado y otro guardado entre los ocultos.
+La pestaña del equipo, con un repo desmarcado en el panel.
 ![04-review-garden-team](es/04-review-garden-team.jpg)
 
 ## 📝 jardín de tareas
 
-El filtro de Todoist de hoy en pestañas, tus propias tareas abajo y la lista de hechas abierta.
+El panel de listas a la izquierda, con hoy y atrasadas como pestañas.
 ![05-task-garden](es/05-task-garden.jpg)
 
 Plantar una tarea nueva (`c`).
@@ -34,14 +34,16 @@ La ayuda del teclado (`?`).
 
 ## 🌿 jardín de ramas
 
-Las ramas locales con el estado de su PR, su upstream y su worktree.
+Una pestaña por cada repo del panel, con el estado de la PR, el upstream y el worktree de cada rama.
 ![08-branch-garden](es/08-branch-garden.jpg)
 
 Ordenar dos ramas fusionadas de una vez.
 ![09-branch-garden-tidy](es/09-branch-garden-tidy.jpg)
 
-Los worktrees, incluido un fantasma cuya carpeta ya no existe.
-![10-branch-garden-worktrees](es/10-branch-garden-worktrees.jpg)
+## 🏡 jardín de worktrees
+
+Una pestaña de worktrees por repo, incluido un fantasma cuya carpeta ya no existe.
+![10-worktree-garden](es/10-worktree-garden.jpg)
 
 ## 🎟️ jardín de tickets
 
@@ -54,10 +56,10 @@ Una pestaña de sprint, con los tickets de todo el equipo y un filtro por person
 Un ticket abierto en el panel lateral.
 ![13-ticket-garden-ticket](es/13-ticket-garden-ticket.jpg)
 
-## 🎨 colores
+## ⚙️ ajustes
 
-El menú de colores al pie de la barra lateral, encima del de idiomas.
-![14-color-menu](es/14-color-menu.jpg)
+Colores e idioma arriba, y debajo ocultar repos en todas partes a la vez; la lista de repos viene de GitHub.
+![14-settings](es/14-settings.jpg)
 
 ## Cómo volver a tomarlas
 

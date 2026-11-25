@@ -1,4 +1,4 @@
-/* Color palettes beyond fairyfloss (garden.css), picked with the sidebar switcher and kept in the garden_palette cookie.
+/* Color palettes beyond Rosé Pine (garden.css), picked on the ⚙️ settings page and kept in the garden_palette cookie.
    Official swatches only. Each palette follows your system's light/dark. The dark sides meet WCAG AA; the light sides
    keep colored text below AA, but where no swatch for a role reaches 3:1 that role's text uses the palette's gray,
    with the color kept in its tint. */
@@ -65,68 +65,6 @@
   }
 }
 
-/* ---------- rosé pine: dawn by day, main by night 🌹 ---------- */
-
-:root[data-palette="rose-pine"] {
-  color-scheme: light;
-  --bg: #faf4ed;          /* base */
-  --glow-1: rgba(215, 130, 126, .2);
-  --glow-2: rgba(144, 122, 169, .16);
-  --glow-3: rgba(86, 148, 159, .12);
-  --dot: rgba(70, 66, 97, .06);
-  --surface: #fffaf3;     /* surface */
-  --surface-2: #f2e9e1;   /* overlay */
-  --border: #dfdad9;      /* highlightMed */
-  --text: #464261;        /* text */
-  --muted: #464261;       /* text; subtle is under AA */
-  --pink: #b4637a;        /* love; rose is under 3:1 */
-  --lavender: #907aa9;    /* iris */
-  --mint: #286983;        /* pine */
-  --gold: #797593;        /* subtle; gold is under 3:1 */
-  --coral: #b4637a;       /* love */
-  --pink-soft: rgba(215, 130, 126, .14);
-  --lav-soft: rgba(144, 122, 169, .12);
-  --mint-soft: rgba(86, 148, 159, .12);
-  --gold-soft: rgba(234, 157, 52, .16);
-  --coral-soft: rgba(180, 99, 122, .1);
-  --on-accent: #fffaf3;   /* surface */
-  --shadow: 0 6px 22px rgba(70, 66, 97, .1);
-  --shadow-hover: 0 10px 30px rgba(180, 99, 122, .18);
-  --tab-shadow: 0 -6px 18px rgba(180, 99, 122, .08);
-  --backdrop: rgba(70, 66, 97, .45);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root[data-palette="rose-pine"] {
-    color-scheme: dark;
-    --bg: #191724;          /* base */
-    --glow-1: rgba(235, 188, 186, .12);
-    --glow-2: rgba(196, 167, 231, .12);
-    --glow-3: rgba(156, 207, 216, .08);
-    --dot: rgba(224, 222, 244, .05);
-    --surface: #1f1d2e;     /* surface */
-    --surface-2: #26233a;   /* overlay */
-    --border: #403d52;      /* highlightMed */
-    --text: #e0def4;        /* text */
-    --muted: #908caa;       /* subtle */
-    --pink: #ebbcba;        /* rose */
-    --lavender: #c4a7e7;    /* iris */
-    --mint: #9ccfd8;        /* foam */
-    --gold: #f6c177;        /* gold */
-    --coral: #eb6f92;       /* love */
-    --pink-soft: rgba(235, 188, 186, .12);
-    --lav-soft: rgba(196, 167, 231, .12);
-    --mint-soft: rgba(156, 207, 216, .1);
-    --gold-soft: rgba(246, 193, 119, .1);
-    --coral-soft: rgba(235, 111, 146, .12);
-    --on-accent: #191724;   /* base */
-    --shadow: 0 6px 22px rgba(10, 9, 16, .45);
-    --shadow-hover: 0 10px 30px rgba(235, 188, 186, .16);
-    --tab-shadow: 0 -6px 18px rgba(10, 9, 16, .35);
-    --backdrop: rgba(10, 9, 16, .6);
-  }
-}
-
 /* ---------- everforest: light by day, dark by night, medium contrast 🌲 ---------- */
 
 :root[data-palette="everforest"] {
@@ -186,5 +124,191 @@
     --shadow-hover: 0 10px 30px rgba(167, 192, 128, .16);
     --tab-shadow: 0 -6px 18px rgba(15, 18, 20, .35);
     --backdrop: rgba(15, 18, 20, .6);
+  }
+}
+
+/* ---------- nightfox: dayfox by day, nightfox by night 🦊 ---------- */
+
+:root[data-palette="nightfox"] {
+  color-scheme: light;
+  --bg: #e4dcd4;           /* bg0 */
+  --glow-1: rgba(164, 64, 181, .16);
+  --glow-2: rgba(40, 72, 169, .12);
+  --glow-3: rgba(40, 121, 128, .1);
+  --dot: rgba(61, 43, 90, .06);
+  --surface: #f6f2ee;      /* bg1 */
+  --surface-2: #e4dcd4;    /* bg0 */
+  --border: #d3c7bb;       /* bg3 */
+  --text: #3d2b5a;         /* fg1 */
+  --muted: #643f61;        /* fg2 */
+  --pink: #a440b5;         /* pink */
+  --lavender: #2848a9;     /* blue */
+  --mint: #396847;         /* green */
+  --gold: #AC5402;         /* yellow */
+  --coral: #a5222f;        /* red */
+  --pink-soft: rgba(164, 64, 181, .1);
+  --lav-soft: rgba(40, 72, 169, .1);
+  --mint-soft: rgba(57, 104, 71, .1);
+  --gold-soft: rgba(172, 84, 2, .14);
+  --coral-soft: rgba(165, 34, 47, .1);
+  --on-accent: #f6f2ee;    /* bg1 */
+  --shadow: 0 6px 22px rgba(61, 43, 90, .12);
+  --shadow-hover: 0 10px 30px rgba(110, 51, 206, .18);
+  --tab-shadow: 0 -6px 18px rgba(110, 51, 206, .08);
+  --backdrop: rgba(61, 43, 90, .45);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-palette="nightfox"] {
+    color-scheme: dark;
+    --bg: #192330;           /* bg1 */
+    --glow-1: rgba(214, 122, 210, .12);
+    --glow-2: rgba(113, 156, 214, .12);
+    --glow-3: rgba(99, 205, 207, .08);
+    --dot: rgba(205, 206, 207, .05);
+    --surface: #131a24;      /* bg0 */
+    --surface-2: #212e3f;    /* bg2 */
+    --border: #39506d;       /* bg4 */
+    --text: #cdcecf;         /* fg1 */
+    --muted: #aeafb0;        /* fg2 */
+    --pink: #d67ad2;         /* pink */
+    --lavender: #719cd6;     /* blue */
+    --mint: #81b29a;         /* green */
+    --gold: #dbc074;         /* yellow */
+    --coral: #f4a261;        /* orange; red is under AA here */
+    --pink-soft: rgba(214, 122, 210, .14);
+    --lav-soft: rgba(113, 156, 214, .14);
+    --mint-soft: rgba(129, 178, 154, .1);
+    --gold-soft: rgba(219, 192, 116, .1);
+    --coral-soft: rgba(244, 162, 97, .14);
+    --on-accent: #131a24;    /* bg0 */
+    --shadow: 0 6px 22px rgba(19, 26, 36, .45);
+    --shadow-hover: 0 10px 30px rgba(157, 121, 214, .2);
+    --tab-shadow: 0 -6px 18px rgba(19, 26, 36, .35);
+    --backdrop: rgba(19, 26, 36, .6);
+  }
+}
+
+/* ---------- dracula: alucard by day, dracula by night 🧛 ---------- */
+
+:root[data-palette="dracula"] {
+  color-scheme: light;
+  --bg: #ECE9DF;           /* background lighter */
+  --glow-1: rgba(191, 24, 90, .3);
+  --glow-2: rgba(120, 98, 208, .24);
+  --glow-3: rgba(4, 127, 180, .2);
+  --dot: rgba(31, 31, 31, .06);
+  --surface: #FFFBEB;      /* background */
+  --surface-2: #EFEDDC;    /* floating */
+  --border: #CFCFDE;       /* selection */
+  --text: #1F1F1F;         /* foreground */
+  --muted: #6C664B;        /* comment */
+  --pink: #BF185A;         /* bright magenta */
+  --lavender: #7862D0;     /* bright blue */
+  --mint: #198D0C;         /* bright green */
+  --gold: #846E15;         /* yellow; bright yellow is under 3:1 */
+  --coral: #D74C3D;        /* bright red */
+  --pink-soft: rgba(191, 24, 90, .16);
+  --lav-soft: rgba(120, 98, 208, .16);
+  --mint-soft: rgba(25, 141, 12, .16);
+  --gold-soft: rgba(132, 110, 21, .2);
+  --coral-soft: rgba(215, 76, 61, .16);
+  --on-accent: #FFFBEB;    /* background */
+  --shadow: 0 6px 22px rgba(31, 31, 31, .12);
+  --shadow-hover: 0 10px 30px rgba(120, 98, 208, .18);
+  --tab-shadow: 0 -6px 18px rgba(120, 98, 208, .08);
+  --backdrop: rgba(31, 31, 31, .45);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-palette="dracula"] {
+    color-scheme: dark;
+    --bg: #282A36;           /* background */
+    --glow-1: rgba(255, 121, 198, .12);
+    --glow-2: rgba(189, 147, 249, .12);
+    --glow-3: rgba(139, 233, 253, .08);
+    --dot: rgba(248, 248, 242, .05);
+    --surface: #21222C;      /* background dark */
+    --surface-2: #282A36;    /* background; red is under AA on background light */
+    --border: #44475A;       /* selection */
+    --text: #F8F8F2;         /* foreground */
+    --muted: #F8F8F2;        /* foreground; comment is under AA */
+    --pink: #FF79C6;         /* pink */
+    --lavender: #BD93F9;     /* purple */
+    --mint: #50FA7B;         /* green */
+    --gold: #F1FA8C;         /* yellow */
+    --coral: #FF5555;        /* red */
+    --pink-soft: rgba(255, 121, 198, .14);
+    --lav-soft: rgba(189, 147, 249, .14);
+    --mint-soft: rgba(80, 250, 123, .1);
+    --gold-soft: rgba(241, 250, 140, .1);
+    --coral-soft: rgba(255, 85, 85, .14);
+    --on-accent: #282A36;    /* background */
+    --shadow: 0 6px 22px rgba(25, 26, 33, .45);
+    --shadow-hover: 0 10px 30px rgba(189, 147, 249, .2);
+    --tab-shadow: 0 -6px 18px rgba(25, 26, 33, .35);
+    --backdrop: rgba(25, 26, 33, .6);
+  }
+}
+
+/* ---------- tokyo night: day by day, moon by night 🌃 ---------- */
+
+:root[data-palette="tokyo-night"] {
+  color-scheme: light;
+  --bg: #e1e2e7;           /* bg; fg is only AA on bg, so cards stand out by border and shadow */
+  --glow-1: rgba(152, 84, 241, .16);
+  --glow-2: rgba(46, 125, 233, .12);
+  --glow-3: rgba(17, 140, 116, .1);
+  --dot: rgba(55, 96, 191, .06);
+  --surface: #e1e2e7;      /* bg */
+  --surface-2: #e1e2e7;    /* bg */
+  --border: #a8aecb;       /* fg_gutter */
+  --text: #3760bf;         /* fg */
+  --muted: #3760bf;        /* fg; the grays are under AA */
+  --pink: #9854f1;         /* magenta */
+  --lavender: #2e7de9;     /* blue */
+  --mint: #587539;         /* green */
+  --gold: #8c6c3e;         /* yellow */
+  --coral: #c64343;        /* red1 */
+  --pink-soft: rgba(152, 84, 241, .1);
+  --lav-soft: rgba(46, 125, 233, .1);
+  --mint-soft: rgba(88, 117, 57, .1);
+  --gold-soft: rgba(140, 108, 62, .14);
+  --coral-soft: rgba(198, 67, 67, .1);
+  --on-accent: #e1e2e7;    /* bg */
+  --shadow: 0 6px 22px rgba(55, 96, 191, .12);
+  --shadow-hover: 0 10px 30px rgba(152, 84, 241, .18);
+  --tab-shadow: 0 -6px 18px rgba(152, 84, 241, .08);
+  --backdrop: rgba(55, 96, 191, .45);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-palette="tokyo-night"] {
+    color-scheme: dark;
+    --bg: #222436;           /* bg */
+    --glow-1: rgba(192, 153, 255, .12);
+    --glow-2: rgba(130, 170, 255, .12);
+    --glow-3: rgba(79, 214, 190, .08);
+    --dot: rgba(200, 211, 245, .05);
+    --surface: #1e2030;      /* bg_dark */
+    --surface-2: #222436;    /* bg; fg_dark is under AA on bg_highlight */
+    --border: #3b4261;       /* fg_gutter */
+    --text: #c8d3f5;         /* fg */
+    --muted: #828bb8;        /* fg_dark */
+    --pink: #c099ff;         /* magenta */
+    --lavender: #82aaff;     /* blue */
+    --mint: #c3e88d;         /* green */
+    --gold: #ffc777;         /* yellow */
+    --coral: #ff757f;        /* red */
+    --pink-soft: rgba(192, 153, 255, .14);
+    --lav-soft: rgba(130, 170, 255, .14);
+    --mint-soft: rgba(195, 232, 141, .1);
+    --gold-soft: rgba(255, 199, 119, .1);
+    --coral-soft: rgba(255, 117, 127, .14);
+    --on-accent: #1e2030;    /* bg_dark */
+    --shadow: 0 6px 22px rgba(25, 27, 41, .45);
+    --shadow-hover: 0 10px 30px rgba(192, 153, 255, .2);
+    --tab-shadow: 0 -6px 18px rgba(25, 27, 41, .35);
+    --backdrop: rgba(25, 27, 41, .6);
   }
 }

@@ -13,22 +13,23 @@ branches:
     nothing_picked: "nada marcado por ahora"
     filtered_out: "🌱 sin mostrar"
     none_filtered: "¡mostrando todos los repos! 🎉"
-    hidden: "🙈 ocultos"
-    hide_label: "ocultar %{name} de esta lista"
-    hide_title: "ocultar de esta lista"
-    bring_back: "traer de vuelta 👀"
-    bring_back_label: "traer de vuelta %{name}"
-    tucked_away: "%{name} guardadito 🙈"
   pr_note: "🫧 no se pudo conectar con GitHub para %{repos}, así que esta vez no hay info de PR ahí"
   loading: "regando el jardín…"
   no_repos: "todavía no hay repos de git por aquí"
   select_visible: "seleccionar visibles ☑️"
   select_item: "seleccionar %{label}"
-  tabs:
-    label: "parcelas del jardín"
+  main_label: "parcelas del jardín"
+  repo_tabs_label: "repos"
+  beds:
     branches: "ramas"
     worktrees: "worktrees"
   stats:
+    unsaved:
+      one: "con cambios"
+      other: "con cambios"
+    ghosts:
+      one: "fantasma"
+      other: "fantasmas"
     branches:
       one: "rama"
       other: "ramas"
@@ -90,6 +91,7 @@ branches:
     tidy: "¡tu jardín está perfectamente ordenado!"
     branches: "nada florece aquí… prueba con otro filtro"
     worktrees: "ningún worktree coincide… prueba con otro filtro"
+    no_worktrees: "no hay más worktrees en este repo 🏡"
   lock:
     default: "es la rama predeterminada, ella se queda 👑"
     worktree: "vive en un worktree en %{path}"

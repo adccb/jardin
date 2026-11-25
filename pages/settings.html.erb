@@ -1,0 +1,43 @@
+    <header class="hero">
+      <h1><span class="bob" aria-hidden="true">⚙️</span> <span class="title"><%= t('settings.title') %></span> <span class="bob" aria-hidden="true">🌸</span></h1>
+      <p class="tagline"><%= t('settings.tagline') %></p>
+    </header>
+
+    <div class="settings-pair">
+      <section class="settings-card" aria-labelledby="colors-title">
+        <h2 id="colors-title"><span aria-hidden="true">🎨</span> <%= t('settings.colors.heading') %></h2>
+        <p class="settings-help"><%= t('settings.colors.help') %></p>
+        <div class="settings-choices" role="radiogroup" aria-labelledby="colors-title">
+<% palettes.each do |choice| -%>
+          <label class="settings-choice">
+            <input type="radio" name="palette" value="<%= choice.id %>" data-name="<%= h(choice.name) %>" data-emoji="<%= choice.emoji %>"<%= ' checked' if choice == palette %>>
+            <span aria-hidden="true"><%= choice.emoji %></span> <%= choice.name %>
+          </label>
+<% end -%>
+        </div>
+      </section>
+
+      <section class="settings-card" aria-labelledby="language-title">
+        <h2 id="language-title"><span aria-hidden="true">🌐</span> <%= t('settings.language.heading') %></h2>
+        <p class="settings-help"><%= t('settings.language.help') %></p>
+        <div class="settings-choices" role="radiogroup" aria-labelledby="language-title">
+<% locales.each do |choice| -%>
+          <label class="settings-choice" lang="<%= choice %>">
+            <input type="radio" name="locale" value="<%= choice %>"<%= ' checked' if choice == locale %>>
+            <span aria-hidden="true"><%= flag(choice) %></span> <%= language_name(choice) %>
+          </label>
+<% end -%>
+        </div>
+      </section>
+    </div>
+
+    <section class="settings-card" aria-labelledby="hidden-repos-title">
+      <h2 id="hidden-repos-title"><span aria-hidden="true">🙈</span> <%= t('settings.repos.heading') %> <small id="hidden-count"></small></h2>
+      <p class="settings-help"><%= t('settings.repos.help') %></p>
+      <div class="toolbar-row">
+        <input id="repo-search" type="search" placeholder="<%= t('settings.repos.search_placeholder') %>" aria-label="<%= t('settings.repos.search_label') %>">
+        <button id="refresh" class="btn btn-small" type="button"><%= t('common.refresh') %></button>
+      </div>
+      <p class="shown" id="repos-shown"></p>
+      <div id="settings-repos"></div>
+    </section>

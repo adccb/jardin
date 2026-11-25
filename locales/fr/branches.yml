@@ -13,22 +13,23 @@ branches:
     nothing_picked: "rien de coché pour l'instant"
     filtered_out: "🌱 pas affichés"
     none_filtered: "tous les dépôts sont affichés ! 🎉"
-    hidden: "🙈 cachés"
-    hide_label: "cacher %{name} de cette liste"
-    hide_title: "cacher de cette liste"
-    bring_back: "faire revenir 👀"
-    bring_back_label: "faire revenir %{name}"
-    tucked_away: "%{name} mis de côté 🙈"
   pr_note: "🫧 impossible de joindre GitHub pour %{repos}, donc pas d'infos de PR là cette fois"
   loading: "on arrose le jardin…"
   no_repos: "aucun dépôt git par ici pour l'instant"
   select_visible: "tout cocher ☑️"
   select_item: "sélectionner %{label}"
-  tabs:
-    label: "parterres du jardin"
+  main_label: "parterres du jardin"
+  repo_tabs_label: "dépôts"
+  beds:
     branches: "branches"
     worktrees: "worktrees"
   stats:
+    unsaved:
+      one: "non enregistré"
+      other: "non enregistrés"
+    ghosts:
+      one: "fantôme"
+      other: "fantômes"
     branches:
       one: "branche"
       other: "branches"
@@ -90,6 +91,7 @@ branches:
     tidy: "ton jardin est parfaitement rangé !"
     branches: "rien ne fleurit ici… essaie un autre filtre"
     worktrees: "aucun worktree ne correspond… essaie un autre filtre"
+    no_worktrees: "aucun autre worktree dans ce dépôt 🏡"
   lock:
     default: "c'est la branche par défaut, elle reste 👑"
     worktree: "vit dans un worktree à %{path}"

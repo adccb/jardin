@@ -16,12 +16,6 @@ reviews:
     nothing_picked: "nothing checked right now"
     filtered_out: "🌱 filtered out"
     none_filtered: "showing every repo! 🎉"
-    hidden: "🙈 hidden"
-    hide_label: "hide %{name} from this list"
-    hide_title: "hide from this list"
-    bring_back: "bring back 👀"
-    bring_back_label: "bring back %{name}"
-    tucked_away: "%{name} tucked away 🙈"
   tabs_label: "who asked"
   tabs:
     you:

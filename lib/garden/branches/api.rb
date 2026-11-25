@@ -5,14 +5,17 @@ module Garden
     class Api
       include Responses
 
-      def initialize(root:)
+      # Checkouts of repos hidden on the settings page (matched by their origin remote) are left out of the list.
+      def initialize(root:, settings: Settings::Store.new(nil), local_repos: nil)
         @finder = RepoFinder.new(root)
+        @settings = settings
+        @local_repos = local_repos || Github::LocalRepos.new(@finder)
         @pull_requests = PullRequests.new
       end
 
       def call(request, action)
         case [request.method, action]
-        in ['GET', 'repos'] then json(200, repos: @finder.repos.map { |path| { path:, name: File.basename(path) } })
+        in ['GET', 'repos'] then json(200, repos: shown_repos)
         in ['GET', 'state'] then json(200, snapshot(request.query))
         in ['POST', 'delete-branch'] then json(200, delete_branch(request.params))
         in ['POST', 'remove-worktree'] then json(200, remove_worktree(request.params))
@@ -22,6 +25,11 @@ module Garden
       end
 
       private
+
+      def shown_repos
+        hidden = @settings.hidden_paths(@local_repos)
+        (@finder.repos - hidden).map { |path| { path:, name: File.basename(path) } }
+      end
 
       def snapshot(query)
         Snapshot.new(@finder.fetch(query['repo']), @pull_requests).state(refresh: query['refresh'] == '1')

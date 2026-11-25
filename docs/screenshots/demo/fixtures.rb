@@ -29,6 +29,20 @@ module Demo
         [{ slug: 'sunny-sideup/dotfiles', name: 'dotfiles' }, { slug: 'sunny-sideup/recipe-box', name: 'recipe-box' }]
     end
 
+    # ---------- ⚙️ settings ----------
+
+    # Every repo "GitHub" lists for the demo, a couple already hidden.
+    SETTINGS_EXTRA = [['sunbeam-labs/greenhouse-legacy', { archived: true }], ['sunbeam-labs/compost-bot', {}],
+                      ['sunbeam-labs/weather-vane', { private: true }], ['sunny-sideup/garden-journal', { private: true }]].freeze
+    SETTINGS_HIDDEN = %w[sunbeam-labs/greenhouse-legacy sunny-sideup/garden-journal].freeze
+
+    def settings_repos
+      repos = pr_repos.map { |repo| [repo[:slug], {}] } + SETTINGS_EXTRA
+      repos.sort_by { _1.first.downcase }.map do |slug, extra|
+        { slug:, private: extra[:private] || false, archived: extra[:archived] || false, hidden: SETTINGS_HIDDEN.include?(slug) }
+      end
+    end
+
     def open_pr(number, title, head, extra = {})
       {
         'number' => number, 'title' => title, 'url' => "https://github.com/#{ORG}/x/pull/#{number}", 'state' => 'OPEN',
@@ -161,96 +175,53 @@ module Demo
 
     # ---------- 📝 task garden ----------
 
-    TASKS = {
-      'en' => [
-        ['Reply to the design review thread about the calendar', 0.5, nil],
-        ['Book a desk for Thursday', 3, nil],
-        ['Write up the Postgres 17 upgrade plan', 20, nil],
-        ['Water the office ferns 🌿', 2, nil],
-        ['Renew the staging TLS certificate', 50, 26],
-        ['Send Wren the a11y audit notes', 72, 30],
-        ['Pick a name for the new service', 100, 80]
-      ],
-      'fr' => [
-        ['Répondre au fil de relecture du calendrier', 0.5, nil],
-        ['Réserver un bureau pour jeudi', 3, nil],
-        ['Rédiger le plan de migration vers Postgres 17', 20, nil],
-        ['Arroser les fougères du bureau 🌿', 2, nil],
-        ['Renouveler le certificat TLS de préprod', 50, 26],
-        ['Envoyer à Wren les notes d’audit a11y', 72, 30],
-        ['Trouver un nom pour le nouveau service', 100, 80]
-      ],
-      'es' => [
-        ['Responder el hilo de revisión del calendario', 0.5, nil],
-        ['Reservar un escritorio para el jueves', 3, nil],
-        ['Escribir el plan de migración a Postgres 17', 20, nil],
-        ['Regar los helechos de la oficina 🌿', 2, nil],
-        ['Renovar el certificado TLS de staging', 50, 26],
-        ['Mandarle a Wren las notas de la auditoría a11y', 72, 30],
-        ['Elegir un nombre para el servicio nuevo', 100, 80]
-      ],
-      'ja' => [
-        ['カレンダーのレビューのスレッドに返信する', 0.5, nil],
-        ['木曜日の席を予約する', 3, nil],
-        ['Postgres 17 へのアップグレード計画を書く', 20, nil],
-        ['オフィスのシダに水をあげる 🌿', 2, nil],
-        ['ステージングの TLS 証明書を更新する', 50, 26],
-        ['Wren に a11y 監査のメモを送る', 72, 30],
-        ['新しいサービスの名前を決める', 100, 80]
-      ]
-    }.freeze
 
-    # Per language: the filter name, then each tab's label and its tasks as [content, project].
+    # Per language: the demo's open Todoist tasks as [content, project]. TODO_SHAPES says which are late.
     TODOIST = {
-      'en' => ['today', [['today | overdue', [['Pay the gardener invoice', 'Home'], ['Team stand-up', 'Work'], ['Repot the basil', 'Garden'], ['Call grandma', 'Family']]],
-                         ['#Groceries',
-                          [['Cherry tomatoes', 'Groceries'], ['Seed-starting compost', 'Groceries'],
-                           ['Coffee beans', 'Groceries']]]]],
-      'fr' => ["aujourd'hui", [["aujourd'hui | en retard", [['Payer la facture du jardinier', 'Maison'], ['Stand-up de l’équipe', 'Travail'], ['Rempoter le basilic', 'Jardin'], ['Appeler mamie', 'Famille']]],
-                               ['#Courses',
-                                [['Tomates cerises', 'Courses'], ['Terreau pour semis', 'Courses'],
-                                 ['Café en grains', 'Courses']]]]],
-      'es' => ['hoy', [['hoy | vencidas', [['Pagarle al jardinero', 'Casa'], ['Stand-up del equipo', 'Trabajo'], ['Trasplantar la albahaca', 'Jardín'], ['Llamar a la abuela', 'Familia']]],
-                       ['#Súper',
-                        [['Tomates cherry', 'Súper'], ['Tierra para almácigos', 'Súper'],
-                         ['Café en grano', 'Súper']]]]],
-      'ja' => ['今日', [['今日 | 期限切れ', [%w[庭師さんの請求書を払う 家], %w[チームのスタンドアップ 仕事], %w[バジルを植え替える 庭], %w[おばあちゃんに電話する 家族]]],
-                        ['#買い物',
-                         [%w[ミニトマト 買い物], %w[種まき用の土 買い物], %w[コーヒー豆 買い物]]]]]
+      'en' => [['Pay the gardener invoice', 'Home'], ['Team stand-up', 'Work'], ['Repot the basil', 'Garden'], ['Call grandma', 'Family'], ['Cherry tomatoes', 'Groceries'], ['Seed-starting compost', 'Groceries'], ['Coffee beans', 'Groceries']],
+      'fr' => [['Payer la facture du jardinier', 'Maison'], ['Stand-up de l’équipe', 'Travail'], ['Rempoter le basilic', 'Jardin'], ['Appeler mamie', 'Famille'], ['Tomates cerises', 'Courses'], ['Terreau pour semis', 'Courses'], ['Café en grains', 'Courses']],
+      'es' => [['Pagarle al jardinero', 'Casa'], ['Stand-up del equipo', 'Trabajo'], ['Trasplantar la albahaca', 'Jardín'], ['Llamar a la abuela', 'Familia'], ['Tomates cherry', 'Súper'], ['Tierra para almácigos', 'Súper'], ['Café en grano', 'Súper']],
+      'ja' => [['庭師さんの請求書を払う', '家'], ['チームのスタンドアップ', '仕事'], ['バジルを植え替える', '庭'], ['おばあちゃんに電話する', '家族'], ['ミニトマト', '買い物'], ['種まき用の土', '買い物'], ['コーヒー豆', '買い物']]
     }.freeze
 
-    # How each demo Todoist task is due and flagged, in list order across both tabs.
+    # How each demo Todoist task is due and flagged, in list order; the overdue ones land in the late tab.
+    # Per language: the inbox's name, its tasks, and upcoming tasks as [content, project, days away].
+    MORE_LISTS = {
+      'en' => ['Inbox', ['Look into a standing desk', 'Ideas for the garden party 🎉'],
+               [['Dentist appointment', 'Home', 1], ['Mulch the rose beds', 'Garden', 3], ['Quarterly planning prep', 'Work', 6]]],
+      'fr' => ['Boîte de réception', ['Me renseigner sur un bureau debout', 'Idées pour la fête au jardin 🎉'],
+               [['Rendez-vous chez le dentiste', 'Maison', 1], ['Pailler les rosiers', 'Jardin', 3], ['Préparer la planification du trimestre', 'Travail', 6]]],
+      'es' => ['Bandeja de entrada', ['Investigar un escritorio de pie', 'Ideas para la fiesta del jardín 🎉'],
+               [['Cita con el dentista', 'Casa', 1], ['Poner mantillo a los rosales', 'Jardín', 3], ['Preparar la planificación trimestral', 'Trabajo', 6]]],
+      'ja' => ['インボックス', ['スタンディングデスクを調べる', 'ガーデンパーティーのアイデア 🎉'],
+               [%w[歯医者の予約 家] + [1], %w[バラの花壇にマルチングする 庭] + [3], %w[四半期の計画の準備 仕事] + [6]]]
+    }.freeze
+
     TODO_SHAPES = [
       { priority: 1, due: -1, overdue: true }, { priority: 2, time: '09:30', recurring: true },
       { priority: 3, labels: ['weekend'] }, { priority: 4, time: '18:00' },
-      { priority: 4 }, { priority: 3 }, { priority: 2 }
+      { priority: 4 }, { priority: 3, due: -3, overdue: true }, { priority: 2 }
     ].freeze
 
-    def tasks(locale)
-      TASKS.fetch(locale, TASKS['en']).each_with_index.map do |(title, created, done), index|
-        { id: format('00000000-0000-4000-8000-%012d', index), title:, created_at: ago(created),
-          done_at: done && ago(done) }
-      end
-    end
-
     def todo(id, content, project, priority, due: 0, overdue: false, labels: [], time: nil, recurring: false)
-      due_date = date_in(due)
+      due_date = due && date_in(due)
       { id: "demo#{id}", content:, project:, labels:, priority:, due_date:, due_datetime: time && "#{due_date}T#{time}:00",
         recurring:, overdue:, url: "https://app.todoist.com/app/task/demo#{id}" }
     end
 
-    def todoist(locale)
-      filter, tabs = TODOIST.fetch(locale, TODOIST['en'])
-      shapes = TODO_SHAPES.each
-      ids = (1..).each
-      sections = tabs.map do |label, items|
-        tasks = items.map do |content, project|
-          shape = shapes.next
-          todo(ids.next, content, project, shape[:priority], **shape.except(:priority))
-        end
-        { label:, tasks: }
+    def todoist(locale, tabs = 'today,late')
+      tasks = TODOIST.fetch(locale, TODOIST['en']).zip(TODO_SHAPES).each_with_index.map do |((content, project), shape), index|
+        todo(index + 1, content, project, shape[:priority], **shape.except(:priority))
       end
-      { enabled: true, filter: { name: filter, url: 'https://app.todoist.com/app/filter/demo' }, sections: }
+      late, today = tasks.partition { _1[:overdue] }
+      inbox_name, inbox, upcoming = MORE_LISTS.fetch(locale, MORE_LISTS['en'])
+      lists = {
+        'today' => today, 'late' => late,
+        'inbox' => inbox.each_with_index.map { |content, i| todo(20 + i, content, inbox_name, 4 - i, due: i.zero? ? nil : 2) },
+        'upcoming' => upcoming.each_with_index.map { |(content, project, days), i| todo(30 + i, content, project, [2, 4, 3][i], due: days) }
+      }
+      sections = lists.slice(*tabs.split(',')).map { |key, list| { key:, tasks: list } }
+      { enabled: true, sections: }
     end
 
     # ---------- 🌿 branch garden ----------

@@ -4,25 +4,31 @@ import {
 } from './garden.js';
 import { ScopePanel } from './scope-panel.js';
 
+const PAGE = $('[data-garden]').dataset.garden;
+// The default branch never shows: it can't be tidied, and neither can the main checkout or a worktree on it.
+const shownBranches = (state) => state.branches.filter((b) => !b.default);
+const shownWorktrees = (state) => state.worktrees.filter((w) => !w.main && w.branch !== state.default_branch);
+const pageItems = (state) => (PAGE === 'branches' ? shownBranches(state) : shownWorktrees(state));
+
 const newBed = (name) => ({ filter: 'all', query: '', sort: store.get(`${name}-sort`) || 'oldest', selected: new Set() });
-// states: the last snapshot of each in-scope repo, by path. data: those snapshots flattened into one garden,
-// every branch and worktree tagged with the repo it came from.
+// Runs both the branch page and the worktree page: each shows one bed (its `data-garden`), one tab per repo in scope.
+// states: the last snapshot of each in-scope repo, by path. errors: why a repo didn't load, by path.
+// data: the open tab's snapshot, every branch and worktree tagged with its repo.
 const ui = {
-  repos: [], states: {}, generations: {}, pending: 0, data: null, home: '',
-  tab: store.get('tab') === 'worktrees' ? 'worktrees' : 'branches',
+  repos: [], states: {}, errors: {}, generations: {}, pending: 0, data: null, home: '',
+  repoTab: store.get(`${PAGE}-repo-tab`),
   beds: { branches: newBed('branches'), worktrees: newBed('worktrees') },
 };
 
-const SCOPE_KEY = 'branches-repos';
+const SCOPE_KEY = `${PAGE}-repos`;
 const panel = new ScopePanel({ prefix: 'branches.panel', storeKey: SCOPE_KEY, onChange: () => scopeChanged() });
 const scopedPaths = () => panel.scoped().map((repo) => repo.id);
+const activeRepo = () => (scopedPaths().includes(ui.repoTab) ? ui.repoTab : scopedPaths()[0] || null);
 
 const tildify = (path) => (ui.home && path.startsWith(ui.home) ? `~${path.slice(ui.home.length)}` : path);
 const branchKey = (repo, name) => `${repo}::${name}`;
 const branchByKey = (key) => ui.data?.branches.find((b) => b.key === key);
 const worktreeByPath = (path) => ui.data?.worktrees.find((w) => w.path === path);
-// With more than one repo showing, names alone are ambiguous, so say which repo each thing is in.
-const inRepo = (item, text) => (ui.data?.multi ? `${text} (${item.repoName})` : text);
 const isMerged = (b) => !b.default && (b.pr?.state === 'MERGED' || b.merged);
 const isStale = (b) => ageDays(b.date) > STALE_DAYS;
 const canDelete = (b) => !b.default && !b.current && !b.worktree;
@@ -148,39 +154,39 @@ async function loadState({ repos = scopedPaths(), refresh = false, quiet = false
     if (generation !== ui.generations[repo]) return;
     if (result.httpOk) {
       ui.states[repo] = result;
+      delete ui.errors[repo];
     } else {
       delete ui.states[repo];
-      toast(t('branches.toasts.load_failed', { repo: repoName(repo), error: failureMessage(result) }), 'error');
+      ui.errors[repo] = t('branches.toasts.load_failed', { repo: repoName(repo), error: failureMessage(result) });
+      toast(ui.errors[repo], 'error');
     }
   }));
   ui.pending -= 1;
   $('#refresh').disabled = ui.pending > 0;
   render();
-  if (!quiet) sprout($('#branches'), $('#worktrees'));
+  if (!quiet) sprout($(`#${PAGE}`));
 }
 
 function scopeChanged() {
   const scoped = scopedPaths();
   // Forget repos that left scope, so bringing one back fetches it fresh.
   Object.keys(ui.states).filter((path) => !scoped.includes(path)).forEach((path) => delete ui.states[path]);
-  const missing = scoped.filter((path) => !ui.states[path]);
+  Object.keys(ui.errors).filter((path) => !scoped.includes(path)).forEach((path) => delete ui.errors[path]);
+  const missing = scoped.filter((path) => !ui.states[path] && !ui.errors[path]);
   const showing = scoped.length > missing.length;
   if (showing || !missing.length) render();
   if (missing.length) loadState({ repos: missing, quiet: showing });
 }
 
-// Flattens the in-scope snapshots into one garden.
+// The open tab's snapshot, tagged so actions know which repo they're in.
 function combine() {
-  const scoped = scopedPaths();
-  const states = scoped.map((path) => ui.states[path]).filter(Boolean);
-  ui.home = states[0]?.home || ui.home;
-  const tag = (state) => ({ repo: state.repo, repoName: state.name, base: state.default_branch, prInfo: state.pr_info });
+  const state = ui.states[activeRepo()];
+  ui.home = state?.home || Object.values(ui.states)[0]?.home || ui.home;
+  const tag = state ? { repo: state.repo, repoName: state.name, base: state.default_branch, prInfo: state.pr_info } : {};
   ui.data = {
-    branches: states.flatMap((s) => s.branches.map((b) => ({ ...b, ...tag(s), key: branchKey(s.repo, b.name) }))),
-    worktrees: states.flatMap((s) => s.worktrees.map((w) => ({ ...w, ...tag(s) }))),
-    prInfo: states.some((s) => s.pr_info),
-    noPrInfo: states.filter((s) => !s.pr_info).map((s) => s.name),
-    multi: scoped.length > 1,
+    branches: state ? shownBranches(state).map((b) => ({ ...b, ...tag, key: branchKey(state.repo, b.name) })) : [],
+    worktrees: state ? shownWorktrees(state).map((w) => ({ ...w, ...tag })) : [],
+    prInfo: Boolean(state?.pr_info),
   };
   linkWorktreesToBranches();
   keepSelectableSelections();
@@ -209,35 +215,33 @@ function forgetBranch(b) {
 function render() {
   combine();
   renderStats();
-  renderTabs();
-  Object.keys(BEDS).forEach(renderBed);
+  renderRepoTabs();
+  renderBed(PAGE);
   renderBulkbar();
 }
 
 const emptyState = (emoji, message) => `<div class="empty"><span class="big" aria-hidden="true">${emoji}</span>${esc(message)}</div>`;
+const loadingState = () => `<div class="loading"><span class="big" aria-hidden="true">🪴</span>${esc(t('branches.loading'))}</div>`;
 
 function renderLoading() {
-  const loading = `<div class="loading"><span class="big" aria-hidden="true">🪴</span>${esc(t('branches.loading'))}</div>`;
-  $('#worktrees').innerHTML = loading;
-  $('#branches').innerHTML = loading;
+  $(`#${PAGE}`).innerHTML = loadingState();
 }
 
-// When no repo is in scope there's nothing to filter, so both beds say why they're empty.
+// When there's no repo to show (none in scope, still loading, or it failed), both sections say why.
 function scopeEmptyState() {
   if (!ui.repos.length) return emptyState('🏜️', t('branches.no_repos'));
-  if (!scopedPaths().length) return emptyState('🌙', t('branches.nothing_in_scope'));
+  const repo = activeRepo();
+  if (!repo) return emptyState('🌙', t('branches.nothing_in_scope'));
+  if (ui.errors[repo]) return emptyState('🥀', ui.errors[repo]);
+  if (!ui.states[repo]) return loadingState();
   return null;
 }
 
+// The stats add up every repo in scope; the tabs below show one repo at a time.
 function renderStats() {
-  const { branches, worktrees, noPrInfo } = ui.data;
-  const stats = [
-    ['🌿', branches.length, 'branches'],
-    ['🏡', worktrees.filter((w) => !w.main).length, 'worktrees'],
-    ['💖', branches.filter(isMerged).length, 'merged'],
-    ['👻', branches.filter((b) => b.gone).length, 'gone'],
-    ['🕸️', branches.filter(isStale).length, 'stale'],
-  ];
+  const states = scopedPaths().map((path) => ui.states[path]).filter(Boolean);
+  const noPrInfo = states.filter((state) => !state.pr_info).map((state) => state.name);
+  const stats = PAGE === 'branches' ? branchStats(states) : worktreeStats(states);
   $('#stats').innerHTML = stats
     .map(([emoji, count, key]) => `<div class="stat"><b>${count}</b><span><span aria-hidden="true">${emoji}</span> ${esc(tp(`branches.stats.${key}`, count))}</span></div>`)
     .join('');
@@ -245,21 +249,39 @@ function renderStats() {
   $('#pr-note').textContent = t('branches.pr_note', { repos: noPrInfo.join(', ') });
 }
 
-function renderTabs() {
-  document.querySelectorAll('[role="tab"]').forEach((tab) => {
-    const active = tab.dataset.tab === ui.tab;
-    tab.setAttribute('aria-selected', active);
-    tab.tabIndex = active ? 0 : -1;
-    $(`#panel-${tab.dataset.tab}`).hidden = !active;
-  });
-  if (!ui.data) return;
-  $('#branches-count').textContent = ui.data.branches.length;
-  $('#worktrees-count').textContent = ui.data.worktrees.filter((w) => !w.main).length;
-  Object.keys(BEDS).forEach((name) => {
-    const picked = ui.beds[name].selected.size;
-    $(`#${name}-picked`).textContent = picked ? `💝 ${picked}` : '';
-  });
+function branchStats(states) {
+  const branches = states.flatMap(shownBranches);
+  return [
+    ['🌿', branches.length, 'branches'],
+    ['💖', branches.filter(isMerged).length, 'merged'],
+    ['👻', branches.filter((b) => b.gone).length, 'gone'],
+    ['🕸️', branches.filter(isStale).length, 'stale'],
+  ];
 }
+
+function worktreeStats(states) {
+  const worktrees = states.flatMap((state) => shownWorktrees(state).map((w) => ({ ...w, info: state.branches.find((b) => b.name === w.branch) })));
+  return [
+    ['🏡', worktrees.length, 'worktrees'],
+    ['🧺', worktrees.filter((w) => w.dirty > 0).length, 'unsaved'],
+    ['💖', worktrees.filter((w) => w.info && isMerged(w.info)).length, 'merged'],
+    ['👻', worktrees.filter((w) => w.missing || w.prunable).length, 'ghosts'],
+  ];
+}
+
+function renderRepoTabs() {
+  const active = activeRepo();
+  $('#repo-tabs').innerHTML = scopedPaths().map((path, index) => {
+    const selected = path === active;
+    const count = ui.states[path] ? pageItems(ui.states[path]).length : '';
+    return `<button type="button" class="tab" role="tab" id="repo-tab-${index}" data-repo="${esc(path)}" aria-controls="repo-tab-panel"
+      aria-selected="${selected}" tabindex="${selected ? 0 : -1}">🪴 ${esc(repoName(path))} <span class="tab-count">${count}</span></button>`;
+  }).join('');
+  const index = scopedPaths().indexOf(active);
+  if (index === -1) $('#repo-tab-panel').removeAttribute('aria-labelledby');
+  else $('#repo-tab-panel').setAttribute('aria-labelledby', `repo-tab-${index}`);
+}
+
 
 function renderBed(bedName) {
   renderFilters(bedName);
@@ -299,6 +321,8 @@ function branchesEmptyState() {
 }
 
 function worktreesEmptyState() {
+  const { filter, query } = ui.beds.worktrees;
+  if (!ui.data.worktrees.length && filter === 'all' && !query) return emptyState('🏡', t('branches.empty.no_worktrees'));
   return emptyState('🌙', t('branches.empty.worktrees'));
 }
 
@@ -309,7 +333,7 @@ const button = (action, text, { danger = false, extra = '' } = {}) =>
 function branchCard(b) {
   const selected = ui.beds.branches.selected.has(b.key);
   const lead = canDelete(b)
-    ? picker('branches', b.key, inRepo(b, b.name))
+    ? picker('branches', b.key, b.name)
     : `<span class="lock" role="img" title="${esc(lockReason(b))}" aria-label="${esc(lockReason(b))}">${b.default ? '👑' : b.worktree ? '🔒' : '📍'}</span>`;
   const deleteButton = canDelete(b) ? button('delete-branch', t('branches.card.delete'), { danger: true }) : '';
   return `
@@ -335,10 +359,8 @@ function prBadge(pr) {
   return `<a class="badge ${klass}" href="${esc(pr.url)}" target="_blank" rel="noopener" title="${esc(pr.title)}">${esc(label)}</a>`;
 }
 
-const repoBadge = (item) => (ui.data.multi ? badge('b-gold', `🪴 ${item.repoName}`) : '');
-
 function branchBadges(b) {
-  const badges = [repoBadge(b)];
+  const badges = [];
   if (b.default) badges.push(badge('b-gold', t('branches.badges.default')));
   if (b.current) badges.push(badge('b-lav', t('branches.badges.checked_out')));
   badges.push(prBadge(b.pr));
@@ -369,7 +391,7 @@ function worktreeCard(w) {
 }
 
 function worktreeBadges(w) {
-  const badges = [repoBadge(w)];
+  const badges = [];
   if (w.main) badges.push(badge('b-gold', t('branches.badges.main_checkout')));
   if (w.missing) badges.push(badge('b-coral', t('branches.badges.folder_gone')));
   else if (w.dirty > 0) badges.push(badge('b-coral', tp('branches.badges.unsaved', w.dirty)));
@@ -396,15 +418,14 @@ function worktreeActions(w) {
 }
 
 function renderBulkbar() {
-  const count = ui.beds[ui.tab].selected.size;
+  const count = ui.beds[PAGE].selected.size;
   $('#bulkbar').hidden = count === 0;
   $('#bulk-count').innerHTML = `<span aria-hidden="true">💝</span> ${esc(tp('branches.bulkbar.picked', count))}`;
-  $('#bulk-tidy').textContent = tp(`branches.bulkbar.tidy_${ui.tab}`, count);
+  $(`#bulk-tidy-${PAGE}`).textContent = tp(`branches.bulkbar.tidy_${PAGE}`, count);
 }
 
 function rerenderSelection(bedName) {
   renderItems(bedName);
-  renderTabs();
   renderBulkbar();
 }
 
@@ -509,14 +530,14 @@ async function bulkTidyBranches() {
     title: tp('branches.dialogs.bulk_branches.title', branches.length),
     body: `
       <p>${t('branches.dialogs.bulk_branches.intro_html', { command: code('git branch -d') })}</p>
-      <ul class="dialog-list">${branches.map((b) => `<li>🌿 ${code(b.name)}${ui.data.multi ? ` · 🪴 ${esc(b.repoName)}` : ''}</li>`).join('')}</ul>
+      <ul class="dialog-list">${branches.map((b) => `<li>🌿 ${code(b.name)}</li>`).join('')}</ul>
       ${toggle('force', t('branches.dialogs.bulk_branches.force_html', { flag: code('-D') }), allSquashed)}`,
     confirm: t('branches.dialogs.bulk_branches.confirm'),
   });
   if (!form) return;
   const force = form.get('force') === 'on';
   await runBulk({
-    items: branches.map((b) => ({ key: b.key, repo: b.repo, label: `🌿 ${inRepo(b, b.name)}`, branch: b })),
+    items: branches.map((b) => ({ key: b.key, repo: b.repo, label: `🌿 ${b.name}`, branch: b })),
     perform: (item, retrying) => tidyBranch(item.branch, force || retrying),
     retryKey: force ? null : 'branches.dialogs.bulk_branches.retry',
   });
@@ -620,31 +641,31 @@ function finishBulk(tidied, failedCount, retryKey) {
 
 /* ---------- wiring ---------- */
 
-function selectTab(name, { focus = false } = {}) {
-  ui.tab = name;
-  store.set('tab', name);
-  renderTabs();
-  renderBulkbar();
-  if (focus) $(`#tab-${name}`).focus();
+function selectRepoTab(path, { focus = false } = {}) {
+  ui.repoTab = path;
+  store.set(`${PAGE}-repo-tab`, path);
+  render();
+  sprout($(`#${PAGE}`));
+  if (focus) document.getElementById(`repo-tab-${scopedPaths().indexOf(path)}`)?.focus();
 }
 
-$('.tabs').addEventListener('click', (event) => {
+$('#repo-tabs').addEventListener('click', (event) => {
   const tab = event.target.closest('[role="tab"]');
-  if (tab) selectTab(tab.dataset.tab);
+  if (tab && tab.dataset.repo !== activeRepo()) selectRepoTab(tab.dataset.repo);
 });
 
-$('.tabs').addEventListener('keydown', (event) => {
+$('#repo-tabs').addEventListener('keydown', (event) => {
   if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
-  const names = Object.keys(BEDS);
-  const index = names.indexOf(ui.tab);
-  const next = { ArrowLeft: index - 1, ArrowRight: index + 1, Home: 0, End: names.length - 1 }[event.key];
+  const paths = scopedPaths();
+  const index = paths.indexOf(activeRepo());
+  const next = { ArrowLeft: index - 1, ArrowRight: index + 1, Home: 0, End: paths.length - 1 }[event.key];
   event.preventDefault();
-  selectTab(names[(next + names.length) % names.length], { focus: true });
+  selectRepoTab(paths[(next + paths.length) % paths.length], { focus: true });
 });
 
 $('#refresh').addEventListener('click', () => loadState({ refresh: true }));
 
-Object.keys(BEDS).forEach((bedName) => {
+[PAGE].forEach((bedName) => {
   const state = () => ui.beds[bedName];
 
   $(`#${bedName}-search`).addEventListener('input', (event) => { state().query = event.target.value; renderItems(bedName); });
@@ -675,12 +696,11 @@ Object.keys(BEDS).forEach((bedName) => {
     if (event.target.checked) state().selected.add(card.dataset.key);
     else state().selected.delete(card.dataset.key);
     card.classList.toggle('is-selected', event.target.checked);
-    renderTabs();
     renderBulkbar();
   });
 });
 
-$('#branches').addEventListener('click', async (event) => {
+$('#branches')?.addEventListener('click', async (event) => {
   const button = event.target.closest('[data-action="delete-branch"]');
   if (!button) return;
   button.disabled = true;
@@ -688,20 +708,20 @@ $('#branches').addEventListener('click', async (event) => {
   if (!deleted) button.disabled = false;
 });
 
-$('#worktrees').addEventListener('click', async (event) => {
+$('#worktrees')?.addEventListener('click', async (event) => {
   const button = event.target.closest('[data-action="remove-worktree"]');
   if (!button) return;
   await removeWorktree(button.closest('[data-key]').dataset.key, button.dataset.withBranch === '1', pointOf(button));
 });
 
-$('#prune').addEventListener('click', (event) => pruneWorktrees(pointOf(event.currentTarget)));
+$('#prune')?.addEventListener('click', (event) => pruneWorktrees(pointOf(event.currentTarget)));
 
 $('#bulk-clear').addEventListener('click', () => {
-  ui.beds[ui.tab].selected.clear();
-  rerenderSelection(ui.tab);
+  ui.beds[PAGE].selected.clear();
+  renderItems(PAGE);
+  renderBulkbar();
 });
 
-$('#bulk-tidy').addEventListener('click', () => (ui.tab === 'worktrees' ? bulkTidyWorktrees() : bulkTidyBranches()));
+$(`#bulk-tidy-${PAGE}`).addEventListener('click', () => (PAGE === 'worktrees' ? bulkTidyWorktrees() : bulkTidyBranches()));
 
-renderTabs();
 loadRepos();

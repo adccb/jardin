@@ -6,26 +6,31 @@
       </div>
     </header>
 
-    <section class="task-garden" aria-labelledby="todo-title">
-      <section id="todoist-section" class="todoist-section" aria-labelledby="todoist-title" hidden>
+    <div class="pr-layout">
+      <aside class="repo-panel" aria-labelledby="repo-panel-title">
+        <details id="repo-details" open>
+          <summary>
+            <h2 id="repo-panel-title"><span aria-hidden="true">🗂️</span> <%= t('tasks.panel.heading') %> <small id="repo-count"></small></h2>
+          </summary>
+          <p class="repo-panel-actions">
+            <button type="button" class="link-btn" id="repos-all"><%= t('tasks.panel.select_all') %></button> ·
+            <button type="button" class="link-btn" id="repos-none"><%= t('tasks.panel.clear') %></button>
+          </p>
+          <div id="repo-list"></div>
+        </details>
+      </aside>
+
+      <div class="pr-main">
+    <section class="task-garden" aria-labelledby="todoist-title">
+      <section id="todoist-section" class="todoist-section" aria-labelledby="todoist-title">
         <h2 id="todoist-title" class="list-heading">
-          <span aria-hidden="true">🍅</span> <span id="todoist-heading">todoist</span> <span class="count" id="todoist-count"></span>
-          <a class="link-btn todoist-open" id="todoist-open" href="https://app.todoist.com/app" target="_blank" rel="noopener"><%= t('tasks.todoist.open_today') %></a>
+          <span aria-hidden="true">🌷</span> <span id="todoist-heading"><%= t('tasks.todoist.heading') %></span> <span class="count" id="todoist-count"></span>
+          <a class="link-btn todoist-open" id="todoist-open" href="https://app.todoist.com/app/today" target="_blank" rel="noopener"><%= t('tasks.todoist.open_today') %></a>
         </h2>
         <div class="tabs todoist-tabs" role="tablist" id="todoist-tabs" aria-label="<%= t('tasks.todoist.tabs_label') %>" hidden></div>
         <p id="todoist-status" class="todoist-status" hidden></p>
         <ul id="todoist-list" class="task-list" role="tabpanel" aria-labelledby="todoist-title"></ul>
       </section>
-
-      <h2 id="todo-title" class="list-heading sr-only"><span aria-hidden="true">🌱</span> <%= t('tasks.todoist.mine_heading') %></h2>
-      <ul id="todo-list" class="task-list" aria-label="<%= t('tasks.todo_label') %>"></ul>
-
-      <details id="done-section" class="done-section">
-        <summary aria-keyshortcuts="d">
-          <span class="ribbon" aria-hidden="true">🎀</span> <%= t('tasks.done_label') %> <span class="count" id="done-count"></span> <kbd>d</kbd>
-        </summary>
-        <ul id="done-list" class="task-list" aria-label="<%= t('tasks.done_label') %>"></ul>
-      </details>
     </section>
 
     <p class="key-hints" aria-hidden="true">
@@ -34,9 +39,10 @@
       <span><kbd>x</kbd> <%= t('tasks.hints.done') %></span>
       <span><kbd>⌫</kbd> <%= t('tasks.hints.delete') %></span>
       <span><kbd>u</kbd> <%= t('tasks.hints.undo') %></span>
-      <span><kbd>d</kbd> <%= t('tasks.hints.done_list') %></span>
       <span><kbd>?</kbd> <%= t('tasks.hints.help') %></span>
     </p>
+      </div>
+    </div>
 
     <dialog id="task-dialog" class="task-dialog" aria-labelledby="task-dialog-title">
       <form method="dialog" id="task-form">

@@ -1,12 +1,7 @@
 common:
   language_name: "English"
   flag: "🍔"
-  language:
-    current: "language: %{name}"
-    menu_label: "language"
   palette:
-    current: "colors: %{name}"
-    menu_label: "color palette"
     now_wearing: "now wearing %{name} %{emoji}"
   nav_label: "garden tools"
   home: "garden home"

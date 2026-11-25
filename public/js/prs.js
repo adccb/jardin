@@ -17,8 +17,6 @@ function savedSet(key, fallback) {
 const ui = {
   repos: [],
   selected: savedSet('prs-repos', DEFAULT_REPOS),
-  hidden: savedSet('prs-hidden', []),
-  showHidden: false,
   tab: store.get('prs-tab') || 'all',
   state: 'open',
   query: '',
@@ -27,7 +25,8 @@ const ui = {
   loadId: 0,
 };
 
-const shownRepos = () => ui.repos.filter((r) => !ui.hidden.has(r.slug));
+// Repos hidden on the ⚙️ settings page never arrive here: the server leaves them out.
+const shownRepos = () => ui.repos;
 const selectedRepos = () => ui.repos.filter((r) => ui.selected.has(r.slug));
 const tabSlugs = () => (ui.tab === 'all' ? selectedRepos().map((r) => r.slug) : [ui.tab]);
 const prsFor = (state, slugs) => slugs.flatMap((slug) => ui.results[state].get(slug)?.prs || []);
@@ -38,7 +37,7 @@ async function loadRepos() {
   const result = await api('/api/prs/repos');
   ui.repos = result.repos || [];
   const known = new Set(ui.repos.map((r) => r.slug));
-  ui.selected = new Set([...ui.selected].filter((slug) => known.has(slug) && !ui.hidden.has(slug)));
+  ui.selected = new Set([...ui.selected].filter((slug) => known.has(slug)));
   if (!['all', ...ui.selected].includes(ui.tab)) ui.tab = 'all';
   renderRepoPanel();
   await loadMissing();
@@ -90,7 +89,6 @@ function repoOption(repo) {
         <input type="checkbox" data-slug="${esc(repo.slug)}" ${ui.selected.has(repo.slug) ? 'checked' : ''}>
         <span><span class="name">${esc(repo.name)}</span><span class="slug">${esc(repo.slug)}</span></span>
       </label>
-      <button type="button" class="repo-hide" data-hide="${esc(repo.slug)}" aria-label="${esc(t('prs.panel.hide_label', { name: repo.name }))}" title="${esc(t('prs.panel.hide_title'))}">🙈</button>
     </li>`;
 }
 
@@ -99,19 +97,6 @@ function repoGroup(title, repos, emptyText) {
   return `<h3 class="repo-group">${esc(title)} <span class="count">${repos.length}</span></h3>${list}`;
 }
 
-function hiddenGroup() {
-  const hidden = ui.repos.filter((r) => ui.hidden.has(r.slug));
-  if (!hidden.length) return '';
-  const rows = hidden.map((repo) => `
-    <li class="repo-row is-hidden">
-      <span class="repo-option"><span><span class="name">${esc(repo.name)}</span><span class="slug">${esc(repo.slug)}</span></span></span>
-      <button type="button" class="link-btn" data-unhide="${esc(repo.slug)}" aria-label="${esc(t('prs.panel.bring_back_label', { name: repo.name }))}">${esc(t('prs.panel.bring_back'))}</button>
-    </li>`).join('');
-  return `<details class="repo-hidden" id="repo-hidden"${ui.showHidden ? ' open' : ''}>
-    <summary class="repo-group">${esc(t('prs.panel.hidden'))} <span class="count">${hidden.length}</span></summary>
-    <ul class="repo-list">${rows}</ul>
-  </details>`;
-}
 
 function renderRepoPanel() {
   const shown = shownRepos();
@@ -119,8 +104,7 @@ function renderRepoPanel() {
   const others = shown.filter((r) => !ui.selected.has(r.slug));
   $('#repo-list').innerHTML =
     repoGroup(t('prs.panel.in_scope'), inScope, t('prs.panel.nothing_picked'))
-    + repoGroup(t('prs.panel.everything_else'), others, t('prs.panel.picked_all'))
-    + hiddenGroup();
+    + repoGroup(t('prs.panel.everything_else'), others, t('prs.panel.picked_all'));
   renderRepoCount();
 }
 
@@ -128,26 +112,6 @@ function renderRepoCount() {
   $('#repo-count').textContent = t('prs.repo_count', { selected: ui.selected.size, total: shownRepos().length });
 }
 
-function hideRepo(slug) {
-  const rows = [...document.querySelectorAll('#repo-list .repo-row:not(.is-hidden) input')].map((input) => input.dataset.slug);
-  const neighbor = rows[rows.indexOf(slug) + 1] || rows[rows.indexOf(slug) - 1];
-  ui.hidden.add(slug);
-  ui.selected.delete(slug);
-  if (ui.tab === slug) ui.tab = 'all';
-  store.set('prs-hidden', JSON.stringify([...ui.hidden]));
-  saveSelection();
-  renderRepoPanel();
-  render();
-  if (neighbor) focusRepoCheckbox(neighbor);
-  toast(t('prs.panel.tucked_away', { name: slug.split('/')[1] }));
-}
-
-function unhideRepo(slug) {
-  ui.hidden.delete(slug);
-  store.set('prs-hidden', JSON.stringify([...ui.hidden]));
-  renderRepoPanel();
-  focusRepoCheckbox(slug);
-}
 function focusRepoCheckbox(slug) {
   [...document.querySelectorAll('#repo-list input')].find((input) => input.dataset.slug === slug)?.focus();
 }
@@ -321,16 +285,6 @@ $('#repo-list').addEventListener('change', (event) => {
   loadMissing();
 });
 
-$('#repo-list').addEventListener('click', (event) => {
-  const hide = event.target.closest('[data-hide]');
-  const unhide = event.target.closest('[data-unhide]');
-  if (hide) hideRepo(hide.dataset.hide);
-  if (unhide) unhideRepo(unhide.dataset.unhide);
-});
-
-$('#repo-list').addEventListener('toggle', (event) => {
-  if (event.target.id === 'repo-hidden') ui.showHidden = event.target.open;
-}, true);
 
 $('#repos-all').addEventListener('click', () => {
   shownRepos().forEach((r) => ui.selected.add(r.slug));

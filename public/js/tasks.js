@@ -1,133 +1,125 @@
-import { $, store, esc, ago, t, tp, pick, api, failureMessage, toast, sparkle, pointOf, openDialog, formatDate, locale } from './garden.js';
+import {
+  $, store, esc, t, tp, pick, api, failureMessage, toast, sparkle, pointOf, openDialog, formatDate, locale, TOKEN,
+} from './garden.js';
+import { ScopePanel } from './scope-panel.js';
 
+// Every task lives in Todoist, and the lists you pick in the side panel become tabs.
 const LEAVE_MS = 260;
-const TODOIST_STALE_MS = 2 * 60 * 1000;
+const STALE_MS = 2 * 60 * 1000;
+// Checking off and deleting both wait this long (while their toast says "press u to undo") before reaching
+// Todoist, which can't undelete and leaves nothing here to uncheck.
+const UNDO_MS = 6000;
 
 const ui = {
-  tasks: [],
-  lastDeleted: null,
-  todoist: { enabled: false, loading: true, sections: [], filter: null, tab: store.get('tasks-todoist-tab'), error: null, closed: new Set(), loadedAt: 0 },
+  enabled: true, loading: true, error: null, sections: [], loadedAt: 0, loadId: 0,
+  tab: store.get('tasks-todoist-tab'),
+  hidden: new Set(), // checked off or deleted here and not yet confirmed by Todoist, so they stay hidden through reloads
+  pending: null, // { id, action, timer } while undo is still possible
 };
 
-const formatTime = (datetime) => new Intl.DateTimeFormat(locale, { timeStyle: 'short' }).format(new Date(datetime));
-// The same task can sit in more than one of your filter's lists; counts and lookups use each task once.
-const allTodoist = () => [...new Map(ui.todoist.sections.flatMap((section) => section.tasks).map((task) => [task.id, task])).values()];
-const isOpen = (task) => !ui.todoist.closed.has(task.id);
-const openTodoist = () => allTodoist().filter(isOpen);
-const findTodoist = (id) => allTodoist().find((task) => task.id === id);
-const activeSection = () => ui.todoist.sections.find((section) => section.label === ui.todoist.tab) || ui.todoist.sections[0];
-const rowById = (id) => [...document.querySelectorAll('.task-row')].find((row) => row.dataset.id === id);
+// The lists the panel offers, in tab order. The first visit shows today and late, as the page always has.
+const LISTS = ['today', 'late', 'inbox', 'upcoming'];
+const STARTING_LISTS = ['today', 'late'];
+const SCOPE_KEY = 'tasks-tabs';
+if (store.get(`${SCOPE_KEY}-excluded`) === null) {
+  store.set(`${SCOPE_KEY}-excluded`, JSON.stringify(LISTS.filter((key) => !STARTING_LISTS.includes(key))));
+}
+const panel = new ScopePanel({ prefix: 'tasks.panel', storeKey: SCOPE_KEY, onChange: () => load() });
+panel.setItems(LISTS.map((key) => ({ id: key, name: t(`tasks.todoist.tabs.${key}`), detail: t(`tasks.panel.details.${key}`) })));
+const shownLists = () => panel.scoped().map((item) => item.id);
 
-const byOldest = (key) => (a, b) => a[key].localeCompare(b[key]);
-const todo = () => ui.tasks.filter((t) => !t.done_at).sort(byOldest('created_at'));
-const done = () => ui.tasks.filter((t) => t.done_at).sort(byOldest('done_at')).reverse();
-const findTask = (id) => ui.tasks.find((t) => t.id === id);
+const formatTime = (datetime) => new Intl.DateTimeFormat(locale, { timeStyle: 'short' }).format(new Date(datetime));
+const visible = (task) => !ui.hidden.has(task.id);
+// Counts and lookups use each task once, in case Todoist ever puts one in two tabs.
+const allOpen = () => [...new Map(ui.sections.flatMap((section) => section.tasks).map((task) => [task.id, task])).values()].filter(visible);
+const findOpen = (id) => allOpen().find((task) => task.id === id);
+const activeSection = () => ui.sections.find((section) => section.key === ui.tab) || ui.sections[0];
+const tabLabel = (section) => t(`tasks.todoist.tabs.${section.key}`);
+const rowById = (id) => [...document.querySelectorAll('.task-row')].find((row) => row.dataset.id === id);
+const today = () => { const now = new Date(); return new Date(now - now.getTimezoneOffset() * 60000).toISOString().slice(0, 10); };
 const pause = (ms) => new Promise((resolve) => { setTimeout(resolve, ms); });
 
 /* ---------- rendering ---------- */
 
 function render() {
-  const open = todo();
-  const finished = done();
-  $('#todo-list').innerHTML = open.length ? open.map(taskRow).join('') : emptyTodo(finished.length);
-  $('#done-list').innerHTML = finished.length ? finished.map(taskRow).join('') : `<li class="done-empty">${t('tasks.done_empty')}</li>`;
-  $('#done-count').textContent = finished.length;
-  const remaining = open.length + openTodoist().length;
-  $('#task-summary').textContent = remaining ? tp('tasks.summary', remaining) : t('tasks.all_caught_up');
-  renderTodoist();
+  const remaining = allOpen().length;
+  // With no lists showing there is nothing to count, so the tagline goes back to its plain self.
+  if (!ui.enabled || !shownLists().length) $('#task-summary').textContent = t('tasks.tagline');
+  else if (!ui.loading && !ui.error) $('#task-summary').textContent = remaining ? tp('tasks.summary', remaining) : t('tasks.all_caught_up');
+  $('#new-task').disabled = !ui.enabled;
+  renderOpen();
 }
 
-function renderTodoist() {
-  const { enabled, loading, error, filter, sections } = ui.todoist;
-  $('#todoist-section').hidden = !enabled;
-  $('#todo-title').classList.toggle('sr-only', !enabled);
-  if (!enabled) return;
-  $('#todoist-heading').textContent = filter ? t('tasks.todoist.heading', { filter: filter.name }) : 'todoist';
-  if (filter) $('#todoist-open').href = filter.url;
-  $('#todoist-count').textContent = loading || error ? '' : openTodoist().length;
-  renderTodoistTabs();
+function renderOpen() {
+  const { enabled, loading, error } = ui;
+  $('#todoist-count').textContent = loading || error || !enabled || !shownLists().length ? '' : allOpen().length;
+  renderTabs();
   const section = activeSection();
-  const status = loading ? t('tasks.todoist.loading') : error ? t('tasks.todoist.error', { error }) : section?.tasks.length ? '' : t('tasks.todoist.empty_tab');
+  const tasks = section ? section.tasks.filter(visible) : [];
+  let status = '';
+  if (!enabled) status = t('tasks.todoist.not_set_up_html');
+  else if (!shownLists().length) status = esc(t('tasks.no_tabs'));
+  else if (loading) status = esc(t('tasks.todoist.loading'));
+  else if (error) status = esc(t('tasks.todoist.error', { error }));
+  else if (!tasks.length) status = esc(t('tasks.todoist.empty_tab'));
   $('#todoist-status').hidden = !status;
-  $('#todoist-status').textContent = status;
-  $('#todoist-list').innerHTML = loading || error || !section ? '' : section.tasks.map(todoistRow).join('');
+  $('#todoist-status').innerHTML = status;
+  $('#todoist-list').innerHTML = loading || error || !enabled ? '' : tasks.map(taskRow).join('');
 }
 
-function renderTodoistTabs() {
-  const { sections, loading, error } = ui.todoist;
+function renderTabs() {
   const tabs = $('#todoist-tabs');
-  tabs.hidden = loading || Boolean(error) || sections.length < 2;
+  tabs.hidden = ui.loading || Boolean(ui.error) || !ui.enabled || !ui.sections.length;
   if (tabs.hidden) return;
   const active = activeSection();
-  tabs.innerHTML = sections.map((section, index) => {
+  tabs.innerHTML = ui.sections.map((section, index) => {
     const selected = section === active;
+    const count = section.tasks.filter(visible).length;
     return `<button type="button" class="tab" role="tab" id="todoist-tab-${index}" data-tab-index="${index}" aria-controls="todoist-list"
-      aria-selected="${selected}" tabindex="${selected ? 0 : -1}">${esc(section.label)} <span class="tab-count">${section.tasks.filter(isOpen).length}</span></button>`;
+      aria-selected="${selected}" tabindex="${selected ? 0 : -1}">${esc(tabLabel(section))} <span class="tab-count">${count}</span></button>`;
   }).join('');
-  $('#todoist-list').setAttribute('aria-labelledby', `todoist-tab-${sections.indexOf(active)}`);
+  $('#todoist-list').setAttribute('aria-labelledby', `todoist-tab-${ui.sections.indexOf(active)}`);
 }
 
-function selectTodoistTab(index, { focus = false } = {}) {
-  const section = ui.todoist.sections[index];
+function selectTab(index, { focus = false } = {}) {
+  const section = ui.sections[index];
   if (!section) return;
-  ui.todoist.tab = section.label;
-  store.set('tasks-todoist-tab', section.label);
-  renderTodoist();
+  ui.tab = section.key;
+  store.set('tasks-todoist-tab', section.key);
+  renderOpen();
   if (focus) document.getElementById(`todoist-tab-${index}`)?.focus();
 }
 
-function todoistBadges(task) {
-  const badges = [];
-  if (task.overdue) badges.push(`<span class="mini-badge is-overdue">${esc(t('tasks.todoist.overdue', { date: formatDate(task.due_date) }))}</span>`);
-  else if (task.due_datetime) badges.push(`<span class="mini-badge is-time">${esc(t('tasks.todoist.at_time', { time: formatTime(task.due_datetime) }))}</span>`);
-  if (task.recurring) badges.push(`<span class="mini-badge">${esc(t('tasks.todoist.recurring'))}</span>`);
-  if (task.project) badges.push(`<span class="mini-badge">📁 ${esc(task.project)}</span>`);
-  return badges.join('');
-}
-
-function todoistRow(task) {
-  const closed = ui.todoist.closed.has(task.id);
-  const meta = closed
-    ? `<span class="mini-badge">${esc(t(task.recurring ? 'tasks.todoist.recurring_done' : 'tasks.todoist.done_badge'))}</span>`
-    : todoistBadges(task);
-  return `
-    <li class="task-row todoist-row prio-${task.priority}${closed ? ' is-done' : ''}" data-id="${esc(task.id)}" data-source="todoist">
-      <label class="task-check">
-        <input type="checkbox" ${closed ? 'checked' : ''}>
-        <span class="task-title">${esc(task.content)}</span>
-      </label>
-      <span class="task-meta">${meta}</span>
-      <a class="task-open" href="${esc(task.url)}" target="_blank" rel="noopener" tabindex="-1" aria-label="${esc(t('tasks.todoist.open_label', { title: task.content }))}">↗️</a>
-    </li>`;
-}
-
-function emptyTodo(doneCount) {
-  const message = doneCount ? t('tasks.empty_all_done_html') : t('tasks.empty_fresh_html');
-  return `<li class="task-empty"><span class="big" aria-hidden="true">🍓</span>${message}</li>`;
+function badges(task) {
+  const list = [];
+  if (task.overdue) list.push(`<span class="mini-badge is-overdue">${esc(t('tasks.todoist.overdue', { date: formatDate(task.due_date) }))}</span>`);
+  else if (task.due_datetime) list.push(`<span class="mini-badge is-time">${esc(t('tasks.todoist.at_time', { time: formatTime(task.due_datetime) }))}</span>`);
+  // Upcoming and inbox tasks can be due any day, so say which one (the time badge above covers today's).
+  if (task.due_date && !task.overdue && task.due_date !== today()) list.push(`<span class="mini-badge">${esc(t('tasks.todoist.due_on', { date: formatDate(task.due_date) }))}</span>`);
+  if (task.recurring) list.push(`<span class="mini-badge">${esc(t('tasks.todoist.recurring'))}</span>`);
+  if (task.project) list.push(`<span class="mini-badge">📁 ${esc(task.project)}</span>`);
+  return list.join('');
 }
 
 function taskRow(task) {
-  const isDone = Boolean(task.done_at);
-  const age = isDone ? t('tasks.finished', { ago: ago(task.done_at) }) : t('tasks.planted', { ago: ago(task.created_at) });
   return `
-    <li class="task-row${isDone ? ' is-done' : ''}" data-id="${esc(task.id)}">
+    <li class="task-row todoist-row prio-${task.priority}" data-id="${esc(task.id)}">
       <label class="task-check">
-        <input type="checkbox" ${isDone ? 'checked' : ''}>
-        <span class="task-title">${esc(task.title)}</span>
+        <input type="checkbox">
+        <span class="task-title">${esc(task.content)}</span>
       </label>
-      <span class="task-age">${age}</span>
-      <button type="button" class="task-delete" data-action="delete" tabindex="-1" aria-label="${t('tasks.delete_label', { title: esc(task.title) })}">🗑️</button>
+      <span class="task-meta">${badges(task)}</span>
+      <a class="task-open" href="${esc(task.url)}" target="_blank" rel="noopener" tabindex="-1" aria-label="${esc(t('tasks.todoist.open_label', { title: task.content }))}">↗️</a>
+      <button type="button" class="task-delete" data-action="delete" tabindex="-1" aria-label="${esc(t('tasks.delete_label', { title: task.content }))}">🗑️</button>
     </li>`;
 }
 
 /* ---------- focus ---------- */
 
-// Checks for a closed <details> directly: Chrome keeps its hidden content in layout, so offsetParent lies.
-const focusables = () => [...document.querySelectorAll('.task-row input')].filter((input) => !input.closest('details:not([open])'));
+const focusables = () => [...document.querySelectorAll('.task-row input')];
 
 function focusTask(id) {
-  const row = [...document.querySelectorAll('.task-row')].find((r) => r.dataset.id === id);
-  row?.querySelector('input').focus();
+  rowById(id)?.querySelector('input').focus();
 }
 
 function moveFocus(delta) {
@@ -149,111 +141,117 @@ function restoreFocus(id) {
   if (!document.activeElement || document.activeElement === document.body) $('#new-task').focus();
 }
 
+/* ---------- loading ---------- */
+
+// Asks for just the lists the panel shows. A newer load (say, after another checkbox) wins over an older one.
+async function load({ refresh = false } = {}) {
+  const loadId = ++ui.loadId;
+  const query = new URLSearchParams({ tabs: shownLists().join(',') });
+  if (refresh) query.set('refresh', '1');
+  const result = await api(`/api/tasks/list?${query}`);
+  if (loadId !== ui.loadId) return;
+  Object.assign(ui, {
+    enabled: result.enabled !== false,
+    loading: false,
+    error: result.httpOk ? null : failureMessage(result),
+    sections: result.sections || [],
+    loadedAt: Date.now(),
+  });
+  const focusedId = rowFor(document.activeElement)?.dataset.id;
+  render();
+  if (focusedId) focusTask(focusedId);
+}
+
 /* ---------- actions ---------- */
 
 async function createTask() {
   const input = $('#task-input');
-  const title = input.value.trim();
-  if (!title) return shake(input);
-  const result = await api('/api/tasks/create', { title });
+  const text = input.value.trim();
+  if (!text) return shake(input);
+  const result = await api('/api/tasks/create', { text });
   if (!result.ok) return toast(failureMessage(result), 'error');
-  ui.tasks.push(result.task);
   $('#task-dialog').close();
-  render();
-  const row = [...document.querySelectorAll('.task-row')].find((r) => r.dataset.id === result.task.id);
+  await load({ refresh: true });
+  // Show the new task in whichever tab it landed in.
+  const index = ui.sections.findIndex((section) => section.tasks.some((task) => task.id === result.id));
+  if (index === -1) return toast(t('tasks.toasts.planted_elsewhere'));
+  if (ui.sections[index] !== activeSection()) selectTab(index);
+  const row = rowById(result.id);
   row?.classList.add('is-new');
-  focusTask(result.task.id);
+  focusTask(result.id);
   if (row) sparkle(pointOf(row));
 }
 
-async function toggleTask(id) {
-  const task = findTask(id);
-  const row = [...document.querySelectorAll('.task-row')].find((r) => r.dataset.id === id);
-  if (!task || !row) return;
-  const finishing = !task.done_at;
-  const next = neighborOf(id);
+async function closeRow(row) {
+  const { id } = row.dataset;
+  if (!findOpen(id) || row.classList.contains('is-leaving')) return;
   const point = pointOf(row);
-  row.querySelector('input').checked = finishing;
+  row.querySelector('input').checked = true;
   row.classList.add('is-leaving');
-
-  const [result] = await Promise.all([api('/api/tasks/update', { id, done: finishing }), pause(LEAVE_MS)]);
-  if (!result.ok) {
-    toast(failureMessage(result), 'error');
-    return render();
-  }
-  Object.assign(task, result.task);
-  render();
-  restoreFocus(next);
-  if (finishing) {
-    sparkle(point);
-    toast(pick('tasks.cheers'));
-  }
-}
-
-async function toggleTodoist(id) {
-  const task = findTodoist(id);
-  const input = rowById(id)?.querySelector('input');
-  if (!task || !input) return;
-  const closing = !ui.todoist.closed.has(id);
-  if (!closing && task.recurring) {
-    input.checked = true;
-    return toast(t('tasks.todoist.recurring_reopen'));
-  }
-  input.checked = closing;
-  const result = await api(`/api/tasks/todoist/${closing ? 'close' : 'reopen'}`, { id });
-  if (!result.ok) {
-    input.checked = !closing;
-    return toast(failureMessage(result), 'error');
-  }
-  if (closing) ui.todoist.closed.add(id);
-  else ui.todoist.closed.delete(id);
-  render();
-  focusTask(id);
-  if (!closing) return toast(t('tasks.todoist.reopened'));
-  sparkle(pointOf(rowById(id)));
-  toast(pick('tasks.cheers'));
-}
-
-const isTodoistRow = (row) => row?.dataset.source === 'todoist';
-
-function toggleRow(row) {
-  return isTodoistRow(row) ? toggleTodoist(row.dataset.id) : toggleTask(row.dataset.id);
+  await pause(LEAVE_MS);
+  sparkle(point);
+  stage('close', id, t('tasks.toasts.closed', { cheer: pick('tasks.cheers') }));
 }
 
 function deleteRow(row) {
-  return isTodoistRow(row) ? toast(t('tasks.todoist.no_delete')) : deleteTask(row.dataset.id);
+  const { id } = row.dataset;
+  if (findOpen(id)) stage('delete', id, t('tasks.toasts.deleted'));
 }
 
-function openRow(row) {
-  if (isTodoistRow(row)) window.open(findTodoist(row.dataset.id)?.url, '_blank', 'noopener');
-}
-
-async function deleteTask(id) {
+// Hides the task now and sends the close or delete after UNDO_MS. Only the latest one waits: starting
+// another sends the one before straight away.
+function stage(action, id, message) {
+  flushPending();
   const next = neighborOf(id);
-  const result = await api('/api/tasks/delete', { id });
-  if (!result.ok) return toast(failureMessage(result), 'error');
-  ui.tasks = ui.tasks.filter((t) => t.id !== id);
-  ui.lastDeleted = result.task;
+  ui.hidden.add(id);
+  ui.pending = { id, action, timer: setTimeout(() => flushPending(), UNDO_MS) };
   render();
   restoreFocus(next);
-  toast(t('tasks.toasts.deleted'));
+  toast(message, 'ok', { ms: UNDO_MS });
 }
 
-async function undoDelete() {
-  if (!ui.lastDeleted) return toast(t('tasks.toasts.nothing_to_undo'));
-  const result = await api('/api/tasks/restore', { task: ui.lastDeleted });
-  if (!result.ok) return toast(failureMessage(result), 'error');
-  ui.tasks.push(result.task);
-  ui.lastDeleted = null;
-  if (result.task.done_at) setDoneOpen(true);
+// Sends the waiting action to Todoist. On the way out of the page it uses keepalive so it still arrives.
+async function flushPending({ leaving = false } = {}) {
+  const pending = ui.pending;
+  if (!pending) return;
+  ui.pending = null;
+  clearTimeout(pending.timer);
+  const path = `/api/tasks/${pending.action}`;
+  if (leaving) {
+    fetch(path, {
+      method: 'POST', keepalive: true, body: JSON.stringify({ id: pending.id }),
+      headers: { 'Content-Type': 'application/json', 'X-Garden-Token': TOKEN },
+    });
+    return;
+  }
+  const result = await api(path, { id: pending.id });
+  // Done either way: drop it from what we're showing, so a recurring task's next date can show up on a later load.
+  if (result.ok) ui.sections.forEach((section) => { section.tasks = section.tasks.filter((task) => task.id !== pending.id); });
+  ui.hidden.delete(pending.id);
   render();
-  focusTask(result.task.id);
+  if (!result.ok) toast(failureMessage(result), 'error');
+}
+
+function undo() {
+  const pending = ui.pending;
+  if (!pending) return toast(t('tasks.toasts.nothing_to_undo'));
+  clearTimeout(pending.timer);
+  ui.pending = null;
+  ui.hidden.delete(pending.id);
+  render();
+  focusTask(pending.id);
   toast(t('tasks.toasts.restored'));
 }
 
-/* ---------- dialogs & sections ---------- */
+function openRow(row) {
+  const task = findOpen(row.dataset.id);
+  if (task) window.open(task.url, '_blank', 'noopener');
+}
+
+/* ---------- dialogs ---------- */
 
 function openCreate() {
+  if (!ui.enabled) return toast(t('errors.todoist.not_set_up'));
   const input = $('#task-input');
   input.value = '';
   $('#task-dialog').showModal();
@@ -267,13 +265,7 @@ function shake(input) {
   input.focus();
 }
 
-function setDoneOpen(open) {
-  $('#done-section').open = open;
-  store.set('tasks-done-open', open ? 'yes' : 'no');
-}
-
-const HELP_ROWS = ['create', 'save', 'move', 'toggle', 'delete', 'undo', 'done_list', 'close'];
-const helpRows = () => (ui.todoist.enabled ? [...HELP_ROWS, 'open_todoist'] : HELP_ROWS);
+const HELP_ROWS = ['create', 'save', 'move', 'toggle', 'delete', 'undo', 'open_todoist', 'close'];
 
 function helpRow(name) {
   return `<tr><td>${t(`tasks.help.rows.${name}.keys_html`)}</td><td>${esc(t(`tasks.help.rows.${name}.does`))}</td></tr>`;
@@ -282,7 +274,7 @@ function helpRow(name) {
 function showHelp() {
   openDialog({
     title: t('tasks.help.title'),
-    body: `<table class="key-table">${helpRows().map(helpRow).join('')}</table>`,
+    body: `<table class="key-table">${HELP_ROWS.map(helpRow).join('')}</table>`,
     confirm: null,
     cancel: t('common.got_it'),
   });
@@ -294,13 +286,12 @@ const anyDialogOpen = () => document.querySelector('dialog[open]') !== null;
 const isTyping = (target) => target.matches?.('input[type="text"], input[type="search"], textarea, select, [contenteditable]');
 
 function rowFor(target) {
-  return target.closest?.('.task-row');
+  return target?.closest?.('.task-row');
 }
 
 const SHORTCUTS = {
   c: () => openCreate(),
-  d: () => setDoneOpen(!$('#done-section').open),
-  u: () => undoDelete(),
+  u: () => undo(),
   '?': () => showHelp(),
   j: () => moveFocus(1),
   k: () => moveFocus(-1),
@@ -311,7 +302,7 @@ const SHORTCUTS = {
 };
 
 const ROW_SHORTCUTS = {
-  x: toggleRow,
+  x: closeRow,
   o: openRow,
   Delete: deleteRow,
   Backspace: deleteRow,
@@ -344,48 +335,22 @@ $('#new-task').addEventListener('click', openCreate);
 
 document.querySelector('.task-garden').addEventListener('change', (event) => {
   const row = rowFor(event.target);
-  if (row && event.target.type === 'checkbox') toggleRow(row);
+  if (row && event.target.type === 'checkbox' && event.target.checked) closeRow(row);
 });
 
 document.querySelector('.task-garden').addEventListener('click', (event) => {
   const button = event.target.closest('[data-action="delete"]');
-  if (button) deleteTask(rowFor(button).dataset.id);
+  if (button) deleteRow(rowFor(button));
 });
-
-$('#done-section').addEventListener('toggle', (event) => store.set('tasks-done-open', event.target.open ? 'yes' : 'no'));
-$('#done-section').open = store.get('tasks-done-open') === 'yes';
-
-async function loadTasks() {
-  const result = await api('/api/tasks/list');
-  if (!result.httpOk) return toast(t('tasks.toasts.load_failed', { error: failureMessage(result) }), 'error');
-  ui.tasks = result.tasks;
-  render();
-}
-
-async function loadTodoist({ refresh = false } = {}) {
-  const result = await api(`/api/tasks/todoist${refresh ? '?refresh=1' : ''}`);
-  Object.assign(ui.todoist, {
-    enabled: result.enabled !== false,
-    loading: false,
-    error: result.httpOk ? null : failureMessage(result),
-    sections: result.sections || [],
-    filter: result.filter || null,
-    closed: new Set(),
-    loadedAt: Date.now(),
-  });
-  const focusedId = rowFor(document.activeElement)?.dataset.id;
-  render();
-  if (focusedId) focusTask(focusedId);
-}
 
 $('#todoist-tabs').addEventListener('click', (event) => {
   const tab = event.target.closest('[role="tab"]');
-  if (tab) selectTodoistTab(Number(tab.dataset.tabIndex), { focus: true });
+  if (tab) selectTab(Number(tab.dataset.tabIndex), { focus: true });
 });
 
-function todoistTabFor(key) {
-  const count = ui.todoist.sections.length;
-  const current = ui.todoist.sections.indexOf(activeSection());
+function tabFor(key) {
+  const count = ui.sections.length;
+  const current = ui.sections.indexOf(activeSection());
   if (key === 'ArrowLeft') return (current - 1 + count) % count;
   if (key === 'ArrowRight') return (current + 1) % count;
   if (key === 'Home') return 0;
@@ -394,16 +359,19 @@ function todoistTabFor(key) {
 }
 
 $('#todoist-tabs').addEventListener('keydown', (event) => {
-  const target = todoistTabFor(event.key);
+  const target = tabFor(event.key);
   if (target === null) return;
   event.preventDefault();
-  selectTodoistTab(target, { focus: true });
+  selectTab(target, { focus: true });
 });
 
 // Coming back to the tab after a while picks up whatever changed in Todoist meanwhile.
 document.addEventListener('visibilitychange', () => {
-  if (!document.hidden && ui.todoist.enabled && Date.now() - ui.todoist.loadedAt > TODOIST_STALE_MS) loadTodoist({ refresh: true });
+  if (!document.hidden && ui.enabled && Date.now() - ui.loadedAt > STALE_MS) load({ refresh: true });
 });
 
-loadTasks();
-loadTodoist();
+// A close or delete still waiting for its undo window is sent on the way out, so closing the tab doesn't lose it.
+window.addEventListener('pagehide', () => flushPending({ leaving: true }));
+
+render();
+load();

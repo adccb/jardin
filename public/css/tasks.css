@@ -12,8 +12,11 @@ kbd {
 
 .task-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
 
+/* Each row is a grid: checkbox | title, with its badges on a second line underneath | open and delete buttons.
+   The label uses display: contents so its checkbox and title sit in the grid, and clicking either still toggles. */
 .task-row {
-  display: flex; align-items: center; gap: 12px; padding: 12px 14px 12px 16px;
+  display: grid; grid-template-columns: auto minmax(0, 1fr) auto auto; align-items: center; gap: 4px 12px;
+  padding: 12px 14px 12px 16px;
   background: var(--surface); border: 2px solid var(--border); border-radius: 20px; box-shadow: var(--shadow);
   transition: transform .2s cubic-bezier(.2, .8, .3, 1), border-color .2s ease, box-shadow .2s ease, opacity .25s ease;
 }
@@ -21,8 +24,9 @@ kbd {
 .task-row:focus-within { border-color: var(--lavender); box-shadow: var(--shadow-hover); transform: translateX(4px); }
 .task-row:focus-within .task-check input { outline: none; }
 
-.task-check { flex: 1; min-width: 0; display: flex; align-items: center; gap: 12px; cursor: pointer; }
+.task-check { display: contents; cursor: pointer; }
 .task-check input {
+  grid-column: 1; grid-row: 1;
   appearance: none; flex: none; width: 28px; height: 28px; margin: 0; cursor: pointer;
   border: 3px solid var(--pink); border-radius: 50%; background: var(--pink-soft);
   display: grid; place-items: center; transition: transform .15s ease, background .15s ease;
@@ -30,44 +34,24 @@ kbd {
 .task-check input::after { content: "💖"; font-size: 15px; transform: scale(0); transition: transform .25s cubic-bezier(.3, 1.6, .5, 1); }
 .task-check input:checked::after { transform: scale(1); }
 .task-check input:hover { transform: scale(1.1) rotate(-8deg); }
-.task-title { font-size: 1.08rem; font-weight: 700; overflow-wrap: anywhere; }
+.task-title { grid-column: 2; grid-row: 1; font-size: 1.08rem; font-weight: 700; overflow-wrap: anywhere; cursor: pointer; }
 
-.task-age { flex: none; font-size: .8rem; font-weight: 700; color: var(--muted); }
-.task-delete {
-  flex: none; width: 34px; height: 34px; border: none; border-radius: 12px; cursor: pointer;
-  background: transparent; font-size: 1rem; opacity: 0; transition: opacity .15s ease, background .15s ease;
+/* Open and delete are always showing; with a badge line they center on both lines. */
+.task-open, .task-delete {
+  grid-row: 1; flex: none; display: grid; place-items: center; width: 34px; height: 34px; border-radius: 12px;
+  opacity: .7; transition: opacity .15s ease, background .15s ease;
 }
-.task-row:hover .task-delete, .task-row:focus-within .task-delete { opacity: .8; }
-.task-delete:hover { background: var(--coral-soft); opacity: 1; }
-@media (hover: none) { .task-delete { opacity: .6; } }
-
-.task-row.is-done { opacity: .75; box-shadow: none; background: var(--surface-2); }
-.task-row.is-done .task-title { text-decoration: line-through wavy var(--pink); text-decoration-thickness: 1.5px; color: var(--muted); }
+.task-row:has(.task-meta:not(:empty)) :is(.task-open, .task-delete) { grid-row: 1 / span 2; }
+.task-open { grid-column: 3; text-decoration: none; }
+.task-delete { grid-column: 4; border: none; cursor: pointer; background: transparent; font-size: 1rem; }
+.task-open:hover, .task-open:focus-visible { background: var(--lav-soft); opacity: 1; }
+.task-delete:hover, .task-delete:focus-visible { background: var(--coral-soft); opacity: 1; }
 
 .task-row.is-leaving { opacity: 0; transform: translateX(24px) scale(.97); }
 .task-row.is-leaving .task-title { text-decoration: line-through wavy var(--pink); }
 .task-row.is-new { animation: plant .45s cubic-bezier(.2, .8, .3, 1); }
 @keyframes plant { from { opacity: 0; transform: translateY(-8px) scale(.96); } }
 
-.done-section { margin-top: 26px; }
-.done-section summary {
-  list-style: none; cursor: pointer; width: fit-content; margin-bottom: 12px;
-  font-family: var(--font-display); font-size: 1.3rem; font-weight: 600;
-  padding: 4px 12px; border-radius: 14px;
-}
-.done-section summary::-webkit-details-marker { display: none; }
-.done-section summary:hover { background: var(--pink-soft); }
-.done-section summary .count { font-size: .9rem; color: var(--muted); }
-.done-section summary kbd { font-size: .65em; vertical-align: middle; }
-.done-section .ribbon { display: inline-block; transition: transform .2s ease; }
-.done-section:not([open]) .ribbon { transform: rotate(-90deg); }
-
-.task-empty {
-  text-align: center; padding: 34px 16px; border: 2px dashed var(--border); border-radius: 22px;
-  background: var(--surface-2); font-family: var(--font-display); font-size: 1.15rem; color: var(--muted);
-}
-.task-empty .big { display: block; font-size: 2.6rem; margin-bottom: 6px; }
-.done-empty { margin: 0 12px; font-weight: 700; color: var(--muted); }
 
 .key-hints {
   display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 16px;
@@ -87,7 +71,7 @@ kbd {
 .key-table { width: 100%; border-collapse: separate; border-spacing: 0 6px; }
 .key-table td:first-child { width: 40%; white-space: nowrap; }
 
-/* ---------- today in todoist 🍅 ---------- */
+/* ---------- todoist lists 🌷 ---------- */
 
 .todoist-section { margin-bottom: 30px; }
 .todoist-section[hidden] { display: none; }
@@ -99,7 +83,8 @@ kbd {
 .todoist-open { margin-left: auto; font-family: var(--font-body); font-size: .85rem; }
 .todoist-status { margin: 0 0 10px 6px; font-weight: 700; color: var(--muted); }
 
-.task-meta { flex: none; display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 4px; max-width: 45%; }
+.task-meta { grid-column: 2; grid-row: 2; display: flex; flex-wrap: wrap; align-items: center; gap: 4px; }
+.task-meta:empty { display: none; }
 .mini-badge { font-size: .75rem; font-weight: 700; padding: 2px 8px; border-radius: 999px; background: var(--lav-soft); color: var(--lavender); white-space: nowrap; }
 .mini-badge.is-overdue { background: var(--coral-soft); color: var(--coral); }
 .mini-badge.is-time { background: var(--gold-soft); color: var(--gold); }
@@ -107,19 +92,6 @@ kbd {
 .todoist-row.prio-1 .task-check input { border-color: var(--coral); background: var(--coral-soft); }
 .todoist-row.prio-2 .task-check input { border-color: var(--gold); background: var(--gold-soft); }
 .todoist-row.prio-3 .task-check input { border-color: var(--lavender); background: var(--lav-soft); }
-
-.task-open {
-  flex: none; display: grid; place-items: center; width: 34px; height: 34px; border-radius: 12px;
-  text-decoration: none; opacity: 0; transition: opacity .15s ease, background .15s ease;
-}
-.task-row:hover .task-open, .task-row:focus-within .task-open { opacity: .8; }
-.task-open:hover { background: var(--lav-soft); opacity: 1; }
-@media (hover: none) { .task-open { opacity: .6; } }
-
-@media (max-width: 560px) {
-  .task-row { flex-wrap: wrap; }
-  .task-meta { max-width: none; justify-content: flex-start; padding-left: 40px; }
-}
 
 .todoist-tabs { margin: 0 0 14px; }
 .todoist-tabs[hidden] { display: none; }

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Garden
-  # Wraps a tool's page in the shared shell: sidebar, palette and language toggles, dialog, toasts, translations for its JS.
+  # Wraps a tool's page in the shared shell: sidebar (settings at its foot), dialog, toasts, translations for its JS.
   class Layout
     TEMPLATE = File.join(ROOT, 'pages', 'layout.html.erb')
 

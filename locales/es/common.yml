@@ -1,12 +1,7 @@
 common:
   language_name: "Español"
   flag: "🌽"
-  language:
-    current: "idioma: %{name}"
-    menu_label: "idioma"
   palette:
-    current: "colores: %{name}"
-    menu_label: "paleta de colores"
     now_wearing: "ahora luciendo %{name} %{emoji}"
   nav_label: "herramientas del jardín"
   home: "inicio del jardín"

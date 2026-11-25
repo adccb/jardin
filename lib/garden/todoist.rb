@@ -13,4 +13,3 @@ end
 
 require_relative 'todoist/client'
 require_relative 'todoist/task'
-require_relative 'todoist/saved_filter'

@@ -27,6 +27,9 @@ module Garden
         [to_h[:overdue] ? 0 : 1, to_h[:priority], due_datetime || '~', @task['child_order'].to_i]
       end
 
+      # For lists that run into the future: soonest first, then by priority.
+      def date_key = [due_date || '~', due_datetime || '~', to_h[:priority], @task['child_order'].to_i]
+
       private
 
       def due = @task['due'] || {}

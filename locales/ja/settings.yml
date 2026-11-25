@@ -1,0 +1,33 @@
+settings:
+  title: "設定"
+  tagline: "お庭の育て方 ⚙️ 変更はすぐに保存されるよ"
+  colors:
+    heading: "色"
+    help: "どのページもシステムのライト／ダークに合わせるよ。パレットはここで選んでね"
+  language:
+    heading: "言語"
+    help: "gardenは4つの言語を話せるよ"
+  repos:
+    heading: "隠したリポジトリ"
+    help: "隠したリポジトリはどこにも出てこないよ：PR、レビュー、ブランチ、ワークツリーのページすべて。リストはGitHubから来るので、ghのアカウントで見えるリポジトリが全部並ぶよ。"
+    search_placeholder: "🔍 リポジトリを検索…"
+    search_label: "リポジトリを検索"
+    loading: "GitHubにリポジトリを聞いてるよ… 🐙"
+    count:
+      one: "（%{count}件を非表示）"
+      other: "（%{count}件を非表示）"
+    shown:
+      one: "%{count}件中%{shown}件を表示"
+      other: "%{count}件中%{shown}件を表示"
+    hidden_group: "🙈 どこでも非表示"
+    shown_group: "🌱 表示中"
+    none_hidden: "隠しているものはないよ 🌈"
+    no_match: "一致するリポジトリはないよ 🌙"
+    hide_label: "%{slug} をどこでも隠す"
+    badges:
+      private: "🔒 プライベート"
+      archived: "📦 アーカイブ済み"
+      gone: "👻 もうGitHubにないよ"
+    toasts:
+      hidden: "%{slug} をどこでも隠したよ 🙈"
+      shown: "%{slug} が戻ってきたよ 👀"

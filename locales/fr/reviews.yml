@@ -16,12 +16,6 @@ reviews:
     nothing_picked: "rien de coché pour l'instant"
     filtered_out: "🌱 filtrés"
     none_filtered: "tous les dépôts sont affichés ! 🎉"
-    hidden: "🙈 cachés"
-    hide_label: "cacher %{name} de cette liste"
-    hide_title: "cacher de cette liste"
-    bring_back: "faire revenir 👀"
-    bring_back_label: "faire revenir %{name}"
-    tucked_away: "%{name} mis de côté 🙈"
   tabs_label: "qui demande"
   tabs:
     you:

@@ -12,8 +12,7 @@ options = {
   root: File.join(Dir.home, "src"),
   open: true,
   jira_site: ENV.fetch("JIRA_SITE", "https://1password.atlassian.net"),
-  todoist_filter: ENV.fetch("TODOIST_FILTER", "aujourd'hui"),
-  data_dir: File.join(ENV.fetch("XDG_DATA_HOME", File.join(Dir.home, ".local", "share")), "garden")
+  config_dir: File.join(ENV.fetch("XDG_CONFIG_HOME", File.join(Dir.home, ".config")), "garden")
 }
 
 OptionParser.new do |opts|
@@ -21,17 +20,23 @@ OptionParser.new do |opts|
   opts.on("--port N", Integer, "port to bloom on (default 4747)") { |port| options[:port] = port }
   opts.on("--root DIR", "folder of repos for the branches page (default ~/src)") { |dir| options[:root] = File.expand_path(dir) }
   opts.on("--jira-site URL", "jira cloud site (default $JIRA_SITE or 1password.atlassian.net)") { |url| options[:jira_site] = url }
-  opts.on("--data-dir DIR", "where tasks.json lives (default ~/.local/share/garden)") { |dir| options[:data_dir] = File.expand_path(dir) }
-  opts.on("--todoist-filter NAME", "saved Todoist filter for the task page (default $TODOIST_FILTER or aujourd'hui)") { |name| options[:todoist_filter] = name }
+  opts.on("--config-dir DIR", "where settings.json lives (default ~/.config/garden)") { |dir| options[:config_dir] = File.expand_path(dir) }
   opts.on("--[no-]open", "open the browser (default yes)") { |open| options[:open] = open }
 end.parse!
 
+settings = Garden::Settings::Store.new(File.join(options[:config_dir], "settings.json"))
+finder = Garden::Branches::RepoFinder.new(options[:root])
+local_repos = Garden::Github::LocalRepos.new(finder)
+# Branches and worktrees are two pages over the same repos, so they share one API (and its snapshot cache).
+branches_api = Garden::Branches::Api.new(root: options[:root], settings:, local_repos:)
 tools = [
-  Garden::Tool.new(slug: "prs", emoji: "💌", api: Garden::Prs::Api.new(root: options[:root])),
-  Garden::Tool.new(slug: "reviews", emoji: "👀", api: Garden::Reviews::Api.new),
-  Garden::Tool.new(slug: "tasks", emoji: "📝", api: Garden::Tasks::Api.new(path: File.join(options[:data_dir], "tasks.json"), todoist: Garden::Todoist::Client.from_env, todoist_filter: options[:todoist_filter])),
-  Garden::Tool.new(slug: "branches", emoji: "🌿", api: Garden::Branches::Api.new(root: options[:root])),
-  Garden::Tool.new(slug: "jira", emoji: "🎟️", api: Garden::Jira::Api.new(site: options[:jira_site]))
+  Garden::Tool.new(slug: "prs", emoji: "💌", api: Garden::Prs::Api.new(repos: local_repos, settings:)),
+  Garden::Tool.new(slug: "reviews", emoji: "👀", api: Garden::Reviews::Api.new(hidden_slugs: -> { settings.hidden_slugs })),
+  Garden::Tool.new(slug: "tasks", emoji: "📝", api: Garden::Tasks::Api.new(todoist: Garden::Todoist::Client.from_env)),
+  Garden::Tool.new(slug: "branches", emoji: "🌿", api: branches_api),
+  Garden::Tool.new(slug: "worktrees", emoji: "🏡", api: branches_api, shares: ["branches"]),
+  Garden::Tool.new(slug: "jira", emoji: "🎟️", api: Garden::Jira::Api.new(site: options[:jira_site])),
+  Garden::Tool.new(slug: "settings", emoji: "⚙️", api: Garden::Settings::Api.new(store: settings))
 ]
 
 $stdout.sync = true

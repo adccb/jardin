@@ -28,26 +28,23 @@ module Demo
         steps: "await wait('#prs .card'); await click('[data-state=\"merged\"]');" },
       { name: '03-review-garden', page: '/reviews', preset: { 'reviews-tab' => 'you' } },
       { name: '04-review-garden-team', page: '/reviews',
-        preset: { 'reviews-tab' => 'team', 'reviews-hidden' => ['sunbeam-labs/seedling-docs'].to_json,
-                  'reviews-excluded' => ['sunbeam-labs/pollen-sdk'].to_json },
-        steps: "(await wait('#repo-hidden')).open = true;" },
-      { name: '05-task-garden', page: '/tasks', preset: { 'tasks-done-open' => 'yes' } },
+        preset: { 'reviews-tab' => 'team', 'reviews-excluded' => ['sunbeam-labs/pollen-sdk'].to_json } },
+      { name: '05-task-garden', page: '/tasks' },
       { name: '06-task-garden-new-task', page: '/tasks',
-        steps: "await wait('#todo-list li'); await click('#new-task'); await sleep(300); " \
+        steps: "await wait('#todoist-list li'); await click('#new-task'); await sleep(300); " \
                "(await wait('#task-input')).value = NEW_TASK[lang]; await sleep(1500);" },
       { name: '07-task-garden-keyboard-help', page: '/tasks',
-        steps: "await wait('#todo-list li'); press('?'); await sleep(1500);" },
-      { name: '08-branch-garden', page: '/branches', preset: { 'tab' => 'branches' } },
-      { name: '09-branch-garden-tidy', page: '/branches', preset: { 'tab' => 'branches' },
+        steps: "await wait('#todoist-list li'); press('?'); await sleep(1500);" },
+      { name: '08-branch-garden', page: '/branches', preset: { 'branches-repos-excluded' => '[]' } },
+      { name: '09-branch-garden-tidy', page: '/branches', preset: { 'branches-repos-excluded' => '[]' },
         steps: "await checkBox('[data-key$=\"::sunny/ruby-34\"] input[data-action=\"select\"]'); " \
-               "await checkBox('[data-key$=\"::sunny/bloom-log-pii\"] input[data-action=\"select\"]'); await click('#bulk-tidy'); await sleep(1500);" },
-      { name: '10-branch-garden-worktrees', page: '/branches', preset: { 'tab' => 'worktrees' } },
+               "await checkBox('[data-key$=\"::sunny/bloom-log-pii\"] input[data-action=\"select\"]'); await click('#bulk-tidy-branches'); await sleep(1500);" },
+      { name: '10-worktree-garden', page: '/worktrees', preset: { 'worktrees-repos-excluded' => '[]' } },
       { name: '11-ticket-garden', page: '/jira', preset: { 'jira-view' => 'mine' } },
       { name: '12-ticket-garden-sprint', page: '/jira', preset: { 'jira-view' => 'sprint:501' } },
       { name: '13-ticket-garden-ticket', page: '/jira', preset: { 'jira-view' => 'sprint:501' },
         steps: "await click('[data-key=\"BLOOM-47\"]'); await sleep(2500);" },
-      { name: '14-color-menu', page: '/reviews', preset: { 'reviews-tab' => 'you' },
-        steps: "await wait('#reviews .card'); await click('#palette-button'); await sleep(800);" }
+      { name: '14-settings', page: '/settings' }
     ].freeze
 
     def fetch(name) = LIST.find { |scene| scene[:name] == name }

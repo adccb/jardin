@@ -27,18 +27,18 @@ module Garden
         paginate('/api/v1/tasks/filter', query:, lang:)
       end
 
+      def project_tasks(project_id) = paginate('/api/v1/tasks', project_id:)
       def projects = paginate('/api/v1/projects')
 
-      # Saved filters and your account language only come through the sync endpoint.
-      def filters_and_lang
-        body = post_form('/api/v1/sync', sync_token: '*', resource_types: JSON.generate(%w[filters user]))
-        [body.fetch('filters', []), body.dig('user', 'lang') || 'en']
-      end
-
-      def close(id) = post("/api/v1/tasks/#{URI.encode_www_form_component(id)}/close")
-      def reopen(id) = post("/api/v1/tasks/#{URI.encode_www_form_component(id)}/reopen")
+      # Todoist's own quick add: "water plants tomorrow #Home p1 @chores" sets the date, project, priority and label.
+      def quick_add(text) = post('/api/v1/tasks/quick', text:)
+      def update(id, **fields) = post("/api/v1/tasks/#{escape(id)}", **fields)
+      def delete(id) = perform(Net::HTTP::Delete.new(URI.join(@base, "/api/v1/tasks/#{escape(id)}")))
+      def close(id) = post("/api/v1/tasks/#{escape(id)}/close")
 
       private
+
+      def escape(id) = URI.encode_www_form_component(id)
 
       def paginate(path, **params)
         items = []
@@ -57,11 +57,12 @@ module Garden
         perform(Net::HTTP::Get.new(URI.join(@base, "#{path}?#{query}")))
       end
 
-      def post(path) = perform(Net::HTTP::Post.new(URI.join(@base, path)))
-
-      def post_form(path, **fields)
+      def post(path, **body)
         request = Net::HTTP::Post.new(URI.join(@base, path))
-        request.set_form_data(fields)
+        unless body.empty?
+          request['Content-Type'] = 'application/json'
+          request.body = JSON.generate(body)
+        end
         perform(request)
       end
 

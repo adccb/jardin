@@ -1,5 +1,4 @@
 // shared helpers for every garden page 🌸
-import { sidebarMenu } from './sidebar-menu.js';
 
 export const TOKEN = document.querySelector('meta[name="garden-token"]').content;
 export const $ = (selector) => document.querySelector(selector);
@@ -151,7 +150,7 @@ export function pointOf(element) {
 }
 
 
-export function toast(message, kind = 'ok') {
+export function toast(message, kind = 'ok', { ms } = {}) {
   const element = document.createElement('div');
   element.className = `toast toast-${kind}`;
   element.textContent = message;
@@ -160,7 +159,7 @@ export function toast(message, kind = 'ok') {
   setTimeout(() => {
     element.classList.add('bye');
     setTimeout(() => element.remove(), 400);
-  }, kind === 'error' ? 8000 : 3500);
+  }, ms ?? (kind === 'error' ? 8000 : 3500));
 }
 
 /* ---------- dialog ---------- */
@@ -193,41 +192,5 @@ export function dialogItem(key) {
 
 export const toggle = (name, label, checked = false) =>
   `<label class="force-toggle"><input type="checkbox" name="${name}" ${checked ? 'checked' : ''}><span>${label}</span></label>`;
-
-/* ---------- palette and language menus ---------- */
-
-const remember = (name, value) => { document.cookie = `${name}=${value}; path=/; max-age=31536000; samesite=strict`; };
-
-function labelButton(button, label, emoji) {
-  button.dataset.label = label;
-  button.setAttribute('aria-label', label);
-  button.querySelector('span').textContent = emoji;
-}
-
-// Palettes switch in place; the cookie lets the server render the same palette next time.
-const paletteButton = document.getElementById('palette-button');
-if (paletteButton) {
-  sidebarMenu(paletteButton, {
-    onChoose: ({ dataset: { palette, name, emoji } }) => {
-      if (palette === document.documentElement.dataset.palette) return;
-      document.documentElement.dataset.palette = palette;
-      remember('garden_palette', palette);
-      labelButton(paletteButton, t('common.palette.current', { name }), emoji);
-      toast(t('common.palette.now_wearing', { name, emoji }));
-    },
-  });
-}
-
-// Every string on the page is in the old language, so a new language reloads.
-const languageButton = document.getElementById('language-button');
-if (languageButton) {
-  sidebarMenu(languageButton, {
-    onChoose: ({ dataset: { locale: chosen } }) => {
-      if (chosen === locale) return;
-      remember('garden_locale', chosen);
-      location.reload();
-    },
-  });
-}
 
 plantFloaties();

@@ -13,22 +13,23 @@ branches:
     nothing_picked: "nothing checked right now"
     filtered_out: "🌱 not showing"
     none_filtered: "showing every repo! 🎉"
-    hidden: "🙈 hidden"
-    hide_label: "hide %{name} from this list"
-    hide_title: "hide from this list"
-    bring_back: "bring back 👀"
-    bring_back_label: "bring back %{name}"
-    tucked_away: "%{name} tucked away 🙈"
   pr_note: "🫧 couldn't reach GitHub for %{repos}, so no PR info there this time"
   loading: "watering the garden…"
   no_repos: "no git repos found here yet"
   select_visible: "select visible ☑️"
   select_item: "select %{label}"
-  tabs:
-    label: "garden beds"
+  main_label: "garden beds"
+  repo_tabs_label: "repos"
+  beds:
     branches: "branches"
     worktrees: "worktrees"
   stats:
+    unsaved:
+      one: "unsaved"
+      other: "unsaved"
+    ghosts:
+      one: "ghost"
+      other: "ghosts"
     branches:
       one: "branch"
       other: "branches"
@@ -90,6 +91,7 @@ branches:
     tidy: "your garden is perfectly tidy!"
     branches: "nothing blooming here… try another filter"
     worktrees: "no worktrees match… try another filter"
+    no_worktrees: "no other worktrees in this repo 🏡"
   lock:
     default: "the default branch, she stays 👑"
     worktree: "lives in a worktree at %{path}"
