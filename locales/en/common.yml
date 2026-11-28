@@ -3,6 +3,32 @@ common:
   flag: "🍔"
   palette:
     now_wearing: "now wearing %{name} %{emoji}"
+  keys:
+    title: "⌨️ keyboard magic"
+    search:
+      keys_html: "<kbd>/</kbd>"
+      does: "search this tab"
+    refresh:
+      keys_html: "<kbd>r</kbd>"
+      does: "refresh the page"
+    tabs:
+      keys_html: "<kbd>←</kbd> <kbd>→</kbd>"
+      does: "move between tabs"
+    help:
+      keys_html: "<kbd>?</kbd>"
+      does: "show these keys"
+    close:
+      keys_html: "<kbd>esc</kbd>"
+      does: "close any box"
+  age:
+    loading: "fetching fresh data…"
+    fresh: "🌱 fresh"
+    minutes:
+      one: "🕰️ %{count} min old"
+      other: "🕰️ %{count} min old"
+    hours:
+      one: "🕰️ %{count} hour old"
+      other: "🕰️ %{count} hours old"
   nav_label: "garden tools"
   home: "garden home"
   footer: "made with 💖 and a little bit of glitter ✨ · runs locally on your machine 🔒"

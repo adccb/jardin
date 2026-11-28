@@ -2,7 +2,8 @@
       <h1><span class="bob" aria-hidden="true">🧺</span> <span class="title"><%= t('tasks.title') %></span> <span class="bob" aria-hidden="true">🍓</span></h1>
       <p class="tagline" id="task-summary"><%= t('tasks.tagline') %></p>
       <div class="controls">
-        <button id="new-task" class="btn btn-primary" type="button" aria-keyshortcuts="c"><%= t('tasks.new_task') %> <kbd>c</kbd></button>
+        <button id="refresh" class="btn" type="button"><%= t('common.refresh') %></button>
+        <span id="freshness" class="freshness" aria-live="polite"></span>
       </div>
     </header>
 
@@ -10,38 +11,33 @@
       <aside class="repo-panel" aria-labelledby="repo-panel-title">
         <details id="repo-details" open>
           <summary>
-            <h2 id="repo-panel-title"><span aria-hidden="true">🗂️</span> <%= t('tasks.panel.heading') %> <small id="repo-count"></small></h2>
+            <h2 id="repo-panel-title"><span aria-hidden="true">🗂️</span> <%= t('tasks.panel.heading') %> <small id="repo-count"><span class="bone"></span></small></h2>
           </summary>
           <p class="repo-panel-actions">
             <button type="button" class="link-btn" id="repos-all"><%= t('tasks.panel.select_all') %></button> ·
             <button type="button" class="link-btn" id="repos-none"><%= t('tasks.panel.clear') %></button>
           </p>
-          <div id="repo-list"></div>
+          <div id="repo-list" data-shape="tasks-panel" data-shape-groups=".repo-list, .repo-empty" data-shape-items="li"><%= skeleton_groups(shape('tasks-panel', [2, 2])) %></div>
         </details>
       </aside>
 
-      <div class="pr-main">
-    <section class="task-garden" aria-labelledby="todoist-title">
-      <section id="todoist-section" class="todoist-section" aria-labelledby="todoist-title">
-        <h2 id="todoist-title" class="list-heading">
-          <span aria-hidden="true">🌷</span> <span id="todoist-heading"><%= t('tasks.todoist.heading') %></span> <span class="count" id="todoist-count"></span>
-          <a class="link-btn todoist-open" id="todoist-open" href="https://app.todoist.com/app/today" target="_blank" rel="noopener"><%= t('tasks.todoist.open_today') %></a>
-        </h2>
-        <div class="tabs todoist-tabs" role="tablist" id="todoist-tabs" aria-label="<%= t('tasks.todoist.tabs_label') %>" hidden></div>
-        <p id="todoist-status" class="todoist-status" hidden></p>
-        <ul id="todoist-list" class="task-list" role="tabpanel" aria-labelledby="todoist-title"></ul>
+      <section class="pr-main task-garden" aria-label="<%= t('tasks.todoist.tabs_label') %>">
+        <div id="stats" class="stats" data-shape="tasks-stats" data-shape-items=".stat"><%= skeleton('stat', shape('tasks-stats', [2]).first) %></div>
+        <div class="tabs" role="tablist" id="todoist-tabs" aria-label="<%= t('tasks.todoist.tabs_label') %>"><%= skeleton('tab', 2) %></div>
+        <div class="panel" id="todoist-panel" role="tabpanel">
+          <div class="toolbar">
+            <p class="shown" id="tasks-shown"></p>
+            <div class="toolbar-row">
+              <input id="tasks-search" type="search" placeholder="<%= t('tasks.search_placeholder') %>" aria-label="<%= t('tasks.search_label') %>">
+              <button id="new-task" class="btn btn-small btn-primary" type="button" aria-keyshortcuts="c"><%= t('tasks.new_task') %> <kbd>c</kbd></button>
+              <a class="btn btn-small" id="todoist-open" href="https://app.todoist.com/app/today" target="_blank" rel="noopener"><%= t('tasks.todoist.open_today') %></a>
+            </div>
+            <div id="tasks-chips" class="chips" role="group" aria-label="<%= t('tasks.chips_label') %>"><%= skeleton('chip', 3) %></div>
+          </div>
+          <div id="todoist-status" hidden></div>
+          <ul id="todoist-list" class="task-list" data-shape="tasks-list" data-shape-items=".task-row"><%= skeleton_items(shape('tasks-list', [4]).first, 'task-row', list: true) %><li class="sr-only"><%= t('tasks.todoist.loading') %></li></ul>
+        </div>
       </section>
-    </section>
-
-    <p class="key-hints" aria-hidden="true">
-      <span><kbd>c</kbd> <%= t('tasks.hints.new') %></span>
-      <span><kbd>↑</kbd><kbd>↓</kbd> <%= t('tasks.hints.move') %></span>
-      <span><kbd>x</kbd> <%= t('tasks.hints.done') %></span>
-      <span><kbd>⌫</kbd> <%= t('tasks.hints.delete') %></span>
-      <span><kbd>u</kbd> <%= t('tasks.hints.undo') %></span>
-      <span><kbd>?</kbd> <%= t('tasks.hints.help') %></span>
-    </p>
-      </div>
     </div>
 
     <dialog id="task-dialog" class="task-dialog" aria-labelledby="task-dialog-title">

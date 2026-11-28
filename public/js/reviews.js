@@ -1,10 +1,16 @@
-import { $, store, esc, ago, t, tp, api, failureMessage, toast, sprout } from './garden.js';
+import {
+  $, store, esc, ago, t, tp, api, failureMessage, toast, sprout, stateBox, remembered, remember, markFresh,
+  skeleton, skeletonGrids, regionShape, loadingNote,
+} from './garden.js';
 import { ScopePanel } from './scope-panel.js';
 
 const TABS = ['you', 'team'];
 const TAB_EMOJI = { you: '🙋‍♀️', team: '👥' };
 
-const ui = { requests: [], loaded: false, failure: null, query: '', tab: TABS.includes(store.get('reviews-tab')) ? store.get('reviews-tab') : 'you' };
+const ui = {
+  requests: [], loaded: false, failure: null, query: remembered('reviews-search', ''), chip: remembered('reviews-chip', null),
+  tab: TABS.includes(store.get('reviews-tab')) ? store.get('reviews-tab') : 'you',
+};
 
 const panel = new ScopePanel({ prefix: 'reviews.panel', storeKey: 'reviews', onChange: () => render() });
 
@@ -24,6 +30,7 @@ async function load({ refresh = false } = {}) {
   if (result.httpOk && result.ok) {
     ui.requests = result.requests;
     ui.failure = null;
+    markFresh();
   } else {
     ui.failure = failureMessage(result);
     toast(t('reviews.load_failed', { reason: ui.failure }), 'error');
@@ -62,6 +69,10 @@ function selectTab(via, { focus = false } = {}) {
 }
 
 function renderStats() {
+  if (!ui.loaded) {
+    $('#stats').innerHTML = skeleton('stat', 3);
+    return;
+  }
   const stats = [
     ['👀', scopedRequests().length, 'waiting'],
     ['🙋‍♀️', viaCount('you'), 'you'],
@@ -77,28 +88,46 @@ function matchesQuery(pr) {
   return !query || [pr.title, pr.repo, pr.author, `#${pr.number}`, ...pr.labels].join(' ').toLowerCase().includes(query);
 }
 
-const placeholder = (kind, emoji, text) =>
-  `<div class="${kind}"><span class="big" aria-hidden="true">${emoji}</span>${esc(text)}</div>`;
+// The remembered repo chip, if the open tab has that repo at all; otherwise the tab shows every repo.
+const tabRequests = () => scopedRequests().filter((pr) => pr.via === ui.tab);
+const activeChip = (prs) => (ui.chip && prs.some((pr) => pr.repo === ui.chip) ? ui.chip : null);
 
 function renderRequests() {
   if (!ui.loaded) {
     $('#shown').textContent = '';
-    $('#reviews').innerHTML = placeholder('loading', '👀', t('reviews.empty.loading'));
+    $('#review-chips').hidden = false;
+    $('#review-chips').innerHTML = skeleton('chip', 3);
+    $('#reviews').innerHTML = skeletonGrids(regionShape($('#reviews'), [4]), 'review-card') + loadingNote(t('reviews.empty.loading'));
     return;
   }
-  const prs = scopedRequests().filter((pr) => pr.via === ui.tab).filter(matchesQuery);
+  const all = tabRequests();
+  const chip = activeChip(all);
+  const prs = all.filter((pr) => !chip || pr.repo === chip).filter(matchesQuery);
   $('#shown').textContent = tp('reviews.shown', prs.length);
+  renderChips(all, chip);
   $('#reviews').innerHTML = failureNote() + (prs.length ? `<div class="grid">${prs.map(requestCard).join('')}</div>` : emptyState());
 }
 
-const failureNote = () => (ui.failure ? `<p class="repo-error">🫥 ${esc(ui.failure)}</p>` : '');
+// One chip per repo in the open tab, busiest first.
+function renderChips(all, pressed) {
+  const counts = all.reduce((tally, pr) => tally.set(pr.repo, (tally.get(pr.repo) || 0) + 1), new Map());
+  const repos = [...counts.entries()].sort(([a, x], [b, y]) => y - x || a.localeCompare(b));
+  $('#review-chips').hidden = !repos.length;
+  const chip = (key, label, count) =>
+    `<button type="button" class="chip" data-chip="${esc(key ?? '')}" aria-pressed="${pressed === key}">${esc(label)}<span class="count">${count}</span></button>`;
+  $('#review-chips').innerHTML = repos.length
+    ? chip(null, t('common.all'), all.length) + repos.map(([repo, count]) => chip(repo, `📦 ${repoName(repo)}`, count)).join('')
+    : '';
+}
+
+const failureNote = () => (ui.failure ? stateBox('failed', '🥀', ui.failure) : '');
 
 function emptyState() {
   if (ui.failure) return '';
-  if (ui.query) return placeholder('empty', '🌙', t('reviews.empty.no_match'));
-  if (!ui.requests.length) return placeholder('empty', '🏖️', t('reviews.empty.none'));
-  if (!scopedRequests().length) return placeholder('empty', '🗂️', t('reviews.empty.all_filtered'));
-  return placeholder('empty', '🍃', t(`reviews.empty.${ui.tab}`));
+  if (ui.query || ui.chip) return stateBox('empty', '🌙', t('reviews.empty.no_match'));
+  if (!ui.requests.length) return stateBox('empty', '🏖️', t('reviews.empty.none'));
+  if (!scopedRequests().length) return stateBox('empty', '🗂️', t('reviews.empty.all_filtered'));
+  return stateBox('empty', '🍃', t(`reviews.empty.${ui.tab}`));
 }
 
 const badge = (color, text) => `<span class="badge ${color}">${esc(text)}</span>`;
@@ -139,7 +168,20 @@ $('#via-tabs').addEventListener('keydown', (event) => {
   selectTab(TABS[(next + TABS.length) % TABS.length], { focus: true });
 });
 
-$('#search').addEventListener('input', (event) => { ui.query = event.target.value; renderRequests(); });
+$('#search').value = ui.query;
+$('#search').addEventListener('input', (event) => {
+  ui.query = event.target.value;
+  remember('reviews-search', ui.query);
+  renderRequests();
+});
+
+$('#review-chips').addEventListener('click', (event) => {
+  const chip = event.target.closest('[data-chip]');
+  if (!chip) return;
+  ui.chip = chip.dataset.chip || null;
+  remember('reviews-chip', ui.chip);
+  renderRequests();
+});
 $('#refresh').addEventListener('click', () => load({ refresh: true }));
 
 load();

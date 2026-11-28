@@ -1,6 +1,10 @@
 settings:
   title: "settings"
   tagline: "how your garden grows ⚙️ changes save as you go"
+  tabs:
+    label: "settings"
+    look: "look & pages"
+    repos: "hidden repos"
   colors:
     heading: "colors"
     help: "every page follows your system’s light or dark; pick the palette here"
@@ -14,14 +18,10 @@ settings:
       shown: "%{name} is back in the sidebar 🌱"
       hidden: "%{name} tucked out of the sidebar 🙈"
   repos:
-    heading: "hidden repos"
     help: "hidden repos don't show up anywhere: not in the PR, review, branch or worktree pages. the list comes from GitHub, so it's every repo your gh accounts can see."
     search_placeholder: "🔍 search repos…"
     search_label: "search repos"
     loading: "asking GitHub for your repos… 🐙"
-    count:
-      one: "(%{count} hidden)"
-      other: "(%{count} hidden)"
     shown:
       one: "showing %{shown} of %{count} repo"
       other: "showing %{shown} of %{count} repos"
@@ -37,3 +37,4 @@ settings:
     toasts:
       hidden: "%{slug} hidden everywhere 🙈"
       shown: "%{slug} is back 👀"
+    chips_label: "filter by owner"

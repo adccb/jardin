@@ -1,6 +1,10 @@
 settings:
   title: "ajustes"
   tagline: "cómo crece tu jardín ⚙️ los cambios se guardan al instante"
+  tabs:
+    label: "ajustes"
+    look: "aspecto y páginas"
+    repos: "repos ocultos"
   colors:
     heading: "colores"
     help: "cada página sigue el modo claro u oscuro de tu sistema; aquí eliges la paleta"
@@ -14,14 +18,10 @@ settings:
       shown: "%{name} vuelve a la barra lateral 🌱"
       hidden: "%{name} ya no sale en la barra lateral 🙈"
   repos:
-    heading: "repos ocultos"
     help: "los repos ocultos no aparecen en ninguna parte: ni en PR, ni en revisiones, ramas o worktrees. la lista viene de GitHub, así que incluye todos los repos que ven tus cuentas de gh."
     search_placeholder: "🔍 buscar repos…"
     search_label: "buscar repos"
     loading: "pidiéndole tus repos a GitHub… 🐙"
-    count:
-      one: "(%{count} oculto)"
-      other: "(%{count} ocultos)"
     shown:
       one: "mostrando %{shown} de %{count} repo"
       other: "mostrando %{shown} de %{count} repos"
@@ -37,3 +37,4 @@ settings:
     toasts:
       hidden: "%{slug} oculto en todas partes 🙈"
       shown: "%{slug} está de vuelta 👀"
+    chips_label: "filtrar por dueño"

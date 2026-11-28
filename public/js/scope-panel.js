@@ -1,4 +1,4 @@
-import { $, store, esc, t } from './garden.js';
+import { $, store, esc, t, skeletonGroups, regionShape, loadingNote } from './garden.js';
 
 function savedSet(key) {
   try { return new Set((JSON.parse(store.get(key)) || []).map(String)); } catch { return new Set(); }
@@ -42,14 +42,20 @@ export class ScopePanel {
   text(key, vars) { return t(`${this.prefix}.${key}`, vars); }
 
   render() {
+    if (this.state === 'loading') return this.renderLoading();
     $('#repo-list').innerHTML = this.body();
     $('#repo-count').textContent = this.state === 'ready' && this.items.length
       ? this.text('count', { selected: this.scoped().length, total: this.items.length })
       : '';
   }
 
+  // As tall as the list was last time, so it doesn't push anything when the items arrive.
+  renderLoading() {
+    const list = $('#repo-list');
+    list.innerHTML = skeletonGroups(regionShape(list, [3, 1])) + loadingNote(this.text('loading'));
+  }
+
   body() {
-    if (this.state === 'loading') return this.note(this.text('loading'));
     if (this.state === 'failed') return this.note(this.failure);
     if (!this.items.length) return this.note(this.text('none'));
     return this.group(this.text('in_scope'), this.scoped(), this.text('nothing_picked'))
@@ -100,6 +106,5 @@ export class ScopePanel {
       this.items.forEach((item) => this.excluded.add(item.id));
       this.changed();
     });
-    if (matchMedia('(max-width: 860px)').matches) $('#repo-details').open = false;
   }
 }

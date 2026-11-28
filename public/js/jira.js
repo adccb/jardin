@@ -1,4 +1,7 @@
-import { $, store, esc, ago, formatDate, t, tp, api, failureMessage, sparkle, toast, sprout } from './garden.js';
+import {
+  $, store, esc, ago, formatDate, t, tp, api, failureMessage, sparkle, toast, sprout, stateBox, remembered, remember, markFresh,
+  skeleton, skeletonItems, regionShape, loadingNote, rememberShape,
+} from './garden.js';
 import { ScopePanel } from './scope-panel.js';
 
 const CATEGORY_ORDER = { new: 0, indeterminate: 1, done: 2 };
@@ -23,9 +26,11 @@ const ui = {
   loadIds: {},
   inFlight: 0,
   sprints: [],
+  // Each tab keeps its own status chip, since sprints and your tickets have different statuses.
+  statuses: remembered('jira-statuses', {}),
   status: 'all',
   lanePicks: {},
-  query: '',
+  query: remembered('jira-search', ''),
   sorts: { mine: store.get('jira-sort') || DEFAULT_SORT.mine, sprint: store.get('jira-sprint-sort') || DEFAULT_SORT.sprint },
   includeDone: store.get('jira-done') === 'yes',
   showSprintDone: store.get('jira-sprint-done') === 'yes',
@@ -102,10 +107,11 @@ function sprintScopeChanged() {
 async function loadView(view, { refresh = false } = {}) {
   const loadId = (ui.loadIds[view] || 0) + 1;
   ui.loadIds[view] = loadId;
-  if (view === ui.view) renderLoading();
+  if (view === ui.view && !ui.results[view]) renderLoading();
   const result = await busy(api(`/api/jira/tickets?${viewParams(view, refresh)}`));
   if (loadId !== ui.loadIds[view]) return;
   ui.results[view] = result.httpOk ? result : { failed: failureMessage(result) };
+  if (result.httpOk) markFresh();
   renderTabs();
   if (view !== ui.view) return;
   render();
@@ -151,37 +157,46 @@ function renderViewControls() {
   $('#sort').value = ui.sorts[kindOf(ui.view)];
 }
 
+// As many stat boxes as the tab will have: sprints add done and yours; your tickets add done when it's asked for.
+const statCount = () => (isSprint(ui.view) ? 5 : 4 + Number(ui.includeDone));
+
 function renderLoading() {
-  $('#sprint-info').hidden = true;
-  $('#tickets').innerHTML = `<div class="loading"><span class="big" aria-hidden="true">🫖</span>${esc(t('jira.loading'))}</div>`;
+  $('#stats').innerHTML = skeleton('stat', statCount());
+  $('#status-filters').innerHTML = skeleton('chip', 4);
+  $('#shown').textContent = '';
+  renderSprintInfo();
+  const tickets = $('#tickets');
+  tickets.innerHTML = skeletonItems(regionShape(tickets, [2])[0], 'lane') + loadingNote(t('jira.loading'));
 }
 
 function renderFailure(message) {
-  $('#stats').innerHTML = '';
-  $('#status-filters').innerHTML = '';
+  renderStats({ blank: true });
+  renderFilters();
   $('#shown').textContent = '';
-  $('#sprint-info').hidden = true;
-  $('#tickets').innerHTML = `<div class="empty"><span class="big" aria-hidden="true">🥺</span>${esc(message)}</div>`;
+  renderSprintInfo();
+  $('#tickets').innerHTML = stateBox('failed', '🥀', message);
 }
 
 function stat(emoji, count, label) {
   return `<div class="stat"><b>${count}</b><span><span aria-hidden="true">${emoji}</span> ${esc(label)}</span></div>`;
 }
 
-function renderStats() {
-  const { tickets } = current();
+// blank: the tab didn't load, so its boxes stay put with a dash for each count.
+function renderStats({ blank = false } = {}) {
+  const tickets = current().tickets || [];
+  const count = (number) => (blank ? '–' : number);
   const inCategory = (key) => tickets.filter((ticket) => ticket.status.category === key).length;
   const stats = [
-    stat('🎟️', tickets.length, tp('jira.stats.tickets', tickets.length)),
-    stat('🌱', inCategory('new'), t('jira.stats.to_do')),
-    stat('🏃‍♀️', inCategory('indeterminate'), t('jira.stats.in_progress')),
+    stat('🎟️', count(tickets.length), tp('jira.stats.tickets', tickets.length)),
+    stat('🌱', count(inCategory('new')), t('jira.stats.to_do')),
+    stat('🏃‍♀️', count(inCategory('indeterminate')), t('jira.stats.in_progress')),
   ];
   if (isSprint(ui.view)) {
-    stats.push(stat('✅', inCategory('done'), tp('jira.stats_sprint.done', inCategory('done'))));
-    stats.push(stat('💖', tickets.filter((ticket) => ticket.mine).length, t('jira.stats_sprint.yours')));
+    stats.push(stat('✅', count(inCategory('done')), tp('jira.stats_sprint.done', inCategory('done'))));
+    stats.push(stat('💖', count(tickets.filter((ticket) => ticket.mine).length), t('jira.stats_sprint.yours')));
   } else {
-    stats.push(stat('🔥', tickets.filter(isHot).length, t('jira.stats.high_priority')));
-    if (current().include_done) stats.push(stat('✅', inCategory('done'), tp('jira.stats.done', inCategory('done'))));
+    stats.push(stat('🔥', count(tickets.filter(isHot).length), t('jira.stats.high_priority')));
+    if (current().include_done ?? (blank && ui.includeDone)) stats.push(stat('✅', count(inCategory('done')), tp('jira.stats.done', inCategory('done'))));
   }
   $('#stats').innerHTML = stats.join('');
 }
@@ -232,10 +247,14 @@ function laneView(lane) {
   return { ...lane, people, picked, shown };
 }
 
+// A sprint's dates come with its tickets, or from the sprint list while those are on their way. With neither
+// yet, the line stays as the page drew it. Whether it showed is remembered, so the next first paint matches.
 function renderSprintInfo() {
   const info = $('#sprint-info');
-  const sprint = isSprint(ui.view) && current().sprint;
+  const sprint = isSprint(ui.view) ? current()?.sprint || ui.sprints.find((s) => String(s.id) === sprintIdOf(ui.view)) : null;
+  if (isSprint(ui.view) && !sprint) return;
   info.hidden = !sprint?.start || !sprint?.end;
+  rememberShape('jira-sprint-info', [info.hidden ? 0 : 1]);
   if (info.hidden) return;
   info.textContent = t('jira.sprint.info', { name: sprint.name, start: formatDate(sprint.start), end: formatDate(sprint.end) });
 }
@@ -303,12 +322,12 @@ function laneHtml(lane) {
 }
 
 function emptyState() {
-  if (pool().length > 0) return `<div class="empty"><span class="big" aria-hidden="true">🌙</span>${esc(t('jira.empty.no_match'))}</div>`;
+  if (pool().length > 0) return stateBox('empty', '🌙', t('jira.empty.no_match'));
   if (isSprint(ui.view)) {
     const message = current().tickets.length > 0 ? t('jira.sprint.all_done') : t('jira.sprint.empty');
-    return `<div class="empty"><span class="big" aria-hidden="true">🏖️</span>${esc(message)}</div>`;
+    return stateBox('empty', '🏖️', message);
   }
-  return `<div class="empty"><span class="big" aria-hidden="true">🏝️</span>${esc(t('jira.empty.nothing_assigned'))}</div>`;
+  return stateBox('empty', '🏝️', t('jira.empty.nothing_assigned'));
 }
 
 function statusBadge(status) {
@@ -387,7 +406,7 @@ function fillDrawerHeader(ticket) {
 
 function selectView(view, { focus = false } = {}) {
   ui.view = view;
-  ui.status = 'all';
+  ui.status = ui.statuses[view] || 'all';
   store.set('jira-view', view);
   render();
   if (!ui.results[view]) loadView(view);
@@ -438,8 +457,12 @@ $('#show-sprint-done').addEventListener('change', (event) => {
   render();
 });
 
+ui.status = ui.statuses[ui.view] || 'all';
+$('#search').value = ui.query;
+
 $('#search').addEventListener('input', (event) => {
   ui.query = event.target.value;
+  remember('jira-search', ui.query);
   if (current()?.tickets) renderTickets();
 });
 
@@ -453,6 +476,8 @@ $('#status-filters').addEventListener('click', (event) => {
   const chip = event.target.closest('[data-status]');
   if (!chip) return;
   ui.status = chip.dataset.status;
+  ui.statuses[ui.view] = ui.status;
+  remember('jira-statuses', ui.statuses);
   renderFilters();
   renderTickets();
 });

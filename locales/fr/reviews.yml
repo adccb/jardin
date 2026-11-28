@@ -4,6 +4,7 @@ reviews:
   main_label: "pull requests qui attendent ta relecture"
   search_placeholder: "🔍 cherche dans les titres, dépôts, auteurs, labels…"
   search_label: "rechercher des demandes de relecture"
+  chips_label: "filtrer par dépôt"
   load_failed: "impossible de charger les demandes de relecture 😿 %{reason}"
   panel:
     heading: "dépôts"
@@ -14,7 +15,7 @@ reviews:
     count: "(%{selected} sur %{total})"
     in_scope: "💝 affichés"
     nothing_picked: "rien de coché pour l'instant"
-    filtered_out: "🌱 filtrés"
+    filtered_out: "🌱 pas affichés"
     none_filtered: "tous les dépôts sont affichés ! 🎉"
   tabs_label: "qui demande"
   tabs:

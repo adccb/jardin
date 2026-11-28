@@ -3,6 +3,32 @@ common:
   flag: "🍙"
   palette:
     now_wearing: "いまは %{name} を着てるよ %{emoji}"
+  keys:
+    title: "⌨️ キーボードの魔法"
+    search:
+      keys_html: "<kbd>/</kbd>"
+      does: "このタブを検索"
+    refresh:
+      keys_html: "<kbd>r</kbd>"
+      does: "ページを更新"
+    tabs:
+      keys_html: "<kbd>←</kbd> <kbd>→</kbd>"
+      does: "タブを移動"
+    help:
+      keys_html: "<kbd>?</kbd>"
+      does: "このキー一覧を出す"
+    close:
+      keys_html: "<kbd>esc</kbd>"
+      does: "ボックスを閉じる"
+  age:
+    loading: "新しいデータを取ってきてるよ…"
+    fresh: "🌱 取れたて"
+    minutes:
+      one: "🕰️ %{count}分前のデータ"
+      other: "🕰️ %{count}分前のデータ"
+    hours:
+      one: "🕰️ %{count}時間前のデータ"
+      other: "🕰️ %{count}時間前のデータ"
   nav_label: "お庭の道具"
   home: "お庭のトップ"
   footer: "💖 とちょっぴりのキラキラ ✨ でできてるよ · あなたのマシンの中だけで動くよ 🔒"

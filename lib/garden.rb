@@ -29,6 +29,7 @@ module Garden
 end
 
 require_relative 'garden/palette'
+require_relative 'garden/shapes'
 require_relative 'garden/responses'
 require_relative 'garden/view'
 require_relative 'garden/secrets'

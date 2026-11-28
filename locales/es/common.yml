@@ -3,6 +3,32 @@ common:
   flag: "🌽"
   palette:
     now_wearing: "ahora luciendo %{name} %{emoji}"
+  keys:
+    title: "⌨️ magia del teclado"
+    search:
+      keys_html: "<kbd>/</kbd>"
+      does: "buscar en esta pestaña"
+    refresh:
+      keys_html: "<kbd>r</kbd>"
+      does: "actualizar la página"
+    tabs:
+      keys_html: "<kbd>←</kbd> <kbd>→</kbd>"
+      does: "moverte entre pestañas"
+    help:
+      keys_html: "<kbd>?</kbd>"
+      does: "mostrar estas teclas"
+    close:
+      keys_html: "<kbd>esc</kbd>"
+      does: "cerrar cualquier cuadro"
+  age:
+    loading: "trayendo datos frescos…"
+    fresh: "🌱 recién traído"
+    minutes:
+      one: "🕰️ de hace %{count} min"
+      other: "🕰️ de hace %{count} min"
+    hours:
+      one: "🕰️ de hace %{count} hora"
+      other: "🕰️ de hace %{count} horas"
   nav_label: "herramientas del jardín"
   home: "inicio del jardín"
   footer: "hecho con 💖 y unos cuantos brillitos ✨ · corre localmente en tu máquina 🔒"

@@ -1,6 +1,6 @@
 /* ticket garden 🎟️ */
 
-.done-toggle { padding-right: 16px; cursor: pointer; }
+.done-toggle { cursor: pointer; }
 .done-toggle input { width: 18px; height: 18px; accent-color: var(--mint); margin: 0; }
 
 .ticket {

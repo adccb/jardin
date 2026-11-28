@@ -4,6 +4,7 @@ reviews:
   main_label: "pull requests esperando tu revisión"
   search_placeholder: "🔍 buscar en títulos, repos, autores, etiquetas…"
   search_label: "buscar solicitudes de revisión"
+  chips_label: "filtrar por repo"
   load_failed: "no se pudieron cargar las solicitudes de revisión 😿 %{reason}"
   panel:
     heading: "repos"
@@ -14,7 +15,7 @@ reviews:
     count: "(%{selected} de %{total})"
     in_scope: "💝 mostrando"
     nothing_picked: "nada marcado por ahora"
-    filtered_out: "🌱 filtrados"
+    filtered_out: "🌱 sin mostrar"
     none_filtered: "¡mostrando todos los repos! 🎉"
   tabs_label: "quién pidió"
   tabs:

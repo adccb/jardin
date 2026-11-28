@@ -3,6 +3,7 @@
       <p class="tagline"><%= t('reviews.tagline') %></p>
       <div class="controls">
         <button id="refresh" class="btn" type="button"><%= t('common.refresh') %></button>
+        <span id="freshness" class="freshness" aria-live="polite"></span>
       </div>
     </header>
 
@@ -10,27 +11,28 @@
       <aside class="repo-panel" aria-labelledby="repo-panel-title">
         <details id="repo-details" open>
           <summary>
-            <h2 id="repo-panel-title"><span aria-hidden="true">🗂️</span> <%= t('reviews.panel.heading') %> <small id="repo-count"></small></h2>
+            <h2 id="repo-panel-title"><span aria-hidden="true">🗂️</span> <%= t('reviews.panel.heading') %> <small id="repo-count"><span class="bone"></span></small></h2>
           </summary>
           <p class="repo-panel-actions">
             <button type="button" class="link-btn" id="repos-all"><%= t('reviews.panel.select_all') %></button> ·
             <button type="button" class="link-btn" id="repos-none"><%= t('reviews.panel.clear') %></button>
           </p>
-          <div id="repo-list"></div>
+          <div id="repo-list" data-shape="reviews-panel" data-shape-groups=".repo-list, .repo-empty" data-shape-items="li"><%= skeleton_groups(shape('reviews-panel', [4, 0])) %></div>
         </details>
       </aside>
 
       <section class="pr-main" aria-label="<%= t('reviews.main_label') %>">
-        <div id="stats" class="stats"></div>
-        <div class="tabs" role="tablist" aria-label="<%= t('reviews.tabs_label') %>" id="via-tabs"></div>
+        <div id="stats" class="stats"><%= skeleton('stat', 3) %></div>
+        <div class="tabs" role="tablist" aria-label="<%= t('reviews.tabs_label') %>" id="via-tabs"><%= skeleton('tab', 2) %></div>
         <div class="panel" role="tabpanel" id="review-panel">
           <div class="toolbar">
             <p class="shown" id="shown"></p>
             <div class="toolbar-row">
               <input id="search" type="search" placeholder="<%= t('reviews.search_placeholder') %>" aria-label="<%= t('reviews.search_label') %>">
             </div>
+            <div id="review-chips" class="chips" role="group" aria-label="<%= t('reviews.chips_label') %>"><%= skeleton('chip', 3) %></div>
           </div>
-          <div id="reviews"></div>
+          <div id="reviews" data-shape="reviews-list" data-shape-groups=".grid" data-shape-items=".card"><%= skeleton_grids(shape('reviews-list', [4]), card: 'review-card') %><p class="sr-only"><%= t('reviews.empty.loading') %></p></div>
         </div>
       </section>
     </div>

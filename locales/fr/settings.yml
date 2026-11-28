@@ -1,6 +1,10 @@
 settings:
   title: "réglages"
   tagline: "comment pousse ton jardin ⚙️ tout s’enregistre au fur et à mesure"
+  tabs:
+    label: "réglages"
+    look: "apparence et pages"
+    repos: "dépôts cachés"
   colors:
     heading: "couleurs"
     help: "chaque page suit le mode clair ou sombre de ton système ; choisis la palette ici"
@@ -14,14 +18,10 @@ settings:
       shown: "%{name} revient dans la barre latérale 🌱"
       hidden: "%{name} sort de la barre latérale 🙈"
   repos:
-    heading: "dépôts cachés"
     help: "les dépôts cachés n'apparaissent nulle part : ni dans les PR, ni dans les relectures, les branches ou les worktrees. la liste vient de GitHub, donc elle contient tous les dépôts que tes comptes gh voient."
     search_placeholder: "🔍 chercher un dépôt…"
     search_label: "chercher un dépôt"
     loading: "je demande tes dépôts à GitHub… 🐙"
-    count:
-      one: "(%{count} caché)"
-      other: "(%{count} cachés)"
     shown:
       one: "%{shown} dépôt affiché sur %{count}"
       other: "%{shown} dépôts affichés sur %{count}"
@@ -37,3 +37,4 @@ settings:
     toasts:
       hidden: "%{slug} caché partout 🙈"
       shown: "%{slug} est de retour 👀"
+    chips_label: "filtrer par propriétaire"

@@ -3,8 +3,7 @@
       <p class="tagline"><%= t('jira.tagline') %></p>
       <div class="controls">
         <button id="refresh" class="btn" type="button"><%= t('common.refresh') %></button>
-        <label class="field done-toggle"><input id="include-done" type="checkbox"> <span aria-hidden="true">✅</span> <%= t('jira.include_done') %></label>
-        <label class="field done-toggle" id="sprint-done-toggle" hidden><input id="show-sprint-done" type="checkbox"> <span aria-hidden="true">✅</span> <%= t('jira.sprint.show_done') %></label>
+        <span id="freshness" class="freshness" aria-live="polite"></span>
       </div>
     </header>
 
@@ -12,24 +11,29 @@
       <aside class="repo-panel" aria-labelledby="repo-panel-title">
         <details id="repo-details" open>
           <summary>
-            <h2 id="repo-panel-title"><span aria-hidden="true">🏃</span> <%= t('jira.panel.heading') %> <small id="repo-count"></small></h2>
+            <h2 id="repo-panel-title"><span aria-hidden="true">🏃</span> <%= t('jira.panel.heading') %> <small id="repo-count"><span class="bone"></span></small></h2>
           </summary>
           <p class="repo-panel-actions">
             <button type="button" class="link-btn" id="repos-all"><%= t('jira.panel.select_all') %></button> ·
             <button type="button" class="link-btn" id="repos-none"><%= t('jira.panel.clear') %></button>
           </p>
-          <div id="repo-list"></div>
+          <%# Which done tickets to include: your tickets from the last 30 days, or a sprint's, depending on the open tab. -%>
+          <div class="panel-options">
+            <label class="repo-option done-toggle"><input id="include-done" type="checkbox"> <span><span aria-hidden="true">✅</span> <%= t('jira.include_done') %></span></label>
+            <label class="repo-option done-toggle" id="sprint-done-toggle" hidden><input id="show-sprint-done" type="checkbox"> <span><span aria-hidden="true">✅</span> <%= t('jira.sprint.show_done') %></span></label>
+          </div>
+          <div id="repo-list" data-shape="jira-panel" data-shape-groups=".repo-list, .repo-empty" data-shape-items="li"><%= skeleton_groups(shape('jira-panel', [2, 1])) %></div>
         </details>
       </aside>
 
       <section class="pr-main" aria-label="<%= t('jira.tickets_label') %>">
-        <div id="stats" class="stats"></div>
-    <div class="tabs jira-tabs" role="tablist" id="jira-tabs" aria-label="<%= t('jira.tabs.label') %>"></div>
+        <div id="stats" class="stats" data-shape="jira-stats" data-shape-items=".stat"><%= skeleton('stat', shape('jira-stats', [4]).first) %></div>
+    <div class="tabs jira-tabs" role="tablist" id="jira-tabs" aria-label="<%= t('jira.tabs.label') %>"><%= skeleton('tab', 2) %></div>
 
     <section class="panel" id="jira-panel" role="tabpanel" aria-labelledby="jira-tab-mine">
       <div class="toolbar">
         <p class="shown" id="shown"></p>
-        <p class="sprint-info" id="sprint-info" hidden></p>
+        <p class="sprint-info" id="sprint-info"<%= ' hidden' if shape('jira-sprint-info', [0]).first.zero? %>><span class="bone"></span></p>
         <div class="toolbar-row">
           <input id="search" type="search" placeholder="<%= t('jira.search_placeholder') %>" aria-label="<%= t('jira.search_label') %>">
           <label class="sr-only" for="sort"><%= t('jira.sort_label') %></label>
@@ -41,9 +45,9 @@
             <option value="rank"><%= t('jira.board_order') %></option>
           </select>
         </div>
-        <div id="status-filters" class="chips" role="group" aria-label="<%= t('jira.filter_label') %>"></div>
+        <div id="status-filters" class="chips" role="group" aria-label="<%= t('jira.filter_label') %>"><%= skeleton('chip', 4) %></div>
       </div>
-      <div id="tickets" class="lanes"></div>
+      <div id="tickets" class="lanes" data-shape="jira-lanes" data-shape-items=".lane"><%= skeleton_items(shape('jira-lanes', [2]).first, 'lane') %><p class="sr-only"><%= t('jira.loading') %></p></div>
     </section>
       </section>
     </div>

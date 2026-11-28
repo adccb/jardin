@@ -1,4 +1,7 @@
-import { $, store, esc, ago, t, tp, locale, api, failureMessage, toast, sprout } from './garden.js';
+import {
+  $, store, esc, ago, t, tp, locale, api, failureMessage, toast, sprout, stateBox, remembered, remember, markFresh,
+  skeleton, skeletonGrids, regionShape, loadingNote,
+} from './garden.js';
 
 const STATES = ['open', 'merged', 'closed'];
 const GROUPS = ['mergeable', 'needs_work', 'waiting', 'drafts'];
@@ -18,8 +21,8 @@ const ui = {
   repos: [],
   selected: savedSet('prs-repos', DEFAULT_REPOS),
   tab: store.get('prs-tab') || 'all',
-  state: 'open',
-  query: '',
+  state: ['open', 'merged', 'closed'].includes(remembered('prs-state', 'open')) ? remembered('prs-state', 'open') : 'open',
+  query: remembered('prs-search', ''),
   results: { open: new Map(), merged: new Map(), closed: new Map() },
   loading: false,
   loadId: 0,
@@ -30,6 +33,7 @@ const shownRepos = () => ui.repos;
 const selectedRepos = () => ui.repos.filter((r) => ui.selected.has(r.slug));
 const tabSlugs = () => (ui.tab === 'all' ? selectedRepos().map((r) => r.slug) : [ui.tab]);
 const prsFor = (state, slugs) => slugs.flatMap((slug) => ui.results[state].get(slug)?.prs || []);
+const loadedFor = (state, slugs) => slugs.every((slug) => ui.results[state].has(slug));
 
 /* ---------- loading ---------- */
 
@@ -59,6 +63,7 @@ async function loadMissing({ refresh = false } = {}) {
   if (loadId !== ui.loadId) return;
   ui.loading = false;
   $('#refresh').disabled = false;
+  markFresh();
   render();
   sprout($('#prs'));
 }
@@ -104,12 +109,12 @@ function renderRepoPanel() {
   const others = shown.filter((r) => !ui.selected.has(r.slug));
   $('#repo-list').innerHTML =
     repoGroup(t('prs.panel.in_scope'), inScope, t('prs.panel.nothing_picked'))
-    + repoGroup(t('prs.panel.everything_else'), others, t('prs.panel.picked_all'));
+    + repoGroup(t('prs.panel.filtered_out'), others, t('prs.panel.none_filtered'));
   renderRepoCount();
 }
 
 function renderRepoCount() {
-  $('#repo-count').textContent = t('prs.repo_count', { selected: ui.selected.size, total: shownRepos().length });
+  $('#repo-count').textContent = t('prs.panel.count', { selected: ui.selected.size, total: shownRepos().length });
 }
 
 function focusRepoCheckbox(slug) {
@@ -117,7 +122,12 @@ function focusRepoCheckbox(slug) {
 }
 
 function renderStats() {
-  const open = prsFor('open', selectedRepos().map((r) => r.slug));
+  const slugs = selectedRepos().map((r) => r.slug);
+  if (ui.loading && !loadedFor('open', slugs)) {
+    $('#stats').innerHTML = skeleton('stat', 5);
+    return;
+  }
+  const open = prsFor('open', slugs);
   const inGroup = (key) => open.filter((pr) => pr.group === key).length;
   const stats = [
     ['💌', open.length, 'open'],
@@ -135,7 +145,8 @@ function renderTabs() {
   const tabs = [{ slug: 'all', name: t('prs.all_repos') }, ...selectedRepos().map((r) => ({ slug: r.slug, name: `📦 ${r.name}` }))];
   $('#repo-tabs').innerHTML = tabs.map(({ slug, name }) => {
     const active = slug === ui.tab;
-    const count = prsFor(ui.state, slug === 'all' ? selectedRepos().map((r) => r.slug) : [slug]).length;
+    const slugs = slug === 'all' ? selectedRepos().map((r) => r.slug) : [slug];
+    const count = loadedFor(ui.state, slugs) ? prsFor(ui.state, slugs).length : '';
     return `<button type="button" class="tab" role="tab" id="tab-${esc(slug)}" data-tab="${esc(slug)}" aria-controls="pr-panel"
       aria-selected="${active}" tabindex="${active ? 0 : -1}">${esc(name)} <span class="tab-count">${count}</span></button>`;
   }).join('');
@@ -152,8 +163,7 @@ function matchesQuery(pr) {
   return !query || [pr.title, pr.head, pr.repo, `#${pr.number}`, ...pr.labels].join(' ').toLowerCase().includes(query);
 }
 
-const placeholder = (kind, emoji, key) =>
-  `<div class="${kind}"><span class="big" aria-hidden="true">${emoji}</span>${esc(t(key))}</div>`;
+const placeholder = (kind, emoji, key) => stateBox(kind, emoji, t(key));
 
 function renderPrs() {
   if (!ui.selected.size) {
@@ -162,10 +172,9 @@ function renderPrs() {
     return;
   }
   const slugs = tabSlugs();
-  const loaded = slugs.every((slug) => ui.results[ui.state].has(slug));
-  if (!loaded && ui.loading) {
+  if (!loadedFor(ui.state, slugs) && ui.loading) {
     $('#shown').textContent = '';
-    $('#prs').innerHTML = placeholder('loading', '💌', 'prs.empty.loading');
+    $('#prs').innerHTML = prsSkeleton();
     return;
   }
   const prs = prsFor(ui.state, slugs).filter(matchesQuery);
@@ -174,11 +183,17 @@ function renderPrs() {
   $('#prs').innerHTML = repoErrors(slugs) + (prs.length ? body : emptyState());
 }
 
+// Open PRs come in sections under headings; merged and closed ones in one grid.
+function prsSkeleton() {
+  const heading = ui.state === 'open' ? 'pr-section-heading' : null;
+  return skeletonGrids(regionShape($('#prs'), [2, 2]), 'pr-card', { heading }) + loadingNote(t('prs.empty.loading'));
+}
+
 function repoErrors(slugs) {
   return slugs
     .map((slug) => ui.results[ui.state].get(slug))
     .filter((repo) => repo && !repo.ok)
-    .map((repo) => `<p class="repo-error">🫥 ${esc(repoFailure(repo))}</p>`)
+    .map((repo) => stateBox('failed', '🥀', repoFailure(repo)))
     .join('');
 }
 
@@ -319,12 +334,16 @@ $('#state-chips').addEventListener('click', (event) => {
   const chip = event.target.closest('[data-state]');
   if (!chip) return;
   ui.state = chip.dataset.state;
+  remember('prs-state', ui.state);
   loadMissing();
 });
 
-$('#search').addEventListener('input', (event) => { ui.query = event.target.value; renderPrs(); });
+$('#search').value = ui.query;
+$('#search').addEventListener('input', (event) => {
+  ui.query = event.target.value;
+  remember('prs-search', ui.query);
+  renderPrs();
+});
 $('#refresh').addEventListener('click', () => loadMissing({ refresh: true }));
-
-if (matchMedia('(max-width: 860px)').matches) $('#repo-details').open = false;
 
 loadRepos();

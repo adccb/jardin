@@ -1,5 +1,6 @@
 import {
   $, store, esc, t, tp, pick, api, failureMessage, ago, formatDate, locale, toast, sparkle, pointOf, TOKEN,
+  stateBox, remembered, remember, markFresh, pageKeys, skeleton, skeletonItems, regionShape, loadingNote,
 } from './garden.js';
 
 // The home page: a little of every garden, one tab each. Every tab asks its garden's own API, all at once and
@@ -19,13 +20,18 @@ const tabs = () => [...document.querySelectorAll('#home-tabs [role="tab"]')];
 const names = () => tabs().map((tab) => tab.dataset.tab);
 // What each tab shows once its API answers: { items, row, note, extra }. count is the items still showing.
 const sections = {};
-const ui = { tab: store.get(TAB_KEY), hidden: new Set(), pending: null, query: '', chip: {}, loading: 0 };
+const ui = {
+  tab: store.get(TAB_KEY), hidden: new Set(), pending: null, loading: 0,
+  query: remembered('home-search', ''), chip: remembered('home-chips', {}), // chip: { tab name: chip key }
+};
 const activeTab = () => (names().includes(ui.tab) ? ui.tab : names()[0]);
+// The remembered chip for a tab, if that tab still has it; otherwise the tab shows everything.
+const activeChip = (name) => (sections[name]?.chips?.some((c) => c.key === ui.chip[name]) ? ui.chip[name] : undefined);
 const shown = (name) => (sections[name]?.items || []).filter((item) => !ui.hidden.has(item.id));
 // What the pane lists: the tab's items, narrowed by its chip and the search box.
 function filtered(name) {
   const section = sections[name];
-  const chip = section?.chips?.find((c) => c.key === ui.chip[name]);
+  const chip = section?.chips?.find((c) => c.key === activeChip(name));
   const query = ui.query.trim().toLowerCase();
   return shown(name)
     .filter((item) => !chip || chip.test(item))
@@ -57,27 +63,39 @@ function renderPanel(name) {
   const items = filtered(name);
   $('#home-shown').textContent = section?.items ? tp('home.shown', all.length, { shown: items.length }) : '';
   renderChips(name);
-  let note = !section ? t('home.loading') : section.note;
-  if (!note && section.items && !items.length) note = all.length ? t('home.no_match') : section.empty;
+  let note = '';
+  if (!section) note = ''; // the list's skeleton stands in
+  else if (section.note) note = stateBox(section.failed ? 'failed' : 'empty', section.failed ? '🥀' : STAT_EMOJI[name], section.note);
+  else if (section.items && !items.length) note = stateBox('empty', all.length ? '🌙' : STAT_EMOJI[name], all.length ? t('home.no_match') : section.empty);
   $('#home-note').hidden = !note;
-  $('#home-note').textContent = note || '';
+  $('#home-note').innerHTML = note;
   $('#home-list').className = name === 'tasks' ? 'task-list' : 'home-list';
-  $('#home-list').innerHTML = items.slice(0, LIMIT).map(section?.row || (() => '')).join('');
+  $('#home-list').innerHTML = section ? items.slice(0, LIMIT).map(section.row || (() => '')).join('') : listSkeleton(name);
   const more = items.length > LIMIT ? tp('home.more', items.length - LIMIT) : '';
   const words = [more, section?.extra?.()].filter(Boolean).map(esc);
   const link = `<a class="link-btn" href="/${name}">${esc(t(`home.cards.${name}.open`))}</a>`;
   $('#home-foot').innerHTML = [...words, link].join(' · ');
 }
 
+function listSkeleton(name) {
+  const count = regionShape($('#home-list'), [4])[0];
+  return skeletonItems(count, name === 'tasks' ? 'task-row' : 'home-row', { list: true }) + loadingNote(t('home.loading'), { tag: 'li' });
+}
+
 // Chips for the tabs that have something to filter by, with counts, like the other pages.
 function renderChips(name) {
+  if (!sections[name]) {
+    $('#home-chips').hidden = false;
+    $('#home-chips').innerHTML = skeleton('chip', 3);
+    return;
+  }
   const chips = sections[name]?.chips;
   $('#home-chips').hidden = !chips?.length;
   if (!chips?.length) return;
   const all = [{ key: undefined, label: t('common.all'), test: () => true }, ...chips];
   $('#home-chips').innerHTML = all.map((chip) => {
     const count = shown(name).filter(chip.test).length;
-    return `<button type="button" class="chip" data-chip="${chip.key ?? ''}" aria-pressed="${ui.chip[name] === chip.key}">${esc(chip.label)}<span class="count">${count}</span></button>`;
+    return `<button type="button" class="chip" data-chip="${chip.key ?? ''}" aria-pressed="${activeChip(name) === chip.key}">${esc(chip.label)}<span class="count">${count}</span></button>`;
   }).join('');
 }
 
@@ -86,19 +104,19 @@ function renderStats() {
   $('#stats').innerHTML = names().map((name) => {
     const count = countOf(name);
     const label = tp(`home.stats.${name}`, count ?? 2);
-    return `<div class="stat"><b>${count ?? '…'}</b><span><span aria-hidden="true">${STAT_EMOJI[name]}</span> ${esc(label)}</span></div>`;
+    return `<div class="stat"><b>${count ?? '<span class="bone"></span>'}</b><span><span aria-hidden="true">${STAT_EMOJI[name]}</span> ${esc(label)}</span></div>`;
   }).join('');
   const allClear = names().every((name) => countOf(name) === 0);
   $('#home-summary').textContent = t(allClear ? 'home.all_clear' : 'home.tagline');
 }
 
 // text: what the search box matches against; chips: optional [{ key, label, test }].
-function fill(name, { items = null, row = null, note = '', empty = '', extra = null, text = () => '', chips = null }) {
-  sections[name] = { items, row, note, empty, extra, text, chips };
+function fill(name, { items = null, row = null, note = '', failed = false, empty = '', extra = null, text = () => '', chips = null }) {
+  sections[name] = { items, row, note, failed, empty, extra, text, chips };
   render();
 }
 
-const fail = (name, result) => fill(name, { note: t('home.failed', { error: failureMessage(result) }) });
+const fail = (name, result) => fill(name, { note: t('home.failed', { error: failureMessage(result) }), failed: true });
 
 // A card that links through whole.
 // ci: a checks verdict (passing / failing / pending); it sits on the card's far right.
@@ -238,8 +256,9 @@ const LOADERS = { prs: loadPrs, reviews: loadReviews, tasks: loadTasks, jira: lo
 async function loadAll({ refresh = false } = {}) {
   $('#refresh').disabled = true;
   await Promise.all(names().map((name) => LOADERS[name]({ refresh })
-    .catch((error) => fill(name, { note: t('home.failed', { error: String(error) }) }))));
+    .catch((error) => fill(name, { note: t('home.failed', { error: String(error) }), failed: true }))));
   $('#refresh').disabled = false;
+  markFresh();
 }
 
 /* ---------- checking off tasks (same as the task page) ---------- */
@@ -319,18 +338,25 @@ if ($('#home-tabs')) {
     const row = event.target.closest('.task-row');
     if (row && event.target.checked) closeTask(row);
   });
-  // u takes back the last check-off, as on the task page.
+  // u takes back the last check-off, as on the task page; it joins the shared key list.
+  pageKeys([{ keys_html: t('tasks.help.rows.undo.keys_html'), does: t('tasks.help.rows.undo.does') }]);
   document.addEventListener('keydown', (event) => {
     if (event.key !== 'u' || event.metaKey || event.ctrlKey || event.altKey || event.target.matches?.('input[type="text"], input[type="search"], textarea')) return;
     event.preventDefault();
     undo();
   });
   window.addEventListener('pagehide', () => flushPending({ leaving: true }));
-  $('#home-search').addEventListener('input', (event) => { ui.query = event.target.value; renderPanel(activeTab()); });
+  $('#home-search').value = ui.query;
+  $('#home-search').addEventListener('input', (event) => {
+    ui.query = event.target.value;
+    remember('home-search', ui.query);
+    renderPanel(activeTab());
+  });
   $('#home-chips').addEventListener('click', (event) => {
     const chip = event.target.closest('[data-chip]');
     if (!chip) return;
     ui.chip[activeTab()] = chip.dataset.chip || undefined;
+    remember('home-chips', ui.chip);
     renderPanel(activeTab());
   });
   $('#refresh').addEventListener('click', () => loadAll({ refresh: true }));

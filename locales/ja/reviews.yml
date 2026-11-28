@@ -4,6 +4,7 @@ reviews:
   main_label: "あなたのレビューを待っているPR"
   search_placeholder: "🔍 タイトル、リポジトリ、作成者、ラベルを検索…"
   search_label: "レビュー依頼を検索"
+  chips_label: "リポジトリで絞り込む"
   load_failed: "レビュー依頼を読み込めなかったよ 😿 %{reason}"
   panel:
     heading: "リポジトリ"
@@ -14,7 +15,7 @@ reviews:
     count: "（%{total}件中%{selected}件）"
     in_scope: "💝 表示中"
     nothing_picked: "いまは何もチェックしてないよ"
-    filtered_out: "🌱 絞り込みで除外"
+    filtered_out: "🌱 表示してない"
     none_filtered: "ぜんぶのリポジトリを表示中！🎉"
   tabs_label: "依頼した相手"
   tabs:

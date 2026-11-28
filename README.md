@@ -29,9 +29,15 @@ Your Atlassian email comes from the same item's `username` field, or `JIRA_EMAIL
 The site defaults to `https://1password.atlassian.net` (`--jira-site` or `JIRA_SITE` to change).
 The 🏃 sprints panel lists every open sprint holding a ticket assigned to you (found through the Sprint field); each checked sprint gets its own tab; uncheck the ones you don't want. Every tab groups tickets into swimlanes by parent ticket.
 
+## Every page
+
+Every page has the same shape: a header with 🔄 refresh (and how old the data on screen is), stat boxes, tabs, and a toolbar of the "showing …" label, search, then chips. Pages with a side panel put it on the left, level with the stat boxes. The same keys work everywhere: `/` searches, `r` refreshes, `←` `→` move between tabs, and `?` lists every key, the page's own included. Each page remembers its tab, chips and search.
+
+Nothing jumps while a page loads: every box that's waiting on data shows a skeleton the size of what it showed last time (counts kept in a `garden_shapes` cookie, so the server draws them on first paint), and 🔄 refresh keeps what's on screen, dimmed, until the new data lands.
+
 ## Settings
 
-The 🧭 pages card picks which pages show in the sidebar. A hidden page still opens from its address, keeps its sidebar link while you're on it, and `/` skips to the first page that's shown. ⚙️ settings itself always stays.
+Settings has two tabs: 🎨 look & pages, and 🙈 hidden repos. The 🧭 pages card picks which pages show in the sidebar. A hidden page still opens from its address, keeps its sidebar link while you're on it, and `/` skips to the first page that's shown. ⚙️ settings itself always stays.
 
 ### Hidden repos
 
@@ -49,6 +55,7 @@ The 🗂️ lists panel picks which tabs show: ☀️ today (Todoist's `today` f
 1. `lib/garden/<slug>/api.rb`: a class with `call(request, action)` returning `[status, headers, body]`
    (include `Garden::Responses` for `json`; raise `Garden::Refusal.new('errors.some_key')` for user-facing errors). Routes land at `/api/<slug>/<action>`.
 2. `pages/<slug>.html.erb`: the page fragment inside the shared layout, using `<%= t('<slug>.key') %>` for text.
+   Fill each container your JS loads into with a skeleton (`skeleton`, `skeleton_items`, `skeleton_grids`, `skeleton_groups` from `pages/skeletons/`), and give it `data-shape` so its size is remembered.
 3. `public/js/<slug>.js` (an ES module; import `t`, `tp`, `api`… from `./garden.js`) and `public/css/<slug>.css`.
 4. `locales/<lang>/<slug>.yml` for each of `en`, `fr`, `es` and `ja`, including `<slug>.title` for the sidebar.
 5. Register it in `bin/garden` with `Garden::Tool.new(slug:, emoji:, api:)`.

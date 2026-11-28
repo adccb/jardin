@@ -6,15 +6,16 @@ tasks:
     one: "%{count} little thing to do 💕"
     other: "%{count} little things to do 💕"
   all_caught_up: "all caught up 🌈"
+  search_placeholder: "🔍 search tasks & projects…"
+  search_label: "search tasks"
+  chips_label: "filter by project"
+  shown:
+    one: "showing %{shown} of %{count} task"
+    other: "showing %{shown} of %{count} tasks"
+  no_match: "nothing matches 🌙 try another filter"
+  no_project: "no project"
   no_tabs: "no lists showing 🌙 pick some from the panel"
   delete_label: "delete %{title}"
-  hints:
-    new: "new"
-    move: "move"
-    done: "done"
-    delete: "delete"
-    undo: "undo"
-    help: "help"
   dialog:
     title: "🌱 plant a new task"
     label: "what do you need to do?"
@@ -52,7 +53,6 @@ tasks:
     - "yay!! 🎉"
   todoist:
     not_set_up_html: "todoist isn't set up yet 🍅 start garden with <code>TODOIST_TOKEN_REF</code> pointing at your Todoist API token in 1Password"
-    heading: "your tasks"
     tabs:
       today: "☀️ today"
       late: "🐌 late"
@@ -69,7 +69,6 @@ tasks:
     recurring: "🔁 repeats"
     open_label: "open %{title} in todoist"
   help:
-    title: "⌨️ keyboard magic"
     rows:
       create:
         keys_html: "<kbd>c</kbd>"
@@ -89,9 +88,6 @@ tasks:
       undo:
         keys_html: "<kbd>u</kbd>"
         does: "undo the last done or delete"
-      close:
-        keys_html: "<kbd>esc</kbd>"
-        does: "close any box"
       open_todoist:
         keys_html: "<kbd>o</kbd>"
         does: "open a todoist task in todoist"

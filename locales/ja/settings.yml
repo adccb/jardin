@@ -1,6 +1,10 @@
 settings:
   title: "設定"
   tagline: "お庭の育て方 ⚙️ 変更はすぐに保存されるよ"
+  tabs:
+    label: "設定"
+    look: "見た目とページ"
+    repos: "隠したリポジトリ"
   colors:
     heading: "色"
     help: "どのページもシステムのライト／ダークに合わせるよ。パレットはここで選んでね"
@@ -14,14 +18,10 @@ settings:
       shown: "%{name} がサイドバーに戻ったよ 🌱"
       hidden: "%{name} をサイドバーから隠したよ 🙈"
   repos:
-    heading: "隠したリポジトリ"
     help: "隠したリポジトリはどこにも出てこないよ：PR、レビュー、ブランチ、ワークツリーのページすべて。リストはGitHubから来るので、ghのアカウントで見えるリポジトリが全部並ぶよ。"
     search_placeholder: "🔍 リポジトリを検索…"
     search_label: "リポジトリを検索"
     loading: "GitHubにリポジトリを聞いてるよ… 🐙"
-    count:
-      one: "（%{count}件を非表示）"
-      other: "（%{count}件を非表示）"
     shown:
       one: "%{count}件中%{shown}件を表示"
       other: "%{count}件中%{shown}件を表示"
@@ -37,3 +37,4 @@ settings:
     toasts:
       hidden: "%{slug} をどこでも隠したよ 🙈"
       shown: "%{slug} が戻ってきたよ 👀"
+    chips_label: "オーナーで絞り込む"

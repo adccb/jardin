@@ -1,56 +1,75 @@
     <header class="hero">
       <h1><span class="bob" aria-hidden="true">⚙️</span> <span class="title"><%= t('settings.title') %></span> <span class="bob" aria-hidden="true">🌸</span></h1>
       <p class="tagline"><%= t('settings.tagline') %></p>
+      <div class="controls">
+        <button id="refresh" class="btn" type="button"><%= t('common.refresh') %></button>
+        <span id="freshness" class="freshness" aria-live="polite"></span>
+      </div>
     </header>
 
-    <div class="settings-pair">
-      <section class="settings-card" aria-labelledby="colors-title">
-        <h2 id="colors-title"><span aria-hidden="true">🎨</span> <%= t('settings.colors.heading') %></h2>
-        <p class="settings-help"><%= t('settings.colors.help') %></p>
-        <div class="settings-choices" role="radiogroup" aria-labelledby="colors-title">
+<%# Two tabs, like the other pages' structure but without stat boxes: how garden looks, and which repos it shows. -%>
+    <section class="settings" aria-label="<%= t('settings.tabs.label') %>">
+      <div class="tabs" role="tablist" id="settings-tabs" aria-label="<%= t('settings.tabs.label') %>">
+        <button type="button" class="tab" role="tab" id="settings-tab-look" data-tab="look" aria-controls="settings-look" aria-selected="true">
+          <span aria-hidden="true">🎨</span> <%= t('settings.tabs.look') %>
+        </button>
+        <button type="button" class="tab" role="tab" id="settings-tab-repos" data-tab="repos" aria-controls="settings-repos-panel" aria-selected="false" tabindex="-1">
+          <span aria-hidden="true">🙈</span> <%= t('settings.tabs.repos') %> <span class="tab-count" id="hidden-count"></span>
+        </button>
+      </div>
+
+      <div class="panel" id="settings-look" role="tabpanel" aria-labelledby="settings-tab-look">
+        <div class="settings-pair">
+          <section class="settings-card" aria-labelledby="colors-title">
+            <h2 id="colors-title"><span aria-hidden="true">🎨</span> <%= t('settings.colors.heading') %></h2>
+            <p class="settings-help"><%= t('settings.colors.help') %></p>
+            <div class="settings-choices" role="radiogroup" aria-labelledby="colors-title">
 <% palettes.each do |choice| -%>
-          <label class="settings-choice">
-            <input type="radio" name="palette" value="<%= choice.id %>" data-name="<%= h(choice.name) %>" data-emoji="<%= choice.emoji %>"<%= ' checked' if choice == palette %>>
-            <span aria-hidden="true"><%= choice.emoji %></span> <%= choice.name %>
-          </label>
+              <label class="settings-choice">
+                <input type="radio" name="palette" value="<%= choice.id %>" data-name="<%= h(choice.name) %>" data-emoji="<%= choice.emoji %>"<%= ' checked' if choice == palette %>>
+                <span aria-hidden="true"><%= choice.emoji %></span> <%= choice.name %>
+              </label>
 <% end -%>
-        </div>
-      </section>
+            </div>
+          </section>
 
-      <section class="settings-card" aria-labelledby="language-title">
-        <h2 id="language-title"><span aria-hidden="true">🌐</span> <%= t('settings.language.heading') %></h2>
-        <p class="settings-help"><%= t('settings.language.help') %></p>
-        <div class="settings-choices" role="radiogroup" aria-labelledby="language-title">
+          <section class="settings-card" aria-labelledby="language-title">
+            <h2 id="language-title"><span aria-hidden="true">🌐</span> <%= t('settings.language.heading') %></h2>
+            <p class="settings-help"><%= t('settings.language.help') %></p>
+            <div class="settings-choices" role="radiogroup" aria-labelledby="language-title">
 <% locales.each do |choice| -%>
-          <label class="settings-choice" lang="<%= choice %>">
-            <input type="radio" name="locale" value="<%= choice %>"<%= ' checked' if choice == locale %>>
-            <span aria-hidden="true"><%= flag(choice) %></span> <%= language_name(choice) %>
-          </label>
+              <label class="settings-choice" lang="<%= choice %>">
+                <input type="radio" name="locale" value="<%= choice %>"<%= ' checked' if choice == locale %>>
+                <span aria-hidden="true"><%= flag(choice) %></span> <%= language_name(choice) %>
+              </label>
 <% end -%>
+            </div>
+          </section>
         </div>
-      </section>
-    </div>
 
-    <section class="settings-card settings-pages" aria-labelledby="pages-title">
-      <h2 id="pages-title"><span aria-hidden="true">🧭</span> <%= t('settings.pages.heading') %></h2>
-      <p class="settings-help"><%= t('settings.pages.help') %></p>
-      <div class="settings-choices" role="group" aria-labelledby="pages-title">
+        <section class="settings-card settings-pages" aria-labelledby="pages-title">
+          <h2 id="pages-title"><span aria-hidden="true">🧭</span> <%= t('settings.pages.heading') %></h2>
+          <p class="settings-help"><%= t('settings.pages.help') %></p>
+          <div class="settings-choices" role="group" aria-labelledby="pages-title">
 <% tools.reject { |item| item.slug == 'settings' }.each do |item| -%>
-        <label class="settings-choice">
-          <input type="checkbox" name="page" value="<%= item.slug %>" data-name="<%= t("#{item.slug}.title") %>"<%= ' checked' unless hidden_pages.include?(item.slug) %>>
-          <span aria-hidden="true"><%= item.emoji %></span> <%= t("#{item.slug}.title") %>
-        </label>
+            <label class="settings-choice">
+              <input type="checkbox" name="page" value="<%= item.slug %>" data-name="<%= t("#{item.slug}.title") %>"<%= ' checked' unless hidden_pages.include?(item.slug) %>>
+              <span aria-hidden="true"><%= item.emoji %></span> <%= t("#{item.slug}.title") %>
+            </label>
 <% end -%>
+          </div>
+        </section>
       </div>
-    </section>
 
-    <section class="settings-card" aria-labelledby="hidden-repos-title">
-      <h2 id="hidden-repos-title"><span aria-hidden="true">🙈</span> <%= t('settings.repos.heading') %> <small id="hidden-count"></small></h2>
-      <p class="settings-help"><%= t('settings.repos.help') %></p>
-      <p class="shown" id="repos-shown"></p>
-      <div class="toolbar-row">
-        <input id="repo-search" type="search" placeholder="<%= t('settings.repos.search_placeholder') %>" aria-label="<%= t('settings.repos.search_label') %>">
-        <button id="refresh" class="btn btn-small" type="button"><%= t('common.refresh') %></button>
+      <div class="panel" id="settings-repos-panel" role="tabpanel" aria-labelledby="settings-tab-repos" hidden>
+        <p class="settings-help"><%= t('settings.repos.help') %></p>
+        <div class="toolbar">
+          <p class="shown" id="repos-shown"></p>
+          <div class="toolbar-row">
+            <input id="repo-search" type="search" placeholder="<%= t('settings.repos.search_placeholder') %>" aria-label="<%= t('settings.repos.search_label') %>">
+          </div>
+          <div id="owner-chips" class="chips" role="group" aria-label="<%= t('settings.repos.chips_label') %>"><%= skeleton('chip', 3) %></div>
+        </div>
+        <div id="settings-repos" data-shape="settings-repos" data-shape-groups=".repo-list, .empty" data-shape-items="li"><%= skeleton_groups(shape('settings-repos', [2, 8]), list: 'repo-list settings-repos-list', empty: 'state-box') %><p class="sr-only"><%= t('settings.repos.loading') %></p></div>
       </div>
-      <div id="settings-repos"></div>
     </section>

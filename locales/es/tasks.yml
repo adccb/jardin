@@ -8,13 +8,6 @@ tasks:
   all_caught_up: "todo al día 🌈"
   no_tabs: "no hay listas a la vista 🌙 elige algunas en el panel"
   delete_label: "borrar %{title}"
-  hints:
-    new: "nueva"
-    move: "mover"
-    done: "hecha"
-    delete: "borrar"
-    undo: "deshacer"
-    help: "ayuda"
   dialog:
     title: "🌱 plantar una tarea nueva"
     label: "¿qué tienes que hacer?"
@@ -52,7 +45,6 @@ tasks:
     - "¡¡yupi!! 🎉"
   todoist:
     not_set_up_html: "todoist todavía no está configurado 🍅 inicia garden con <code>TODOIST_TOKEN_REF</code> apuntando a tu token de la API de Todoist en 1Password"
-    heading: "tus tareas"
     tabs:
       today: "☀️ hoy"
       late: "🐌 atrasadas"
@@ -69,7 +61,6 @@ tasks:
     recurring: "🔁 se repite"
     open_label: "abrir %{title} en todoist"
   help:
-    title: "⌨️ magia del teclado"
     rows:
       create:
         keys_html: "<kbd>c</kbd>"
@@ -89,9 +80,14 @@ tasks:
       undo:
         keys_html: "<kbd>u</kbd>"
         does: "deshacer lo último que marcaste o borraste"
-      close:
-        keys_html: "<kbd>esc</kbd>"
-        does: "cerrar cualquier cuadro"
       open_todoist:
         keys_html: "<kbd>o</kbd>"
         does: "abrir una tarea de todoist en todoist"
+  search_placeholder: "🔍 buscar tareas y proyectos…"
+  search_label: "buscar tareas"
+  chips_label: "filtrar por proyecto"
+  shown:
+    one: "mostrando %{shown} de %{count} tarea"
+    other: "mostrando %{shown} de %{count} tareas"
+  no_match: "nada coincide 🌙 prueba otro filtro"
+  no_project: "sin proyecto"

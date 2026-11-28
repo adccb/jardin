@@ -11,8 +11,9 @@ module Garden
       @settings = settings
     end
 
-    def render(tool, locale, palette)
-      View.new(locale:, tool:, tools: @tools, token: @token, palette:, hidden_pages: @settings.hidden_pages).render(TEMPLATE)
+    def render(tool, locale, palette, shapes: {})
+      View.new(locale:, tool:, tools: @tools, token: @token, palette:, hidden_pages: @settings.hidden_pages,
+               shapes:).render(TEMPLATE)
     end
   end
 end

@@ -1,6 +1,7 @@
 import {
   $, STALE_DAYS, store, esc, ageDays, t, tp, pick, ago, ageEmoji, api, failureMessage,
-  sparkle, pointOf, toast, openDialog, setDialogBusy, dialogItem, toggle, sprout,
+  sparkle, pointOf, toast, openDialog, setDialogBusy, dialogItem, toggle, sprout, stateBox, remembered, remember, markFresh,
+  skeleton, skeletonItems, regionShape, loadingNote, rememberShape,
 } from './garden.js';
 import { ScopePanel } from './scope-panel.js';
 
@@ -10,7 +11,10 @@ const shownBranches = (state) => state.branches.filter((b) => !b.default);
 const shownWorktrees = (state) => state.worktrees.filter((w) => !w.main && w.branch !== state.default_branch);
 const pageItems = (state) => (PAGE === 'branches' ? shownBranches(state) : shownWorktrees(state));
 
-const newBed = (name) => ({ filter: 'all', query: '', sort: store.get(`${name}-sort`) || 'oldest', selected: new Set() });
+const newBed = (name) => ({
+  filter: remembered(`${name}-filter`, 'all'), query: remembered(`${name}-search`, ''),
+  sort: store.get(`${name}-sort`) || 'oldest', selected: new Set(),
+});
 // Runs both the branch page and the worktree page: each shows one bed (its `data-garden`), one tab per repo in scope.
 // states: the last snapshot of each in-scope repo, by path. errors: why a repo didn't load, by path.
 // data: the open tab's snapshot, every branch and worktree tagged with its repo.
@@ -24,6 +28,7 @@ const SCOPE_KEY = `${PAGE}-repos`;
 const panel = new ScopePanel({ prefix: 'branches.panel', storeKey: SCOPE_KEY, onChange: () => scopeChanged() });
 const scopedPaths = () => panel.scoped().map((repo) => repo.id);
 const activeRepo = () => (scopedPaths().includes(ui.repoTab) ? ui.repoTab : scopedPaths()[0] || null);
+const isLoading = (path) => Boolean(path && !ui.states[path] && !ui.errors[path]);
 
 const tildify = (path) => (ui.home && path.startsWith(ui.home) ? `~${path.slice(ui.home.length)}` : path);
 const branchKey = (repo, name) => `${repo}::${name}`;
@@ -163,6 +168,7 @@ async function loadState({ repos = scopedPaths(), refresh = false, quiet = false
   }));
   ui.pending -= 1;
   $('#refresh').disabled = ui.pending > 0;
+  if (repos.some((repo) => ui.states[repo])) markFresh();
   render();
   if (!quiet) sprout($(`#${PAGE}`));
 }
@@ -220,8 +226,9 @@ function render() {
   renderBulkbar();
 }
 
-const emptyState = (emoji, message) => `<div class="empty"><span class="big" aria-hidden="true">${emoji}</span>${esc(message)}</div>`;
-const loadingState = () => `<div class="loading"><span class="big" aria-hidden="true">🪴</span>${esc(t('branches.loading'))}</div>`;
+const emptyState = (emoji, message) => stateBox('empty', emoji, message);
+const CARD_SKELETON = { branches: 'branch-card', worktrees: 'worktree-card' };
+const loadingState = () => skeletonItems(regionShape($(`#${PAGE}`), [4])[0], CARD_SKELETON[PAGE]) + loadingNote(t('branches.loading'));
 
 function renderLoading() {
   $(`#${PAGE}`).innerHTML = loadingState();
@@ -232,13 +239,17 @@ function scopeEmptyState() {
   if (!ui.repos.length) return emptyState('🏜️', t('branches.no_repos'));
   const repo = activeRepo();
   if (!repo) return emptyState('🌙', t('branches.nothing_in_scope'));
-  if (ui.errors[repo]) return emptyState('🥀', ui.errors[repo]);
+  if (ui.errors[repo]) return stateBox('failed', '🥀', ui.errors[repo]);
   if (!ui.states[repo]) return loadingState();
   return null;
 }
 
 // The stats add up every repo in scope; the tabs below show one repo at a time.
 function renderStats() {
+  if (scopedPaths().some(isLoading)) {
+    $('#stats').innerHTML = skeleton('stat', 4);
+    return;
+  }
   const states = scopedPaths().map((path) => ui.states[path]).filter(Boolean);
   const noPrInfo = states.filter((state) => !state.pr_info).map((state) => state.name);
   const stats = PAGE === 'branches' ? branchStats(states) : worktreeStats(states);
@@ -286,12 +297,22 @@ function renderRepoTabs() {
 function renderBed(bedName) {
   renderFilters(bedName);
   renderItems(bedName);
-  if (bedName === 'worktrees') $('#prune').hidden = !ui.data.worktrees.some((w) => w.prunable || w.missing);
+  if (bedName === 'worktrees' && !isLoading(activeRepo())) renderPrune();
+}
+
+// Whether it showed is remembered, so the next first paint leaves its room in the toolbar.
+function renderPrune() {
+  $('#prune').hidden = !ui.data.worktrees.some((w) => w.prunable || w.missing);
+  rememberShape('worktrees-prune', [Number(!$('#prune').hidden)]);
 }
 
 function renderFilters(bedName) {
   const bed = BEDS[bedName];
   const state = ui.beds[bedName];
+  if (isLoading(activeRepo())) {
+    $(`#${bedName}-filters`).innerHTML = skeleton('chip', 4);
+    return;
+  }
   $(`#${bedName}-filters`).innerHTML = bed.filters
     .filter((f) => ui.data.prInfo || !f.needsPrs)
     .map((f) => {
@@ -304,7 +325,7 @@ function renderFilters(bedName) {
 function renderItems(bedName) {
   const items = visibleItems(bedName);
   const total = BEDS[bedName].items().length;
-  $(`#${bedName}-shown`).textContent = tp(`branches.toolbar.${bedName}.shown`, total, { shown: items.length });
+  $(`#${bedName}-shown`).textContent = isLoading(activeRepo()) ? '' : tp(`branches.toolbar.${bedName}.shown`, total, { shown: items.length });
   $(`#${bedName}`).innerHTML = items.length ? items.map(BEDS[bedName].card).join('') : scopeEmptyState() || BEDS[bedName].empty();
 }
 
@@ -663,12 +684,17 @@ $('#repo-tabs').addEventListener('keydown', (event) => {
   selectRepoTab(paths[(next + paths.length) % paths.length], { focus: true });
 });
 
-$('#refresh').addEventListener('click', () => loadState({ refresh: true }));
+$('#refresh').addEventListener('click', () => loadState({ refresh: true, quiet: true }));
 
 [PAGE].forEach((bedName) => {
   const state = () => ui.beds[bedName];
 
-  $(`#${bedName}-search`).addEventListener('input', (event) => { state().query = event.target.value; renderItems(bedName); });
+  $(`#${bedName}-search`).value = state().query;
+  $(`#${bedName}-search`).addEventListener('input', (event) => {
+    state().query = event.target.value;
+    remember(`${bedName}-search`, state().query);
+    renderItems(bedName);
+  });
 
   $(`#${bedName}-sort`).value = state().sort;
   $(`#${bedName}-sort`).addEventListener('change', (event) => {
@@ -681,6 +707,7 @@ $('#refresh').addEventListener('click', () => loadState({ refresh: true }));
     const chip = event.target.closest('[data-filter]');
     if (!chip) return;
     state().filter = chip.dataset.filter;
+    remember(`${bedName}-filter`, state().filter);
     renderBed(bedName);
   });
 

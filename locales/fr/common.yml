@@ -3,6 +3,32 @@ common:
   flag: "🥐"
   palette:
     now_wearing: "on s'habille en %{name} %{emoji}"
+  keys:
+    title: "⌨️ magie du clavier"
+    search:
+      keys_html: "<kbd>/</kbd>"
+      does: "chercher dans cet onglet"
+    refresh:
+      keys_html: "<kbd>r</kbd>"
+      does: "actualiser la page"
+    tabs:
+      keys_html: "<kbd>←</kbd> <kbd>→</kbd>"
+      does: "passer d'un onglet à l'autre"
+    help:
+      keys_html: "<kbd>?</kbd>"
+      does: "afficher ces touches"
+    close:
+      keys_html: "<kbd>échap</kbd>"
+      does: "fermer n'importe quelle boîte"
+  age:
+    loading: "je vais chercher des données fraîches…"
+    fresh: "🌱 tout frais"
+    minutes:
+      one: "🕰️ vieux de %{count} min"
+      other: "🕰️ vieux de %{count} min"
+    hours:
+      one: "🕰️ vieux de %{count} heure"
+      other: "🕰️ vieux de %{count} heures"
   nav_label: "outils du jardin"
   home: "accueil du jardin"
   footer: "fait avec 💖 et un soupçon de paillettes ✨ · tourne en local sur ta machine 🔒"

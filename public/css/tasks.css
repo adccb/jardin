@@ -1,12 +1,5 @@
 /* task garden 📝 */
 
-kbd {
-  display: inline-block; min-width: 1.6em; padding: 1px 6px; margin: 0 1px;
-  font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: .78em; font-weight: 700; line-height: 1.5;
-  text-align: center; color: var(--lavender); background: var(--lav-soft);
-  border: 2px solid currentColor; border-bottom-width: 3px; border-radius: 8px;
-}
-.btn-primary kbd { color: inherit; background: rgba(255, 255, 255, .25); border-color: currentColor; }
 
 /* Fills the main column beside the lists panel, like every other page's tab content. */
 .task-garden { margin: 0; }
@@ -54,11 +47,6 @@ kbd {
 @keyframes plant { from { opacity: 0; transform: translateY(-8px) scale(.96); } }
 
 
-.key-hints {
-  display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 16px;
-  margin: 34px 0 0; font-size: .85rem; font-weight: 700; color: var(--muted);
-}
-
 .task-dialog { width: min(520px, calc(100% - 32px)); }
 .task-dialog input {
   width: 100%; font: inherit; font-size: 1.15rem; font-weight: 700; color: var(--text);
@@ -69,20 +57,9 @@ kbd {
 @keyframes shake { 25% { transform: translateX(-6px); } 50% { transform: translateX(6px); } 75% { transform: translateX(-3px); } }
 .task-dialog-hint { margin: 10px 2px 0; font-size: .85rem; font-weight: 700; color: var(--muted); }
 
-.key-table { width: 100%; border-collapse: separate; border-spacing: 0 6px; }
-.key-table td:first-child { width: 40%; white-space: nowrap; }
 
 /* ---------- todoist lists 🌷 ---------- */
 
-.todoist-section { margin-bottom: 30px; }
-.todoist-section[hidden] { display: none; }
-.list-heading {
-  display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 10px; margin: 0 0 12px 4px;
-  font-family: var(--font-display); font-size: 1.3rem; font-weight: 600;
-}
-.list-heading .count { font-size: .9rem; color: var(--muted); }
-.todoist-open { margin-left: auto; font-family: var(--font-body); font-size: .85rem; }
-.todoist-status { margin: 0 0 10px 6px; font-weight: 700; color: var(--muted); }
 
 .task-meta { grid-column: 2; grid-row: 2; display: flex; flex-wrap: wrap; align-items: center; gap: 4px; }
 .task-meta:empty { display: none; }
@@ -93,7 +70,3 @@ kbd {
 .todoist-row.prio-1 .task-check input { border-color: var(--coral); background: var(--coral-soft); }
 .todoist-row.prio-2 .task-check input { border-color: var(--gold); background: var(--gold-soft); }
 .todoist-row.prio-3 .task-check input { border-color: var(--lavender); background: var(--lav-soft); }
-
-.todoist-tabs { margin: 0 0 14px; }
-.todoist-tabs[hidden] { display: none; }
-.todoist-tabs .tab { font-size: 1rem; padding: 7px 14px; }

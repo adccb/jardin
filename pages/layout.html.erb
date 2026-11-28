@@ -44,6 +44,8 @@
 
   <main class="wrap">
 <%= render(tool.template) %>
+<%# The side panel starts folded on narrow screens. Decided here, before the first paint, so nothing below it jumps. -%>
+    <script>document.getElementById('repo-details')?.toggleAttribute('open', !matchMedia('(max-width: 860px)').matches);</script>
     <footer><%= t('common.footer') %></footer>
   </main>
 </div>
@@ -60,6 +62,11 @@
 </dialog>
 
 <div id="toasts" aria-live="polite"></div>
+
+<%# Skeletons garden.js draws while data is on its way; the page draws its first ones itself. -%>
+<% skeleton_kinds.each do |kind| -%>
+<template data-skeleton="<%= kind %>"><%= skeleton(kind) %></template>
+<% end -%>
 
 <script type="module" src="/assets/js/<%= tool.slug %>.js"></script>
 </body>

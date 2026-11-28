@@ -1,5 +1,6 @@
 import {
-  $, store, esc, t, tp, pick, api, failureMessage, toast, sparkle, pointOf, openDialog, formatDate, locale, TOKEN,
+  $, store, esc, t, tp, pick, api, failureMessage, toast, sparkle, pointOf, formatDate, locale, TOKEN,
+  stateBox, remembered, remember, markFresh, pageKeys, skeleton, skeletonItems, regionShape, loadingNote,
 } from './garden.js';
 import { ScopePanel } from './scope-panel.js';
 
@@ -15,6 +16,7 @@ const ui = {
   tab: store.get('tasks-todoist-tab'),
   hidden: new Set(), // checked off or deleted here and not yet confirmed by Todoist, so they stay hidden through reloads
   pending: null, // { id, action, timer } while undo is still possible
+  query: remembered('tasks-search', ''), chip: remembered('tasks-chip', null), // chip: a project name, or null for all
 };
 
 // The lists the panel offers, in tab order. The first visit shows today and late, as the page always has.
@@ -41,44 +43,103 @@ const pause = (ms) => new Promise((resolve) => { setTimeout(resolve, ms); });
 
 /* ---------- rendering ---------- */
 
+const noProject = () => t('tasks.no_project');
+const projectOf = (task) => task.project || noProject();
+
+// The remembered project chip, if the open tab has that project at all; otherwise the tab shows everything.
+const activeChip = (tasks) => (ui.chip && tasks.some((task) => projectOf(task) === ui.chip) ? ui.chip : null);
+
+// The open tab's tasks, narrowed by the project chip and the search box.
+function filtered(tasks) {
+  const query = ui.query.trim().toLowerCase();
+  const chip = activeChip(tasks);
+  return tasks
+    .filter((task) => !chip || projectOf(task) === chip)
+    .filter((task) => !query || [task.content, task.project, ...(task.labels || [])].join(' ').toLowerCase().includes(query));
+}
+
 function render() {
   const remaining = allOpen().length;
   // With no lists showing there is nothing to count, so the tagline goes back to its plain self.
   if (!ui.enabled || !shownLists().length) $('#task-summary').textContent = t('tasks.tagline');
   else if (!ui.loading && !ui.error) $('#task-summary').textContent = remaining ? tp('tasks.summary', remaining) : t('tasks.all_caught_up');
   $('#new-task').disabled = !ui.enabled;
+  renderStats();
   renderOpen();
+}
+
+// One box per list the panel shows, like every page's stat boxes.
+function renderStats() {
+  if (ui.loading) {
+    $('#stats').innerHTML = skeleton('stat', shownLists().length);
+    return;
+  }
+  const ready = !ui.error && ui.enabled;
+  $('#stats').innerHTML = shownLists().map((key) => {
+    const section = ui.sections.find((s) => s.key === key);
+    const count = ready && section ? section.tasks.filter(visible).length : '…';
+    return `<div class="stat"><b>${count}</b><span>${esc(t(`tasks.todoist.tabs.${key}`))}</span></div>`;
+  }).join('');
 }
 
 function renderOpen() {
   const { enabled, loading, error } = ui;
-  $('#todoist-count').textContent = loading || error || !enabled || !shownLists().length ? '' : allOpen().length;
   renderTabs();
   const section = activeSection();
-  const tasks = section ? section.tasks.filter(visible) : [];
-  let status = '';
-  if (!enabled) status = t('tasks.todoist.not_set_up_html');
-  else if (!shownLists().length) status = esc(t('tasks.no_tabs'));
-  else if (loading) status = esc(t('tasks.todoist.loading'));
-  else if (error) status = esc(t('tasks.todoist.error', { error }));
-  else if (!tasks.length) status = esc(t('tasks.todoist.empty_tab'));
-  $('#todoist-status').hidden = !status;
-  $('#todoist-status').innerHTML = status;
-  $('#todoist-list').innerHTML = loading || error || !enabled ? '' : tasks.map(taskRow).join('');
+  const all = section ? section.tasks.filter(visible) : [];
+  const tasks = filtered(all);
+  let state = '';
+  if (!enabled) state = stateBox('empty', '🍅', t('tasks.todoist.not_set_up_html'), { html: true });
+  else if (!shownLists().length) state = stateBox('empty', '🌙', t('tasks.no_tabs'));
+  else if (loading) state = ''; // the list's skeleton stands in
+  else if (error) state = stateBox('failed', '🥀', t('tasks.todoist.error', { error }));
+  else if (!all.length) state = stateBox('empty', '🌈', t('tasks.todoist.empty_tab'));
+  else if (!tasks.length) state = stateBox('empty', '🌙', t('tasks.no_match'));
+  $('#todoist-status').hidden = !state;
+  $('#todoist-status').innerHTML = state;
+  $('#tasks-shown').textContent = loading || error || !enabled || !section ? '' : tp('tasks.shown', all.length, { shown: tasks.length });
+  renderChips(all);
+  if (loading) renderListSkeleton();
+  else $('#todoist-list').innerHTML = error || !enabled ? '' : tasks.map(taskRow).join('');
 }
 
+function renderListSkeleton() {
+  const list = $('#todoist-list');
+  list.innerHTML = skeletonItems(regionShape(list, [4])[0], 'task-row', { list: true }) + loadingNote(t('tasks.todoist.loading'), { tag: 'li' });
+}
+
+// One chip per project in the open tab, busiest first.
+function renderChips(all) {
+  if (ui.loading) {
+    $('#tasks-chips').hidden = false;
+    $('#tasks-chips').innerHTML = skeleton('chip', 3);
+    return;
+  }
+  const tally = all.reduce((counts, task) => counts.set(projectOf(task), (counts.get(projectOf(task)) || 0) + 1), new Map());
+  const projects = [...tally.entries()].sort(([a, x], [b, y]) => y - x || a.localeCompare(b));
+  $('#tasks-chips').hidden = !projects.length;
+  if (!projects.length) return;
+  const pressed = activeChip(all);
+  const chip = (key, label, count) =>
+    `<button type="button" class="chip" data-chip="${esc(key ?? '')}" aria-pressed="${pressed === key}">${esc(label)}<span class="count">${count}</span></button>`;
+  $('#tasks-chips').innerHTML = chip(null, t('common.all'), all.length)
+    + projects.map(([name, count]) => chip(name, `📁 ${name}`, count)).join('');
+}
+
+// While loading, the lists the panel shows stand in as tabs with no counts yet.
 function renderTabs() {
   const tabs = $('#todoist-tabs');
-  tabs.hidden = ui.loading || Boolean(ui.error) || !ui.enabled || !ui.sections.length;
+  const sections = ui.loading ? shownLists().map((key) => ({ key, tasks: null })) : ui.sections;
+  tabs.hidden = Boolean(ui.error) || !ui.enabled || !sections.length;
   if (tabs.hidden) return;
-  const active = activeSection();
-  tabs.innerHTML = ui.sections.map((section, index) => {
+  const active = sections.find((section) => section.key === ui.tab) || sections[0];
+  tabs.innerHTML = sections.map((section, index) => {
     const selected = section === active;
-    const count = section.tasks.filter(visible).length;
-    return `<button type="button" class="tab" role="tab" id="todoist-tab-${index}" data-tab-index="${index}" aria-controls="todoist-list"
+    const count = section.tasks ? section.tasks.filter(visible).length : '';
+    return `<button type="button" class="tab" role="tab" id="todoist-tab-${index}" data-tab-index="${index}" aria-controls="todoist-panel"
       aria-selected="${selected}" tabindex="${selected ? 0 : -1}">${esc(tabLabel(section))} <span class="tab-count">${count}</span></button>`;
   }).join('');
-  $('#todoist-list').setAttribute('aria-labelledby', `todoist-tab-${ui.sections.indexOf(active)}`);
+  $('#todoist-panel').setAttribute('aria-labelledby', `todoist-tab-${sections.indexOf(active)}`);
 }
 
 function selectTab(index, { focus = false } = {}) {
@@ -116,7 +177,7 @@ function taskRow(task) {
 
 /* ---------- focus ---------- */
 
-const focusables = () => [...document.querySelectorAll('.task-row input')];
+const focusables = () => [...document.querySelectorAll('.task-row:not(.is-skeleton) input')];
 
 function focusTask(id) {
   rowById(id)?.querySelector('input').focus();
@@ -148,7 +209,9 @@ async function load({ refresh = false } = {}) {
   const loadId = ++ui.loadId;
   const query = new URLSearchParams({ tabs: shownLists().join(',') });
   if (refresh) query.set('refresh', '1');
+  $('#refresh').disabled = true;
   const result = await api(`/api/tasks/list?${query}`);
+  if (loadId === ui.loadId) $('#refresh').disabled = false;
   if (loadId !== ui.loadId) return;
   Object.assign(ui, {
     enabled: result.enabled !== false,
@@ -157,6 +220,7 @@ async function load({ refresh = false } = {}) {
     sections: result.sections || [],
     loadedAt: Date.now(),
   });
+  if (result.httpOk) markFresh();
   const focusedId = rowFor(document.activeElement)?.dataset.id;
   render();
   if (focusedId) focusTask(focusedId);
@@ -265,20 +329,8 @@ function shake(input) {
   input.focus();
 }
 
-const HELP_ROWS = ['create', 'save', 'move', 'toggle', 'delete', 'undo', 'open_todoist', 'close'];
-
-function helpRow(name) {
-  return `<tr><td>${t(`tasks.help.rows.${name}.keys_html`)}</td><td>${esc(t(`tasks.help.rows.${name}.does`))}</td></tr>`;
-}
-
-function showHelp() {
-  openDialog({
-    title: t('tasks.help.title'),
-    body: `<table class="key-table">${HELP_ROWS.map(helpRow).join('')}</table>`,
-    confirm: null,
-    cancel: t('common.got_it'),
-  });
-}
+pageKeys(['create', 'save', 'move', 'toggle', 'delete', 'undo', 'open_todoist']
+  .map((name) => ({ keys_html: t(`tasks.help.rows.${name}.keys_html`), does: t(`tasks.help.rows.${name}.does`) })));
 
 /* ---------- keyboard ---------- */
 
@@ -292,7 +344,6 @@ function rowFor(target) {
 const SHORTCUTS = {
   c: () => openCreate(),
   u: () => undo(),
-  '?': () => showHelp(),
   j: () => moveFocus(1),
   k: () => moveFocus(-1),
   ArrowDown: () => moveFocus(1),
@@ -372,6 +423,27 @@ document.addEventListener('visibilitychange', () => {
 
 // A close or delete still waiting for its undo window is sent on the way out, so closing the tab doesn't lose it.
 window.addEventListener('pagehide', () => flushPending({ leaving: true }));
+
+$('#refresh').addEventListener('click', async () => {
+  $('#refresh').disabled = true;
+  await load({ refresh: true });
+  $('#refresh').disabled = false;
+});
+
+$('#tasks-search').value = ui.query;
+$('#tasks-search').addEventListener('input', (event) => {
+  ui.query = event.target.value;
+  remember('tasks-search', ui.query);
+  renderOpen();
+});
+
+$('#tasks-chips').addEventListener('click', (event) => {
+  const chip = event.target.closest('[data-chip]');
+  if (!chip) return;
+  ui.chip = chip.dataset.chip || null;
+  remember('tasks-chip', ui.chip);
+  renderOpen();
+});
 
 render();
 load();

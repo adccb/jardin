@@ -8,13 +8,6 @@ tasks:
   all_caught_up: "ぜんぶ片付いたよ 🌈"
   no_tabs: "表示中のリストがないよ 🌙 パネルから選んでね"
   delete_label: "%{title}を削除"
-  hints:
-    new: "新規"
-    move: "移動"
-    done: "完了"
-    delete: "削除"
-    undo: "元に戻す"
-    help: "ヘルプ"
   dialog:
     title: "🌱 新しいタスクを植える"
     label: "なにをする？"
@@ -52,7 +45,6 @@ tasks:
     - "やったー！！ 🎉"
   todoist:
     not_set_up_html: "Todoistがまだ設定されてないよ 🍅 1PasswordにあるTodoistのAPIトークンを <code>TODOIST_TOKEN_REF</code> で指定してgardenを起動してね"
-    heading: "あなたのタスク"
     tabs:
       today: "☀️ 今日"
       late: "🐌 期限切れ"
@@ -69,7 +61,6 @@ tasks:
     recurring: "🔁 くり返し"
     open_label: "%{title}をTodoistで開く"
   help:
-    title: "⌨️ キーボードの魔法"
     rows:
       create:
         keys_html: "<kbd>c</kbd>"
@@ -89,9 +80,14 @@ tasks:
       undo:
         keys_html: "<kbd>u</kbd>"
         does: "最後の完了や削除を元に戻す"
-      close:
-        keys_html: "<kbd>esc</kbd>"
-        does: "開いている画面を閉じる"
       open_todoist:
         keys_html: "<kbd>o</kbd>"
         does: "TodoistのタスクをTodoistで開く"
+  search_placeholder: "🔍 タスクとプロジェクトを検索…"
+  search_label: "タスクを検索"
+  chips_label: "プロジェクトで絞り込む"
+  shown:
+    one: "%{count}件中%{shown}件を表示"
+    other: "%{count}件中%{shown}件を表示"
+  no_match: "一致するものはないよ 🌙 ほかの絞り込みを試してね"
+  no_project: "プロジェクトなし"

@@ -3,6 +3,7 @@
       <p class="tagline"><%= t('prs.tagline') %></p>
       <div class="controls">
         <button id="refresh" class="btn" type="button"><%= t('common.refresh') %></button>
+        <span id="freshness" class="freshness" aria-live="polite"></span>
       </div>
     </header>
 
@@ -10,28 +11,28 @@
       <aside class="repo-panel" aria-labelledby="repo-panel-title">
         <details id="repo-details" open>
           <summary>
-            <h2 id="repo-panel-title"><span aria-hidden="true">🗂️</span> <%= t('prs.panel.heading') %> <small id="repo-count"></small></h2>
+            <h2 id="repo-panel-title"><span aria-hidden="true">🗂️</span> <%= t('prs.panel.heading') %> <small id="repo-count"><span class="bone"></span></small></h2>
           </summary>
           <p class="repo-panel-actions">
             <button type="button" class="link-btn" id="repos-all"><%= t('prs.panel.select_all') %></button> ·
             <button type="button" class="link-btn" id="repos-none"><%= t('prs.panel.clear') %></button>
           </p>
-          <div id="repo-list"></div>
+          <div id="repo-list" data-shape="prs-panel" data-shape-groups=".repo-list, .repo-empty" data-shape-items="li"><%= skeleton_groups(shape('prs-panel', [1, 4])) %></div>
         </details>
       </aside>
 
       <section class="pr-main" aria-label="<%= t('prs.main_label') %>">
-        <div id="stats" class="stats"></div>
-        <div class="tabs" role="tablist" aria-label="<%= t('prs.tabs_label') %>" id="repo-tabs"></div>
+        <div id="stats" class="stats"><%= skeleton('stat', 5) %></div>
+        <div class="tabs" role="tablist" aria-label="<%= t('prs.tabs_label') %>" id="repo-tabs"><%= skeleton('tab', 2) %></div>
         <div class="panel" role="tabpanel" id="pr-panel">
           <div class="toolbar">
             <p class="shown" id="shown"></p>
             <div class="toolbar-row">
               <input id="search" type="search" placeholder="<%= t('prs.search_placeholder') %>" aria-label="<%= t('prs.search_label') %>">
             </div>
-            <div id="state-chips" class="chips" role="group" aria-label="<%= t('prs.states_label') %>"></div>
+            <div id="state-chips" class="chips" role="group" aria-label="<%= t('prs.states_label') %>"><%= skeleton('chip', 3) %></div>
           </div>
-          <div id="prs"></div>
+          <div id="prs" data-shape="prs-list" data-shape-groups=".grid" data-shape-items=".card"><%= skeleton_grids(shape('prs-list', [2, 2]), card: 'pr-card', heading: 'pr-section-heading') %><p class="sr-only"><%= t('prs.empty.loading') %></p></div>
         </div>
       </section>
     </div>
